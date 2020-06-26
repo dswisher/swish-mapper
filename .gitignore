@@ -1,0 +1,9 @@
+
+bin/
+obj/
+
+src/SwishMapper.Cli/SAMPLES/
+
+test/SwishMapper.Tests/coverage.opencover.xml
+test/SwishMapper.Tests/coveragereport/
+
