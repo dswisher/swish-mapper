@@ -20,18 +20,35 @@ namespace SwishMapper.Reports
         {
             var root = new DocRoot();
 
-            var table = new DocTable();
+            // Add the little header table for the doc
+            root.AddTable()
+                .Row()
+                    .Cell("Document")
+                    .Cell(doc.Name)
+                .Row()
+                    .Cell("Root Element")
+                    .Cell(doc.RootElement.Name);
 
-            root.Children.Add(table);
+            // Add the big table of all the elements
+            var table = root.AddTable()
+                .Row()      // TODO - set header style, or perhaps make it a .Header() call
+                    .Cell("Depth")
+                    .Cell("Name")
+                    .Cell("Child");
 
-            foreach (var dataElement in doc.Elements.OrderBy(x => x.Depth).ThenBy(x => x.Name))
+            foreach (var dataElement in doc.Elements.OrderBy(x => x.Name))
             {
-                var row = new DocTableRow
-                {
-                    Text = $"{dataElement.Depth} - {dataElement.Name}"
-                };
+                var numKids = dataElement.Attributes.Count + dataElement.Elements.Count;
 
-                table.Rows.Add(row);
+                table.Row()
+                    .Cell(dataElement.Depth, rowSpan: numKids + 1)
+                    .Cell(dataElement.Name, rowSpan: numKids + 1);
+
+                foreach (var attribute in dataElement.Attributes)
+                {
+                    table.Row()
+                        .Cell(attribute.Name);
+                }
             }
 
             return root;

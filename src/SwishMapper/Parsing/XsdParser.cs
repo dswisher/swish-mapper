@@ -51,7 +51,7 @@ namespace SwishMapper.Parsing
 
         private DataElement Walk(XmlSchemaElement xsdElement, ParserContext context)
         {
-            // TODO - for local elements, build the name based on the name of the parent
+            // TODO - do not merge local elements as if they are global - see https://github.com/dswisher/swish-mapper/issues/2
             var name = xsdElement.Name;
 
             if (name == null)

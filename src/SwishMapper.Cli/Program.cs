@@ -32,7 +32,7 @@ namespace SwishMapper.Cli
 
                 var report = new DocumentReport(doc);
 
-                var formatter = new ConsoleFormatter();
+                var formatter = new ConsoleFormatter(Console.Out);
                 formatter.Write(report);
             }
             catch (ParserException ex)

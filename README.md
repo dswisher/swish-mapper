@@ -71,3 +71,14 @@ specified sources.
 
 A diagram illustrating the structure (hierarchy) of a single data source or sink.
 
+
+# Links
+
+## XSD
+
+* [Hide vs Expose Namespaces](http://www.xfront.com/HideVersusExpose.html) - in-depth discussion of `elementFormDefault`
+
+## Markup
+
+* [mdast](https://github.com/syntax-tree/mdast) - Markdown Abstract Syntax Tree - one model of an AST for Markdown
+
