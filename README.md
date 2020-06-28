@@ -37,6 +37,14 @@ TODO.
 The set of reports to generate is specified in the project file (see above).
 This section describes each report.
 
+## Document Report
+
+* Format: HTML
+* Status: Not yet implemented
+
+A list of all elements in one data source or sink.
+
+
 ## Dictionary Report
 
 * Format: HTML
@@ -56,7 +64,7 @@ Gaps are defined as data items in the sink that are not present in any of the
 specified sources.
 
 
-# Source/Sink Diagram
+## Source/Sink Diagram
 
 * Format: SVG
 * Status: Not yet implemented

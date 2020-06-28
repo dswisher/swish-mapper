@@ -1,7 +1,10 @@
 ﻿
 using System;
 using System.Xml.Schema;
+
+using SwishMapper.Formatters;
 using SwishMapper.Parsing;
+using SwishMapper.Reports;
 
 namespace SwishMapper.Cli
 {
@@ -24,11 +27,13 @@ namespace SwishMapper.Cli
 
             try
             {
-                var rootElement = parser.ParseAsync(path, "test-xsd", rootName, string.Empty).Result.RootElement;
+                var doc = parser.ParseAsync(path, "test-xsd", rootName, string.Empty).Result;
+                var rootElement = doc.RootElement;
 
-                // TODO - print out the "tree"
-                Console.WriteLine("Root element {0} has {1} attributes and {2} child elements.",
-                    rootElement.Name, rootElement.Attributes.Count, rootElement.Elements.Count);
+                var report = new DocumentReport(doc);
+
+                var formatter = new ConsoleFormatter();
+                formatter.Write(report);
             }
             catch (ParserException ex)
             {

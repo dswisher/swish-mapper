@@ -28,6 +28,15 @@ namespace SwishMapper.Models
         public string DataType { get; set; }
 
         /// <summary>
+        /// The depth of this element.
+        /// </summary>
+        /// <remarks>
+        /// The root element has a depth of zero. If an element appears in multiple places in the
+        /// hierarchy, this is the minimum value.
+        /// </remarks>
+        public int Depth { get; set; }
+
+        /// <summary>
         /// The attributes of this element.
         /// </summary>
         public IList<DataAttribute> Attributes { get { return attributes; } }

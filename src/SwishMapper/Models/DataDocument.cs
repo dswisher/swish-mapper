@@ -1,4 +1,6 @@
 
+using System.Collections.Generic;
+
 namespace SwishMapper.Models
 {
     /// <summary>
@@ -9,6 +11,8 @@ namespace SwishMapper.Models
     /// </remarks>
     public class DataDocument
     {
+        private readonly Dictionary<string, DataElement> elements = new Dictionary<string, DataElement>();
+
         /// <summary>
         /// The name of this document.
         /// </summary>
@@ -18,5 +22,14 @@ namespace SwishMapper.Models
         /// The top-most element in the document.
         /// </summary>
         public DataElement RootElement { get; set; }
+
+
+        public IEnumerable<DataElement> Elements { get { return elements.Values; } }
+
+
+        public void AddElement(DataElement element)
+        {
+            elements.Add(element.Name, element);
+        }
     }
 }
