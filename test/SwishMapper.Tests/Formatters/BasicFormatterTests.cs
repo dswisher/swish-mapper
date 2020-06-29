@@ -6,6 +6,7 @@ using System.Xml;
 
 using FluentAssertions;
 using SwishMapper.Formatters;
+using SwishMapper.Tests.TestHelpers;
 using Xunit;
 
 namespace SwishMapper.Tests.Formatters
@@ -34,7 +35,22 @@ namespace SwishMapper.Tests.Formatters
                 var content = RunTest(memory, w => new HtmlFormatter(w), root, requiredText);
 
                 // Validate the XHTML is well formed by loading it using a DTD-validating XmlReader
-                // See https://github.com/dswisher/swish-mapper/issues/3
+                var settings = new XmlReaderSettings
+                {
+                    DtdProcessing = DtdProcessing.Parse,
+                    ValidationType = ValidationType.DTD,
+                    XmlResolver = new CustomXmlResolver()
+                };
+
+                memory.Position = 0;
+
+                using (var textReader = new StreamReader(memory, leaveOpen: true))
+                using (var xmlReader = XmlReader.Create(textReader, settings))
+                {
+                    var xmlDoc = new XmlDocument();
+
+                    xmlDoc.Load(xmlReader);
+                }
             }
         }
 
