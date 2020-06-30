@@ -1,10 +1,10 @@
 
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 using FluentAssertions;
 using SwishMapper.Parsing;
+using SwishMapper.Tests.TestHelpers;
 using Xunit;
 
 namespace SwishMapper.Tests.Parsing
@@ -26,7 +26,7 @@ namespace SwishMapper.Tests.Parsing
         public async Task DocumentNameIsSet()
         {
             // Arrange
-            var path = FindXsd("one-simple-element.xsd");   // any XSD would suffice
+            var path = FileFinder.FindXsd("one-simple-element.xsd");   // any XSD would suffice
 
             // Act
             var doc = await parser.ParseAsync(path, docName, rootElementName, string.Empty);
@@ -40,7 +40,7 @@ namespace SwishMapper.Tests.Parsing
         public async Task DepthIsSet()
         {
             // arrange
-            var path = FindXsd("nested-sequences.xsd");
+            var path = FileFinder.FindXsd("nested-sequences.xsd");
 
             // Act
             var doc = await parser.ParseAsync(path, docName, rootElementName, string.Empty);
@@ -61,7 +61,7 @@ namespace SwishMapper.Tests.Parsing
         public async Task ElementsAreTracked(string xsdName, string[] elementNames)
         {
             // Arrange
-            var path = FindXsd(xsdName);
+            var path = FileFinder.FindXsd(xsdName);
 
             // Act
             var doc = await parser.ParseAsync(path, docName, rootElementName, string.Empty);
@@ -76,7 +76,7 @@ namespace SwishMapper.Tests.Parsing
         public async Task ElementDataTypesAreParsed(string xsdName, string elementName, string dataType)
         {
             // Arrange
-            var path = FindXsd(xsdName);
+            var path = FileFinder.FindXsd(xsdName);
 
             // Act
             var doc = await parser.ParseAsync(path, docName, rootElementName, string.Empty);
@@ -94,7 +94,7 @@ namespace SwishMapper.Tests.Parsing
         public async Task AttributeDataTypesAreParsed(string xsdName, string elementName, string attributeName, string dataType)
         {
             // Arrange
-            var path = FindXsd(xsdName);
+            var path = FileFinder.FindXsd(xsdName);
 
             // Act
             var doc = await parser.ParseAsync(path, docName, rootElementName, string.Empty);
@@ -113,7 +113,7 @@ namespace SwishMapper.Tests.Parsing
         public async Task CanParseElementWithChildElement(string xsdName)
         {
             // Arrange
-            var path = FindXsd(xsdName);
+            var path = FileFinder.FindXsd(xsdName);
 
             // Act
             var doc = await parser.ParseAsync(path, docName, rootElementName, string.Empty);
@@ -126,27 +126,6 @@ namespace SwishMapper.Tests.Parsing
             child.Name.Should().Be("payload");
             child.DataType.Should().Be("String");
             child.Depth.Should().Be(1);
-        }
-
-
-        private static string FindXsd(string name)
-        {
-            const string dataDirectory = "TestData";
-
-            var directory = new DirectoryInfo(Directory.GetCurrentDirectory());
-            while ((directory != null) && (directory.GetDirectories(dataDirectory).Length == 0))
-            {
-                directory = directory.Parent;
-            }
-
-            if (directory == null)
-            {
-                throw new DirectoryNotFoundException($"Could not find {dataDirectory} directory.");
-            }
-
-            directory = directory.GetDirectories(dataDirectory)[0];
-
-            return Path.Join(directory.FullName, name);
         }
     }
 }

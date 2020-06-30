@@ -6,6 +6,7 @@ using SwishMapper.Models;
 
 namespace SwishMapper.Parsing
 {
+    // TODO - rename to XsdParserContext
     public class ParserContext
     {
         private readonly Dictionary<string, DataElement> elements = new Dictionary<string, DataElement>();

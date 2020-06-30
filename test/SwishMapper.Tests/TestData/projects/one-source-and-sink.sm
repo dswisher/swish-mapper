@@ -1,0 +1,7 @@
+
+# Sources
+source incoming1.xsd
+
+# Sinks
+sink outgoing1.xsd
+
