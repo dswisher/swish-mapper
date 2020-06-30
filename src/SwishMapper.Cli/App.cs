@@ -1,10 +1,14 @@
 
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
+using SwishMapper.Formatters;
 using SwishMapper.Models;
 using SwishMapper.Parsing;
+using SwishMapper.Reports;
 
 namespace SwishMapper.Cli
 {
@@ -53,10 +57,27 @@ namespace SwishMapper.Cli
             // TODO
 
             // Generate reports.
-            // TODO
-            //     var report = new DocumentReport(doc);
-            //     var formatter = new ConsoleFormatter(Console.Out);
-            //     formatter.Write(report);
+            var output = new DirectoryInfo("OUTPUT");
+            if (!output.Exists)
+            {
+                logger.LogInformation("Creating output directory {Dir}.", output.FullName);
+                output.Create();
+            }
+
+            foreach (var doc in sources.Concat(sinks))
+            {
+                var report = new DocumentReport(doc);
+                var reportPath = Path.Combine(output.FullName, $"doc-{doc.Name}.html");
+
+                logger.LogInformation("Writing doc report for {Name} to {Path}", doc.Name, reportPath);
+
+                using (var writer = new StreamWriter(reportPath))
+                {
+                    var formatter = new HtmlFormatter(writer);
+
+                    formatter.Write(report);
+                }
+            }
 
             // All done!
             logger.LogDebug("Done.");

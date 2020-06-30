@@ -3,6 +3,7 @@ bin/
 obj/
 
 src/SwishMapper.Cli/SAMPLES/
+src/SwishMapper.Cli/OUTPUT/
 
 test/SwishMapper.Tests/coverage.opencover.xml
 test/SwishMapper.Tests/coveragereport/
