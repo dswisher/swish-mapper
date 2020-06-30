@@ -6,14 +6,13 @@ using SwishMapper.Models;
 
 namespace SwishMapper.Parsing
 {
-    // TODO - rename to XsdParserContext
-    public class ParserContext
+    public class XsdParserContext
     {
         private readonly Dictionary<string, DataElement> elements = new Dictionary<string, DataElement>();
         private readonly XmlSchemaSet schemaSet;
 
 
-        public ParserContext(XmlSchemaSet schemaSet)
+        public XsdParserContext(XmlSchemaSet schemaSet)
         {
             this.schemaSet = schemaSet;
 
@@ -21,7 +20,7 @@ namespace SwishMapper.Parsing
         }
 
 
-        private ParserContext(ParserContext parentContext)
+        private XsdParserContext(XsdParserContext parentContext)
         {
             schemaSet = parentContext.schemaSet;
             elements = parentContext.elements;
@@ -33,14 +32,14 @@ namespace SwishMapper.Parsing
         public IDictionary<string, DataElement> Elements { get { return elements; } }
 
 
-        public ParserContext Push(DataElement element)
+        public XsdParserContext Push(DataElement element)
         {
             if (!elements.ContainsKey(element.Name))
             {
                 elements.Add(element.Name, element);
             }
 
-            var child = new ParserContext(this);
+            var child = new XsdParserContext(this);
 
             child.Depth = Depth + 1;
 

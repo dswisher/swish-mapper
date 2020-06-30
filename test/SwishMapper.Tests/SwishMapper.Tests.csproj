@@ -2,12 +2,17 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <IsPackable>false</IsPackable>
+        <CodeAnalysisRuleSet>../../src/stylecop.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="coverlet.msbuild" Version="2.8.1">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
 
         <PackageReference Include="FluentAssertions" Version="5.10.3" />
@@ -23,5 +28,9 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\SwishMapper\SwishMapper.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <AdditionalFiles Include="../../src/stylecop.json" />
     </ItemGroup>
 </Project>

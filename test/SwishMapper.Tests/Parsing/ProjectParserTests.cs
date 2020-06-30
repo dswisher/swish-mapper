@@ -1,10 +1,12 @@
 
 using System;
 using System.IO;
+using System.Linq;
 
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SwishMapper.Models;
 using SwishMapper.Parsing;
 using SwishMapper.Tests.TestHelpers;
 using Xunit;
@@ -40,7 +42,7 @@ namespace SwishMapper.Tests.Parsing
         public void EmptyFileIsHandled(string name)
         {
             // Arrange
-            var path = FileFinder.FindProject(name);
+            var path = FileFinder.FindProjectFile(name).FullName;
 
             // Act
             var project = parser.Parse(path);
@@ -55,7 +57,7 @@ namespace SwishMapper.Tests.Parsing
         public void SourcesAndSinksAreParsed(string name, int numSources, int numSinks)
         {
             // Arrange
-            var path = FileFinder.FindProject(name);
+            var path = FileFinder.FindProjectFile(name).FullName;
 
             // Act
             var project = parser.Parse(path);
@@ -66,7 +68,44 @@ namespace SwishMapper.Tests.Parsing
         }
 
 
-        // TODO - relative paths should be relative to the project file
-        // TODO - sources and sinks need to specify the root element, at least for a DTD
+        [Theory]
+        [InlineData("one-source-and-sink.sm")]
+        public void PathsAreRelativeToProjectFile(string name)
+        {
+            // Arrange
+            var path = FileFinder.FindProjectFile(name).FullName;
+
+            // Act
+            var project = parser.Parse(path);
+
+            // Assert
+            foreach (var doc in project.Sinks.Cast<ProjectDocument>().Concat(project.Sources))
+            {
+                var fullName = FileFinder.FindProjectFile(doc.ProjectPath).FullName;
+
+                doc.FullPath.Should().Be(fullName);
+            }
+        }
+
+
+        [Theory]
+        [InlineData("one-source-and-sink.sm", "Source1", "SourceRoot")]
+        [InlineData("one-source-and-sink.sm", "Sink1", "SinkRoot")]
+        public void RootElementNamesAreParsed(string name, string docName, string expectedRootName)
+        {
+            // Arrange
+            var path = FileFinder.FindProjectFile(name).FullName;
+
+            // Act
+            var project = parser.Parse(path);
+
+            // Assert
+            bool fromSink = docName.Contains("sink", StringComparison.OrdinalIgnoreCase);
+
+            var doc = fromSink ? (ProjectDocument)project.Sinks.First(x => x.Name == docName)
+                : project.Sources.First(x => x.Name == docName);
+
+            doc.RootElementName.Should().Be(expectedRootName);
+        }
     }
 }

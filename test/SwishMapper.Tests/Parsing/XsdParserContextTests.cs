@@ -6,9 +6,9 @@ using Xunit;
 
 namespace SwishMapper.Tests.Parsing
 {
-    public class ParserContextTests
+    public class XsdParserContextTests
     {
-        private readonly ParserContext rootContext = new ParserContext(null);
+        private readonly XsdParserContext rootContext = new XsdParserContext(null);
         private readonly DataElement rootElement = new DataElement("rootElement");
         private readonly DataElement childElement = new DataElement("childElement");
 

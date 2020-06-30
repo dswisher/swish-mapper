@@ -1,4 +1,5 @@
 
+using System;
 using System.IO;
 
 using Microsoft.Extensions.Logging;
@@ -21,7 +22,9 @@ namespace SwishMapper.Parsing
         {
             var project = new ProjectDefinition();
 
-            using (var reader = new StreamReader(path))
+            var projectFileInfo = new FileInfo(path);
+
+            using (var reader = new StreamReader(projectFileInfo.FullName))
             {
                 string line;
                 while ((line = reader.ReadLine()) != null)
@@ -38,17 +41,32 @@ namespace SwishMapper.Parsing
                     switch (bits[0])
                     {
                         case "source":
-                            project.Sources.Add(new ProjectSource { Path = bits[1] });
+                            project.Sources.Add(ParseDoc<ProjectSource>(projectFileInfo, bits));
                             break;
 
                         case "sink":
-                            project.Sinks.Add(new ProjectSink { Path = bits[1] });
+                            project.Sinks.Add(ParseDoc<ProjectSink>(projectFileInfo, bits));
                             break;
                     }
                 }
             }
 
             return project;
+        }
+
+
+        private T ParseDoc<T>(FileInfo projectFileInfo, string[] bits)
+            where T : ProjectDocument
+        {
+            T doc = Activator.CreateInstance<T>();
+
+            doc.Name = bits[1];
+            doc.ProjectPath = bits[2];
+            doc.FullPath = new FileInfo(Path.Combine(projectFileInfo.Directory.FullName, doc.ProjectPath)).FullName;
+
+            doc.RootElementName = bits[3];
+
+            return doc;
         }
     }
 }

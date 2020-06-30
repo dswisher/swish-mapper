@@ -11,9 +11,9 @@ namespace SwishMapper.Tests.TestHelpers
         }
 
 
-        public static string FindProject(string name)
+        public static FileInfo FindProjectFile(string name)
         {
-            return Path.Join(FindDataDir().FullName, "projects", name);
+            return new FileInfo(Path.Join(FindDataDir().FullName, "projects", name));
         }
 
 

@@ -11,8 +11,8 @@ namespace SwishMapper.Tests.Parsing
 {
     public class XsdParserTests
     {
-        private const string docName = "test-xsd";
-        private const string rootElementName = "message";
+        private const string DocName = "test-xsd";
+        private const string RootElementName = "message";
 
         private readonly XsdParser parser;
 
@@ -29,10 +29,10 @@ namespace SwishMapper.Tests.Parsing
             var path = FileFinder.FindXsd("one-simple-element.xsd");   // any XSD would suffice
 
             // Act
-            var doc = await parser.ParseAsync(path, docName, rootElementName, string.Empty);
+            var doc = await parser.ParseAsync(path, DocName, RootElementName, string.Empty);
 
             // Assert
-            doc.Name.Should().Be(docName);
+            doc.Name.Should().Be(DocName);
         }
 
 
@@ -43,7 +43,7 @@ namespace SwishMapper.Tests.Parsing
             var path = FileFinder.FindXsd("nested-sequences.xsd");
 
             // Act
-            var doc = await parser.ParseAsync(path, docName, rootElementName, string.Empty);
+            var doc = await parser.ParseAsync(path, DocName, RootElementName, string.Empty);
 
             // Assert
             doc.Elements.First(x => x.Name == "message").Depth.Should().Be(0);
@@ -64,7 +64,7 @@ namespace SwishMapper.Tests.Parsing
             var path = FileFinder.FindXsd(xsdName);
 
             // Act
-            var doc = await parser.ParseAsync(path, docName, rootElementName, string.Empty);
+            var doc = await parser.ParseAsync(path, DocName, RootElementName, string.Empty);
 
             // Assert
             doc.Elements.Select(x => x.Name).Should().BeEquivalentTo(elementNames);
@@ -72,14 +72,14 @@ namespace SwishMapper.Tests.Parsing
 
 
         [Theory]
-        [InlineData("one-simple-element.xsd", "message", "String" )]
+        [InlineData("one-simple-element.xsd", "message", "String")]
         public async Task ElementDataTypesAreParsed(string xsdName, string elementName, string dataType)
         {
             // Arrange
             var path = FileFinder.FindXsd(xsdName);
 
             // Act
-            var doc = await parser.ParseAsync(path, docName, rootElementName, string.Empty);
+            var doc = await parser.ParseAsync(path, DocName, RootElementName, string.Empty);
 
             // Assert
             var element = doc.Elements.First(x => x.Name == elementName);
@@ -89,15 +89,15 @@ namespace SwishMapper.Tests.Parsing
 
 
         [Theory]
-        [InlineData("one-attribute.xsd", "message", "myAttribute", "String" )]
-        [InlineData("ref-element.xsd", "payload", "myAttribute", "String" )]
+        [InlineData("one-attribute.xsd", "message", "myAttribute", "String")]
+        [InlineData("ref-element.xsd", "payload", "myAttribute", "String")]
         public async Task AttributeDataTypesAreParsed(string xsdName, string elementName, string attributeName, string dataType)
         {
             // Arrange
             var path = FileFinder.FindXsd(xsdName);
 
             // Act
-            var doc = await parser.ParseAsync(path, docName, rootElementName, string.Empty);
+            var doc = await parser.ParseAsync(path, DocName, RootElementName, string.Empty);
 
             // Assert
             var element = doc.Elements.First(x => x.Name == elementName);
@@ -116,7 +116,7 @@ namespace SwishMapper.Tests.Parsing
             var path = FileFinder.FindXsd(xsdName);
 
             // Act
-            var doc = await parser.ParseAsync(path, docName, rootElementName, string.Empty);
+            var doc = await parser.ParseAsync(path, DocName, RootElementName, string.Empty);
 
             // Assert
             doc.RootElement.Elements.Should().HaveCount(1);

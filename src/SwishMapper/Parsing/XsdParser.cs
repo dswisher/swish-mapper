@@ -8,7 +8,7 @@ using SwishMapper.Models;
 
 namespace SwishMapper.Parsing
 {
-    public class XsdParser
+    public class XsdParser : IXsdParser
     {
         public Task<DataDocument> ParseAsync(string path, string docName, string rootElementName, string rootElementNamespace)
         {
@@ -30,7 +30,7 @@ namespace SwishMapper.Parsing
 
             var xsdRoot = (XmlSchemaElement)schemaSet.GlobalElements[qualifiedRoot];
 
-            var context = new ParserContext(schemaSet);
+            var context = new XsdParserContext(schemaSet);
 
             var rootElement = Walk(xsdRoot, context);
 
@@ -49,7 +49,7 @@ namespace SwishMapper.Parsing
         }
 
 
-        private DataElement Walk(XmlSchemaElement xsdElement, ParserContext context)
+        private DataElement Walk(XmlSchemaElement xsdElement, XsdParserContext context)
         {
             // TODO - do not merge local elements as if they are global - see https://github.com/dswisher/swish-mapper/issues/2
             var name = xsdElement.Name;
@@ -96,7 +96,7 @@ namespace SwishMapper.Parsing
         }
 
 
-        private void Walk(DataElement element, XmlSchemaComplexType complexType, ParserContext context)
+        private void Walk(DataElement element, XmlSchemaComplexType complexType, XsdParserContext context)
         {
             // Pick out any attributes, and add them to the element
             foreach (XmlSchemaAttribute xsdAttribute in complexType.Attributes)
@@ -128,13 +128,13 @@ namespace SwishMapper.Parsing
         }
 
 
-        private void Walk(DataElement element, XmlSchemaSimpleType simpleType, ParserContext context)
+        private void Walk(DataElement element, XmlSchemaSimpleType simpleType, XsdParserContext context)
         {
             element.DataType = simpleType.Datatype.ValueType.Name;
         }
 
 
-        private void Walk(DataElement element, XmlSchemaSequence sequence, ParserContext context)
+        private void Walk(DataElement element, XmlSchemaSequence sequence, XsdParserContext context)
         {
             foreach (XmlSchemaAnnotated item in sequence.Items)
             {

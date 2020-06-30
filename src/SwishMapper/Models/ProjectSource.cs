@@ -1,8 +1,10 @@
 
 namespace SwishMapper.Models
 {
-    public class ProjectSource
+    /// <summary>
+    /// An incoming data flow to the project being documented.
+    /// </summary>
+    public class ProjectSource : ProjectDocument
     {
-        public string Path { get; set; }
     }
 }
