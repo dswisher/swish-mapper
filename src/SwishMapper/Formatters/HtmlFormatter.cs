@@ -29,7 +29,13 @@ namespace SwishMapper.Formatters
             writer.WriteLine("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
 
             writer.WriteLine("<head>");
-            writer.WriteLine("<title>Stuff</title>");   // TODO - better title
+            writer.WriteLine("<title>{0}</title>", root.Title ?? "Document of Stuff");
+
+            if (root.Style != null)
+            {
+                writer.WriteLine("<link rel=\"stylesheet\" href=\"{0}\">", root.Style);
+            }
+
             writer.WriteLine("</head><body>");
 
             foreach (var child in root.Children)

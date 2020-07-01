@@ -18,7 +18,12 @@ namespace SwishMapper.Reports
 
         public DocRoot Build()
         {
-            var root = new DocRoot();
+            // Create the document
+            var root = new DocRoot
+            {
+                Title = doc.Name,
+                Style = "style.css"
+            };
 
             // Add the little header table for the doc
             root.AddTable()
@@ -34,7 +39,8 @@ namespace SwishMapper.Reports
                 .Row()      // TODO - set header style, or perhaps make it a .Header() call
                     .Cell("Depth")
                     .Cell("Name")
-                    .Cell("Child");
+                    .Cell("Child")
+                    .Cell("Kind");
 
             foreach (var dataElement in doc.Elements.OrderBy(x => x.Name))
             {
@@ -42,12 +48,26 @@ namespace SwishMapper.Reports
 
                 table.Row()
                     .Cell(dataElement.Depth, rowSpan: numKids + 1)
-                    .Cell(dataElement.Name, rowSpan: numKids + 1);
+                    .Cell(dataElement.Name, rowSpan: numKids + 1)
+                    .Cell()
+                    .Cell();
 
-                foreach (var attribute in dataElement.Attributes)
+                foreach (var attribute in dataElement.Attributes.OrderBy(x => x.Name))
                 {
                     table.Row()
-                        .Cell(attribute.Name);
+                        .Cell()
+                        .Cell()
+                        .Cell(attribute.Name)
+                        .Cell("attribute");
+                }
+
+                foreach (var elem in dataElement.Elements.OrderBy(x => x.Name))
+                {
+                    table.Row()
+                        .Cell()
+                        .Cell()
+                        .Cell(elem.Name)
+                        .Cell("element");
                 }
             }
 

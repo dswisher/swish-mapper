@@ -25,6 +25,19 @@ namespace SwishMapper.Formatters
         }
 
 
+        public static DocTableRow Cell(this DocTableRow row)
+        {
+            var cell = new DocTableCell
+            {
+                Text = "&nbsp;"
+            };
+
+            row.Cells.Add(cell);
+
+            return row;
+        }
+
+
         public static DocTableRow Cell<T>(this DocTableRow row, T content, int rowSpan = 0)
         {
             var cell = new DocTableCell

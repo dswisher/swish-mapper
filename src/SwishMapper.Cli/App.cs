@@ -79,6 +79,15 @@ namespace SwishMapper.Cli
                 }
             }
 
+            // Copy the static files to the OUTPUT directory
+            var content = new DirectoryInfo("Content");
+            foreach (var file in content.GetFiles())
+            {
+                // TODO - only copy if source is newer
+                var target = Path.Combine(output.FullName, file.Name);
+                file.CopyTo(target, true);
+            }
+
             // All done!
             logger.LogDebug("Done.");
         }
