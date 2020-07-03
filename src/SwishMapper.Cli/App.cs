@@ -16,14 +16,17 @@ namespace SwishMapper.Cli
     {
         private readonly IProjectParser projectParser;
         private readonly IXsdParser xsdParser;
+        private readonly IMappingParser mappingParser;
         private readonly ILogger logger;
 
         public App(IProjectParser projectParser,
                    IXsdParser xsdParser,
+                   IMappingParser mappingParser,
                    ILogger<App> logger)
         {
             this.projectParser = projectParser;
             this.xsdParser = xsdParser;
+            this.mappingParser = mappingParser;
             this.logger = logger;
         }
 
@@ -54,7 +57,12 @@ namespace SwishMapper.Cli
             }
 
             // Load the mappings.
-            // TODO
+            foreach (var pm in project.Mappings)
+            {
+                var map = await Load(pm, sources, sinks);
+
+                // TODO - keep the map around, or hook it onto the sink?
+            }
 
             // Generate reports.
             var output = new DirectoryInfo("OUTPUT");
@@ -102,6 +110,18 @@ namespace SwishMapper.Cli
             var doc = await xsdParser.ParseAsync(projectDoc.FullPath, projectDoc.Name, projectDoc.RootElementName, string.Empty);
 
             return doc;
+        }
+
+
+        private async Task<object> Load(ProjectMapping projectMapping, IEnumerable<DataDocument> sources, IEnumerable<DataDocument> sinks)
+        {
+            logger.LogInformation("Loading mapping {Name} from {Path}.", projectMapping.ProjectPath, projectMapping.FullPath);
+
+            var map = await mappingParser.ParseAsync(projectMapping.FullPath, sources, sinks);
+
+            // TODO
+            await Task.CompletedTask;
+            return null;
         }
     }
 }

@@ -17,6 +17,12 @@ namespace SwishMapper.Tests.TestHelpers
         }
 
 
+        public static FileInfo FindMappingFile(string name)
+        {
+            return new FileInfo(Path.Join(FindDataDir().FullName, "maps", name));
+        }
+
+
         private static DirectoryInfo FindDataDir()
         {
             const string dataDirectory = "TestData";

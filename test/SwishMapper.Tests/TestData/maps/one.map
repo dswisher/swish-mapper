@@ -1,0 +1,10 @@
+
+sink snk
+source src
+
+# One, lone mapping
+maps
+{
+    source1 -> sink1
+}
+

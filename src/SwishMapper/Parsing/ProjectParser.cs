@@ -27,8 +27,11 @@ namespace SwishMapper.Parsing
             using (var reader = new StreamReader(projectFileInfo.FullName))
             {
                 string line;
+                int lineNumber = 0;
                 while ((line = reader.ReadLine()) != null)
                 {
+                    lineNumber += 1;
+
                     // Skip comments and whitespace
                     if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
                     {
@@ -38,15 +41,24 @@ namespace SwishMapper.Parsing
                     // Split into words
                     var bits = line.Split();
 
+                    // Take the proper action
                     switch (bits[0])
                     {
-                        case "source":
-                            project.Sources.Add(ParseDoc<ProjectSource>(projectFileInfo, bits));
+                        case "mapping":
+                            project.Mappings.Add((ProjectMapping)ParseFile(new ProjectMapping(), projectFileInfo, bits[1]));
                             break;
 
                         case "sink":
                             project.Sinks.Add(ParseDoc<ProjectSink>(projectFileInfo, bits));
                             break;
+
+                        case "source":
+                            project.Sources.Add(ParseDoc<ProjectSource>(projectFileInfo, bits));
+                            break;
+
+                        default:
+                            // TODO - someday, keep track of line position (column) so it can be reported
+                            throw new ParserException($"Unknown directive: '{bits[0]}'.", projectFileInfo.Name, lineNumber);
                     }
                 }
             }
@@ -61,12 +73,21 @@ namespace SwishMapper.Parsing
             T doc = Activator.CreateInstance<T>();
 
             doc.Name = bits[1];
-            doc.ProjectPath = bits[2];
-            doc.FullPath = new FileInfo(Path.Combine(projectFileInfo.Directory.FullName, doc.ProjectPath)).FullName;
+
+            ParseFile(doc, projectFileInfo, bits[2]);
 
             doc.RootElementName = bits[3];
 
             return doc;
+        }
+
+
+        private ProjectFile ParseFile(ProjectFile file, FileInfo projectFileInfo, string projectPath)
+        {
+            file.ProjectPath = projectPath;
+            file.FullPath = new FileInfo(Path.Combine(projectFileInfo.Directory.FullName, projectPath)).FullName;
+
+            return file;
         }
     }
 }

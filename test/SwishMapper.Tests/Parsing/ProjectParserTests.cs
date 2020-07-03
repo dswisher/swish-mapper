@@ -36,6 +36,23 @@ namespace SwishMapper.Tests.Parsing
         }
 
 
+        [Fact]
+        public void UnknownDirectiveThrows()
+        {
+            // Arrange
+            const string filename = "unknown-directive.sm";
+
+            var path = FileFinder.FindProjectFile(filename).FullName;
+
+            Action act = () => parser.Parse(path);
+
+            // Act and assert
+            act.Should().Throw<ParserException>()
+                .Where(x => x.Filename == filename)
+                .Where(x => x.LineNumber == 9);
+        }
+
+
         [Theory]
         [InlineData("empty.sm")]
         [InlineData("comments.sm")]
@@ -65,6 +82,21 @@ namespace SwishMapper.Tests.Parsing
             // Assert
             project.Sources.Should().HaveCount(numSources);
             project.Sinks.Should().HaveCount(numSinks);
+        }
+
+
+        [Theory]
+        [InlineData("one-mapping.sm", 1)]
+        public void MappingsAreParsed(string name, int numMaps)
+        {
+            // Arrange
+            var path = FileFinder.FindProjectFile(name).FullName;
+
+            // Act
+            var project = parser.Parse(path);
+
+            // Assert
+            project.Mappings.Should().HaveCount(numMaps);
         }
 
 

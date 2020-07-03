@@ -30,6 +30,8 @@ namespace SwishMapper.Cli
             var services = new ServiceCollection();
 
             services.AddSingleton(new LoggerFactory().AddSerilog(Log.Logger));
+            services.AddSingleton<ILexerFactory, LexerFactory>();
+            services.AddSingleton<IMappingParser, MappingParser>();
             services.AddSingleton<IProjectParser, ProjectParser>();
             services.AddSingleton<IXsdParser, XsdParser>();
             services.AddSingleton<App>();
@@ -43,6 +45,19 @@ namespace SwishMapper.Cli
                 {
                     // TODO - add/use cancellation token!
                     app.RunAsync(projectName).Wait();
+                }
+                catch (AggregateException ae)
+                {
+                    ae.Handle(ex =>
+                    {
+                        if (ex is ParserException)
+                        {
+                            Log.Error(ex.Message);
+                            return true;
+                        }
+
+                        return false;
+                    });
                 }
                 catch (Exception ex)
                 {
