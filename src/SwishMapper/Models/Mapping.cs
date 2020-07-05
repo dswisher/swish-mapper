@@ -8,14 +8,14 @@ namespace SwishMapper.Models
     /// </summary>
     public class Mapping
     {
-        private readonly List<DataDocument> sources = new List<DataDocument>();
+        private readonly List<string> sourceNames = new List<string>();
         private readonly List<MappingEntry> entries = new List<MappingEntry>();
 
 
         /// <summary>
-        /// The document whose attributes are populated (derived, copied) from the source documents, below.
+        /// The name of the sink for this mapping document.
         /// <summary>
-        public DataDocument Sink { get; set; }
+        public string SinkName { get; set; }
 
 
         /// <summary>
@@ -27,15 +27,15 @@ namespace SwishMapper.Models
         /// <summary>
         /// The source documents used to populate the sink, above.
         /// <summary>
-        public IEnumerable<DataDocument> Sources { get { return sources; } }
+        public IEnumerable<string> SourceNames { get { return sourceNames; } }
 
 
         /// <summary>
-        /// Add a source to the mapping.
+        /// Add a source name to the mapping.
         /// <summary>
-        public void AddSource(DataDocument source)
+        public void AddSourceName(string source)
         {
-            sources.Add(source);
+            sourceNames.Add(source);
         }
 
 
@@ -44,21 +44,6 @@ namespace SwishMapper.Models
         /// <summary>
         public void AddEntry(MappingEntry entry)
         {
-            entries.Add(entry);
-        }
-
-
-        /// <summary>
-        /// Convenience method to create and add an entry.
-        /// <summary>
-        public void AddEntry(DataItem source, DataItem sink)
-        {
-            var entry = new MappingEntry
-            {
-                SourceItem = source,
-                SinkItem = sink
-            };
-
             entries.Add(entry);
         }
     }

@@ -10,11 +10,11 @@ namespace SwishMapper.Models
         /// <summary>
         /// The item in the data sink.
         /// <summary>
-        public DataItem SinkItem { get; set; }
+        public string SinkItem { get; set; }
 
         /// <summary>
         /// The item in the data source from which the sink item is populated.
         /// <summary>
-        public DataItem SourceItem { get; set; }
+        public string SourceItem { get; set; }
     }
 }

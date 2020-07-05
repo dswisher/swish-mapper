@@ -8,7 +8,8 @@ namespace SwishMapper.Parsing
         Keyword,
         Arrow,      // ->
         LeftCurly,
-        RightCurly
+        RightCurly,
+        Semicolon
     }
 
 

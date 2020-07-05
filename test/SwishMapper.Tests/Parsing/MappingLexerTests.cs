@@ -149,6 +149,7 @@ namespace SwishMapper.Tests.Parsing
         [Theory]
         [InlineData("{", TokenKind.LeftCurly)]
         [InlineData("}", TokenKind.RightCurly)]
+        [InlineData(";", TokenKind.Semicolon)]
         [InlineData("->", TokenKind.Arrow)]
         public void CanParsePunctuation(string content, TokenKind expectedKind)
         {

@@ -41,6 +41,12 @@ namespace SwishMapper.Parsing
         }
 
 
+        public ParserException(string message, LexerToken token)
+            : this(message, token.Filename, token.LineNumber, token.LinePosition)
+        {
+        }
+
+
         public int LineNumber { get; private set; }
         public int LinePosition { get; private set; }
         public string Filename { get; private set; }

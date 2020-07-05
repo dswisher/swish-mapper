@@ -32,6 +32,7 @@ namespace SwishMapper.Cli
             services.AddSingleton(new LoggerFactory().AddSerilog(Log.Logger));
             services.AddSingleton<ILexerFactory, LexerFactory>();
             services.AddSingleton<IMappingParser, MappingParser>();
+            services.AddSingleton<IMappingProcessor, MappingProcessor>();
             services.AddSingleton<IProjectParser, ProjectParser>();
             services.AddSingleton<IXsdParser, XsdParser>();
             services.AddSingleton<App>();

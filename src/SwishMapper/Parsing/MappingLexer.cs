@@ -164,16 +164,21 @@ namespace SwishMapper.Parsing
 
         private void ScanPunctuation()
         {
-            Consume();
-
-            switch (builder[0])
+            switch (Current)
             {
                 case '{':
+                    Consume();
                     CreateToken(TokenKind.LeftCurly);
                     break;
 
                 case '}':
+                    Consume();
                     CreateToken(TokenKind.RightCurly);
+                    break;
+
+                case ';':
+                    Consume();
+                    CreateToken(TokenKind.Semicolon);
                     break;
 
                 case '-':
@@ -181,14 +186,16 @@ namespace SwishMapper.Parsing
                     break;
 
                 default:
-                    // Subtract one from pos, as we've consumed
-                    throw new ParserException($"Unexpected punctuation character '{Current}'.", Filename, lineNumber, linePos - 1);
+                    throw new ParserException($"Unexpected punctuation character '{Current}'.", Filename, lineNumber, linePos);
             }
         }
 
 
         private void ScanArrow()
         {
+            // TODO - backtrack?
+            Consume();
+
             if (Current == '>')
             {
                 Consume();

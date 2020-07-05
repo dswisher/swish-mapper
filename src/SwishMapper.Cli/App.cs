@@ -17,16 +17,19 @@ namespace SwishMapper.Cli
         private readonly IProjectParser projectParser;
         private readonly IXsdParser xsdParser;
         private readonly IMappingParser mappingParser;
+        private readonly IMappingProcessor mappingProcessor;
         private readonly ILogger logger;
 
         public App(IProjectParser projectParser,
                    IXsdParser xsdParser,
                    IMappingParser mappingParser,
+                   IMappingProcessor mappingProcessor,
                    ILogger<App> logger)
         {
             this.projectParser = projectParser;
             this.xsdParser = xsdParser;
             this.mappingParser = mappingParser;
+            this.mappingProcessor = mappingProcessor;
             this.logger = logger;
         }
 
@@ -59,8 +62,11 @@ namespace SwishMapper.Cli
             // Load the mappings.
             foreach (var pm in project.Mappings)
             {
-                var map = await Load(pm, sources, sinks);
+                var map = await Load(pm);
 
+                mappingProcessor.Process(map, sources, sinks);
+
+                // TODO - apply the mappings
                 // TODO - keep the map around, or hook it onto the sink?
             }
 
@@ -113,15 +119,13 @@ namespace SwishMapper.Cli
         }
 
 
-        private async Task<object> Load(ProjectMapping projectMapping, IEnumerable<DataDocument> sources, IEnumerable<DataDocument> sinks)
+        private async Task<Mapping> Load(ProjectMapping projectMapping)
         {
             logger.LogInformation("Loading mapping {Name} from {Path}.", projectMapping.ProjectPath, projectMapping.FullPath);
 
-            var map = await mappingParser.ParseAsync(projectMapping.FullPath, sources, sinks);
+            var map = await mappingParser.ParseAsync(projectMapping.FullPath);
 
-            // TODO
-            await Task.CompletedTask;
-            return null;
+            return map;
         }
     }
 }
