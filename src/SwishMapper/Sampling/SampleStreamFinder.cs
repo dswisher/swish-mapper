@@ -21,6 +21,8 @@ namespace SwishMapper.Sampling
             {
                 logger.LogDebug("...opening {Name}...", path);
 
+                // TODO - handle zip files!
+
                 var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
 
                 yield return new SampleStream(path, stream, x => logger.LogDebug("...closing {Name}...", x.Filename));

@@ -45,17 +45,63 @@ namespace SwishMapper.Sampling
 
             accumulator.Push(name);
 
-            logger.LogDebug("Element name: {Name}", name);
+            // If there are attributes, process 'em
+            ProcessAttributes(reader, accumulator);
 
-            // TODO - process attributes
+            // Empty elements (<foo/>) don't have children.
+            if (!reader.IsEmptyElement)
+            {
+                // Advance to the first child element
+                await reader.ReadAsync();
 
-            // TODO - HACK! For now, just skip the element
-            await reader.SkipCurrentElementAsync();
+                // Process any child elements, until we get to an end
+                var done = false;
+                while (!done)
+                {
+                    switch (reader.NodeType)
+                    {
+                        case XmlNodeType.Element:
+                            await ProcessElementAsync(reader, accumulator);
+                            await reader.ReadAsync();
+                            break;
 
-            // Make sure the end element matches what we expect
-            reader.VerifyEndElement(name);
+                        case XmlNodeType.Text:
+                            accumulator.SetValue(reader.Value);
+                            await reader.ReadAsync();
+                            break;
 
+                        case XmlNodeType.EndElement:
+                            done = true;
+                            break;
+
+                        default:
+                            throw new SamplerException($"Unexpected node type: {reader.NodeType}.");
+                    }
+                }
+
+                reader.VerifyEndElement(name);
+            }
+
+            // We're heading back up to the parent, so pop
             accumulator.Pop();
+        }
+
+
+        private void ProcessAttributes(XmlReader reader, ISampleAccumulator accumulator)
+        {
+            if (reader.HasAttributes)
+            {
+                // Go through all the attributes
+                while (reader.MoveToNextAttribute())
+                {
+                    accumulator.Push(reader.Name);
+                    accumulator.SetValue(reader.Value);
+                    accumulator.Pop();
+                }
+
+                // Move back to the element node
+                reader.MoveToElement();
+            }
         }
     }
 }

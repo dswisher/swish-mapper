@@ -1,4 +1,5 @@
 
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
@@ -28,6 +29,8 @@ namespace SwishMapper.Sampler
 
         public async Task RunAsync(Options options)
         {
+            var watch = Stopwatch.StartNew();
+
             // Build the finder options
             var finderOptions = new SampleStreamFinderOptions
             {
@@ -40,6 +43,7 @@ namespace SwishMapper.Sampler
             {
                 using (sample)
                 {
+                    // TODO - parallelize this? In theory, it's all async...
                     // TODO - based on the file type, use the proper type of sampler; for now, it's XML or go home.
                     logger.LogInformation("Sample file: {Name}", sample.Filename);
                     await xmlSampler.SampleAsync(sample, accumulator);
@@ -47,6 +51,8 @@ namespace SwishMapper.Sampler
             }
 
             // TODO - "extract" the sample data from the accumulator and return it
+
+            logger.LogInformation($"Elapsed time: {watch.Elapsed:hh\\:mm\\:ss\\.fff}");
         }
     }
 }
