@@ -19,13 +19,11 @@ namespace SwishMapper.Sampling
         {
             foreach (var path in options.InputFiles)
             {
-                logger.LogDebug("...opening {Name}...", path);
-
                 // TODO - handle zip files!
 
                 var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
 
-                yield return new SampleStream(path, stream, x => logger.LogDebug("...closing {Name}...", x.Filename));
+                yield return new SampleStream(path, stream);
             }
         }
     }

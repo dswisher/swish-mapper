@@ -5,6 +5,8 @@ obj/
 src/SwishMapper.Cli/SAMPLES/
 src/SwishMapper.Cli/OUTPUT/
 
+src/SwishMapper.Sampler/my-samples.json
+
 test/SwishMapper.Tests/coverage.opencover.xml
 test/SwishMapper.Tests/coveragereport/
 

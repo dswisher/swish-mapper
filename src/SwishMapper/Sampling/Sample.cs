@@ -8,6 +8,7 @@ namespace SwishMapper.Sampling
         private readonly Dictionary<string, int> histogram = new Dictionary<string, int>();
 
 
+        public int TotalSeen { get; private set; }
         public IDictionary<string, int> Histogram { get { return histogram; } }
 
 
@@ -21,6 +22,8 @@ namespace SwishMapper.Sampling
             {
                 histogram.Add(val, 1);
             }
+
+            TotalSeen += 1;
         }
     }
 }

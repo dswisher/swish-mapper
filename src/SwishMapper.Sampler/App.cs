@@ -1,5 +1,7 @@
 
 using System.Diagnostics;
+using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
@@ -46,12 +48,30 @@ namespace SwishMapper.Sampler
                     // TODO - parallelize this? In theory, it's all async...
                     // TODO - based on the file type, use the proper type of sampler; for now, it's XML or go home.
                     logger.LogInformation("Sample file: {Name}", sample.Filename);
+
+                    accumulator.AddFile(Path.GetFileName(sample.Filename));
+
                     await xmlSampler.SampleAsync(sample, accumulator);
                 }
             }
 
-            // TODO - "extract" the sample data from the accumulator and return it
+            // Build the JSON representation of the sample data
+            var json = accumulator.AsJson();
 
+            // Write the sample info to the output file
+            logger.LogInformation("Writing sample details to {Name}.", options.OutputFile);
+
+            using (var stream = new FileStream(options.OutputFile, FileMode.Create, FileAccess.Write))
+            {
+                var jsonOptions = new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                };
+
+                await JsonSerializer.SerializeAsync(stream, json, jsonOptions);
+            }
+
+            // Record the elapsed time for posterity.
             logger.LogInformation($"Elapsed time: {watch.Elapsed:hh\\:mm\\:ss\\.fff}");
         }
     }

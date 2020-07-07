@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SwishMapper.Models;
 using SwishMapper.Sampling;
 using Xunit;
 
@@ -109,6 +110,11 @@ namespace SwishMapper.Tests.Sampling
             private readonly Stack<string> current = new Stack<string>();
 
             public IDictionary<string, Sample> Samples => throw new System.NotImplementedException();
+            public IList<string> Filenames => throw new System.NotImplementedException();
+
+            public void AddFile(string filename)
+            {
+            }
 
             public void Push(string name, bool isAttribute = false)
             {
@@ -135,6 +141,11 @@ namespace SwishMapper.Tests.Sampling
             public string GetValue(string name)
             {
                 return values.ContainsKey(name) ? values[name] : null;
+            }
+
+            public SampleJson AsJson()
+            {
+                throw new System.NotImplementedException();
             }
         }
     }
