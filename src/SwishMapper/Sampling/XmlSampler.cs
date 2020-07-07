@@ -94,7 +94,12 @@ namespace SwishMapper.Sampling
                 // Go through all the attributes
                 while (reader.MoveToNextAttribute())
                 {
-                    accumulator.Push(reader.Name);
+                    if (reader.Name == "xsi:nil")
+                    {
+                        continue;
+                    }
+
+                    accumulator.Push(reader.Name, isAttribute: true);
                     accumulator.SetValue(reader.Value);
                     accumulator.Pop();
                 }

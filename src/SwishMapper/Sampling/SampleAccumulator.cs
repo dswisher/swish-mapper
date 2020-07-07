@@ -29,8 +29,14 @@ namespace SwishMapper.Sampling
         {
             lock (mutex)
             {
-                // TODO - implement Push attribute
-                stack.Push(name);
+                if (isAttribute)
+                {
+                    stack.Push($"@{name}");
+                }
+                else
+                {
+                    stack.Push(name);
+                }
             }
         }
 
@@ -103,7 +109,7 @@ namespace SwishMapper.Sampling
                         Samples = pair.Value.Histogram
                             .OrderByDescending(x => x.Value)
                             .Take(desiredSamples)
-                            .Select(x => new SampleJsonSample { Value = x.Key, Count = x.Value })
+                            .Select(x => new SampleJsonSample { Value = Ellipsify(x.Key), Count = x.Value })
                             .ToList()
                     };
 
@@ -111,6 +117,19 @@ namespace SwishMapper.Sampling
                 }
 
                 return json;
+            }
+        }
+
+
+        private static string Ellipsify(string s, int maxLength = 100)
+        {
+            if (s.Length > maxLength)
+            {
+                return s.Substring(0, maxLength - 3) + "...";
+            }
+            else
+            {
+                return s;
             }
         }
     }
