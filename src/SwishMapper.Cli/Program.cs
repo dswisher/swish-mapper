@@ -36,12 +36,12 @@ namespace SwishMapper.Cli
             services.AddSingleton<IMappingProcessor, MappingProcessor>();
             services.AddSingleton<IProjectParser, ProjectParser>();
             services.AddSingleton<IXsdParser, XsdParser>();
-            services.AddSingleton<App>();
+            services.AddSingleton<OldApp>();
             services.AddLogging(l => l.AddConsole());
 
             using (var serviceProvider = services.BuildServiceProvider())
             {
-                var app = serviceProvider.GetRequiredService<App>();
+                var app = serviceProvider.GetRequiredService<OldApp>();
 
                 try
                 {

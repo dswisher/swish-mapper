@@ -14,7 +14,7 @@ using SwishMapper.Reports;
 
 namespace SwishMapper.Cli
 {
-    public class App
+    public class OldApp
     {
         private readonly IProjectParser projectParser;
         private readonly IXsdParser xsdParser;
@@ -22,11 +22,11 @@ namespace SwishMapper.Cli
         private readonly IMappingProcessor mappingProcessor;
         private readonly ILogger logger;
 
-        public App(IProjectParser projectParser,
+        public OldApp(IProjectParser projectParser,
                    IXsdParser xsdParser,
                    IMappingParser mappingParser,
                    IMappingProcessor mappingProcessor,
-                   ILogger<App> logger)
+                   ILogger<OldApp> logger)
         {
             this.projectParser = projectParser;
             this.xsdParser = xsdParser;
