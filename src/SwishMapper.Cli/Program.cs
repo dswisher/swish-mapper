@@ -5,7 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using SwishMapper.Parsing;
-using SwishMapper.Parsing.Old;
+using SwishMapper.Parsing.Project;
+using SwishMapper.Work;
+using Old = SwishMapper.Parsing.Old;
 
 namespace SwishMapper.Cli
 {
@@ -35,13 +37,23 @@ namespace SwishMapper.Cli
             services.AddSingleton<IMappingParser, MappingParser>();
             services.AddSingleton<IMappingProcessor, MappingProcessor>();
             services.AddSingleton<IProjectParser, ProjectParser>();
+            services.AddSingleton<IProjectPlanner, ProjectPlanner>();
             services.AddSingleton<IXsdParser, XsdParser>();
-            services.AddSingleton<OldApp>();
+            services.AddSingleton<App>();
+
+            services.AddTransient<DataProjectAssembler>();
+            services.AddTransient<DataModelAssembler>();
+            services.AddTransient<XsdPopulator>();
+
             services.AddLogging(l => l.AddConsole());
+
+            services.AddSingleton<Old.IProjectParser, Old.ProjectParser>();
+            services.AddSingleton<OldApp>();
 
             using (var serviceProvider = services.BuildServiceProvider())
             {
-                var app = serviceProvider.GetRequiredService<OldApp>();
+                // var app = serviceProvider.GetRequiredService<OldApp>();
+                var app = serviceProvider.GetRequiredService<App>();
 
                 try
                 {

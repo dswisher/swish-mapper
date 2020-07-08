@@ -1,4 +1,6 @@
 
+using System.Collections.Generic;
+
 namespace SwishMapper.Models.Data
 {
     /// <summary>
@@ -6,6 +8,10 @@ namespace SwishMapper.Models.Data
     /// </summary>
     public class DataProject
     {
+        private readonly List<DataModel> models = new List<DataModel>();
+
         // TODO
+
+        public IList<DataModel> Models { get { return models; } }
     }
 }

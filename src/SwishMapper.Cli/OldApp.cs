@@ -23,10 +23,10 @@ namespace SwishMapper.Cli
         private readonly ILogger logger;
 
         public OldApp(IProjectParser projectParser,
-                   IXsdParser xsdParser,
-                   IMappingParser mappingParser,
-                   IMappingProcessor mappingProcessor,
-                   ILogger<OldApp> logger)
+                      IXsdParser xsdParser,
+                      IMappingParser mappingParser,
+                      IMappingProcessor mappingProcessor,
+                      ILogger<OldApp> logger)
         {
             this.projectParser = projectParser;
             this.xsdParser = xsdParser;
