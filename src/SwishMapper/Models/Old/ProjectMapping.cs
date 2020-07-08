@@ -1,5 +1,5 @@
 
-namespace SwishMapper.Models
+namespace SwishMapper.Models.Old
 {
     /// <summary>
     /// A file defining mappings between a sink and a source.

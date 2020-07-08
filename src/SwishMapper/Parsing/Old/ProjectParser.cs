@@ -3,9 +3,9 @@ using System;
 using System.IO;
 
 using Microsoft.Extensions.Logging;
-using SwishMapper.Models;
+using SwishMapper.Models.Old;
 
-namespace SwishMapper.Parsing
+namespace SwishMapper.Parsing.Old
 {
     public class ProjectParser : IProjectParser
     {

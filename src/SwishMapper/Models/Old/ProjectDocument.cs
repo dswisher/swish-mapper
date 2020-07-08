@@ -1,5 +1,5 @@
 
-namespace SwishMapper.Models
+namespace SwishMapper.Models.Old
 {
     /// <summary>
     /// Common bits for sources and sinks.

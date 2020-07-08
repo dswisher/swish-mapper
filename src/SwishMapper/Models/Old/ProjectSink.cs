@@ -1,5 +1,5 @@
 
-namespace SwishMapper.Models
+namespace SwishMapper.Models.Old
 {
     /// <summary>
     /// An outgoing data flow from the project being documented.

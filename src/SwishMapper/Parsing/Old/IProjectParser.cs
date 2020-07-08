@@ -1,7 +1,7 @@
 
-using SwishMapper.Models;
+using SwishMapper.Models.Old;
 
-namespace SwishMapper.Parsing
+namespace SwishMapper.Parsing.Old
 {
     public interface IProjectParser
     {

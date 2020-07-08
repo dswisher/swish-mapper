@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SwishMapper.Formatters;
 using SwishMapper.Models;
+using SwishMapper.Models.Old;
 using SwishMapper.Parsing;
+using SwishMapper.Parsing.Old;
 using SwishMapper.Reports;
 
 namespace SwishMapper.Cli
@@ -46,8 +48,8 @@ namespace SwishMapper.Cli
 
             // Load each source and each sink listed in the project file.
             // TODO - parallelize this!
-            var sources = new List<DataDocument>();
-            var sinks = new List<DataDocument>();
+            var sources = new List<XsdDocument>();
+            var sinks = new List<XsdDocument>();
 
             foreach (var ps in project.Sources)
             {
@@ -107,7 +109,7 @@ namespace SwishMapper.Cli
         }
 
 
-        private async Task<DataDocument> Load(ProjectDocument projectDoc)
+        private async Task<XsdDocument> Load(ProjectDocument projectDoc)
         {
             logger.LogInformation("Loading {Kind} {Name}.", projectDoc is ProjectSink ? "sink" : "source", projectDoc.Name);
 

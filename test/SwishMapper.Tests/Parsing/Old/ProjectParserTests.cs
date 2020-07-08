@@ -6,12 +6,13 @@ using System.Linq;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SwishMapper.Models;
+using SwishMapper.Models.Old;
 using SwishMapper.Parsing;
+using SwishMapper.Parsing.Old;
 using SwishMapper.Tests.TestHelpers;
 using Xunit;
 
-namespace SwishMapper.Tests.Parsing
+namespace SwishMapper.Tests.Parsing.Old
 {
     public class ProjectParserTests
     {

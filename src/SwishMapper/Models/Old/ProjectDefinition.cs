@@ -1,7 +1,7 @@
 
 using System.Collections.Generic;
 
-namespace SwishMapper.Models
+namespace SwishMapper.Models.Old
 {
     public class ProjectDefinition
     {
