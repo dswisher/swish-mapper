@@ -9,9 +9,9 @@ namespace SwishMapper.Models
     /// <remarks>
     /// In some respects, this can be viewed as a simplified XSD.
     /// </remarks>
-    public class DataDocument
+    public class XsdDocument
     {
-        private readonly Dictionary<string, DataElement> elements = new Dictionary<string, DataElement>();
+        private readonly Dictionary<string, XsdElement> elements = new Dictionary<string, XsdElement>();
 
         /// <summary>
         /// The name of this document.
@@ -21,13 +21,13 @@ namespace SwishMapper.Models
         /// <summary>
         /// The top-most element in the document.
         /// </summary>
-        public DataElement RootElement { get; set; }
+        public XsdElement RootElement { get; set; }
 
 
-        public IEnumerable<DataElement> Elements { get { return elements.Values; } }
+        public IEnumerable<XsdElement> Elements { get { return elements.Values; } }
 
 
-        public void AddElement(DataElement element)
+        public void AddElement(XsdElement element)
         {
             elements.Add(element.Name, element);
         }

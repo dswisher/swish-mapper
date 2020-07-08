@@ -6,12 +6,12 @@ namespace SwishMapper.Models
     /// <summary>
     /// A data item that consists of other data items.
     /// </summary>
-    public class DataElement : DataItem
+    public class XsdElement : XsdItem
     {
-        private readonly List<DataElement> elements = new List<DataElement>();
-        private readonly List<DataAttribute> attributes = new List<DataAttribute>();
+        private readonly List<XsdElement> elements = new List<XsdElement>();
+        private readonly List<XsdAttribute> attributes = new List<XsdAttribute>();
 
-        public DataElement(string name)
+        public XsdElement(string name)
             : base(name)
         {
         }
@@ -29,11 +29,11 @@ namespace SwishMapper.Models
         /// <summary>
         /// The attributes of this element.
         /// </summary>
-        public IList<DataAttribute> Attributes { get { return attributes; } }
+        public IList<XsdAttribute> Attributes { get { return attributes; } }
 
         /// <summary>
         /// The child elements of this element.
         /// </summary>
-        public IList<DataElement> Elements { get { return elements; } }
+        public IList<XsdElement> Elements { get { return elements; } }
     }
 }

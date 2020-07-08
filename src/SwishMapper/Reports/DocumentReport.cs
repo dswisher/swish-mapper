@@ -8,9 +8,9 @@ namespace SwishMapper.Reports
 {
     public class DocumentReport : IReport
     {
-        private readonly DataDocument doc;
+        private readonly XsdDocument doc;
 
-        public DocumentReport(DataDocument doc)
+        public DocumentReport(XsdDocument doc)
         {
             this.doc = doc;
         }

@@ -9,8 +9,8 @@ namespace SwishMapper.Tests.Parsing
     public class XsdParserContextTests
     {
         private readonly XsdParserContext rootContext = new XsdParserContext(null);
-        private readonly DataElement rootElement = new DataElement("rootElement");
-        private readonly DataElement childElement = new DataElement("childElement");
+        private readonly XsdElement rootElement = new XsdElement("rootElement");
+        private readonly XsdElement childElement = new XsdElement("childElement");
 
 
         [Fact]

@@ -7,6 +7,6 @@ namespace SwishMapper.Parsing
 {
     public interface IMappingProcessor
     {
-        void Process(Mapping mapping, IEnumerable<DataDocument> sources, IEnumerable<DataDocument> sinks);
+        void Process(Mapping mapping, IEnumerable<XsdDocument> sources, IEnumerable<XsdDocument> sinks);
     }
 }

@@ -4,9 +4,9 @@ namespace SwishMapper.Models
     /// <summary>
     /// Common properties for attributes and elements.
     /// </summary>
-    public abstract class DataItem
+    public abstract class XsdItem
     {
-        protected DataItem(string name)
+        protected XsdItem(string name)
         {
             Name = name;
         }

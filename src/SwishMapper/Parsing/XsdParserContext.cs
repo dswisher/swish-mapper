@@ -8,7 +8,7 @@ namespace SwishMapper.Parsing
 {
     public class XsdParserContext
     {
-        private readonly Dictionary<string, DataElement> elements = new Dictionary<string, DataElement>();
+        private readonly Dictionary<string, XsdElement> elements = new Dictionary<string, XsdElement>();
         private readonly XmlSchemaSet schemaSet;
 
 
@@ -16,7 +16,7 @@ namespace SwishMapper.Parsing
         {
             this.schemaSet = schemaSet;
 
-            elements = new Dictionary<string, DataElement>();
+            elements = new Dictionary<string, XsdElement>();
         }
 
 
@@ -29,10 +29,10 @@ namespace SwishMapper.Parsing
 
         public int Depth { get; private set; }
         public XmlSchemaSet SchemaSet { get { return schemaSet; } }
-        public IDictionary<string, DataElement> Elements { get { return elements; } }
+        public IDictionary<string, XsdElement> Elements { get { return elements; } }
 
 
-        public XsdParserContext Push(DataElement element)
+        public XsdParserContext Push(XsdElement element)
         {
             if (!elements.ContainsKey(element.Name))
             {

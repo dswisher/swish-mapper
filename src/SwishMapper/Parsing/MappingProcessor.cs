@@ -17,7 +17,7 @@ namespace SwishMapper.Parsing
         }
 
 
-        public void Process(Mapping mapping, IEnumerable<DataDocument> allSources, IEnumerable<DataDocument> allSinks)
+        public void Process(Mapping mapping, IEnumerable<XsdDocument> allSources, IEnumerable<XsdDocument> allSinks)
         {
             // Find the sink
             var sink = allSinks.FirstOrDefault(x => x.Name == mapping.SinkName);
@@ -57,7 +57,7 @@ namespace SwishMapper.Parsing
         }
 
 
-        private DataItem FindItem(DataDocument doc, string name)
+        private XsdItem FindItem(XsdDocument doc, string name)
         {
             var elem = doc.Elements.FirstOrDefault(x => x.Name == name);
 

@@ -4,9 +4,9 @@ namespace SwishMapper.Models
     /// <summary>
     /// A data item that contains a primitive type (string, integer, etc).
     /// </summary>
-    public class DataAttribute : DataItem
+    public class XsdAttribute : XsdItem
     {
-        public DataAttribute(string name)
+        public XsdAttribute(string name)
             : base(name)
         {
         }

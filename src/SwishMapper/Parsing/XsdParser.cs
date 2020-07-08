@@ -10,7 +10,7 @@ namespace SwishMapper.Parsing
 {
     public class XsdParser : IXsdParser
     {
-        public Task<DataDocument> ParseAsync(string path, string docName, string rootElementName, string rootElementNamespace)
+        public Task<XsdDocument> ParseAsync(string path, string docName, string rootElementName, string rootElementNamespace)
         {
             // Load the XSD into a schema set and compile it up
             var schemaSet = new XmlSchemaSet();
@@ -34,7 +34,7 @@ namespace SwishMapper.Parsing
 
             var rootElement = Walk(xsdRoot, context);
 
-            var doc = new DataDocument
+            var doc = new XsdDocument
             {
                 Name = docName,
                 RootElement = rootElement
@@ -49,7 +49,7 @@ namespace SwishMapper.Parsing
         }
 
 
-        private DataElement Walk(XmlSchemaElement xsdElement, XsdParserContext context)
+        private XsdElement Walk(XmlSchemaElement xsdElement, XsdParserContext context)
         {
             // TODO - do not merge local elements as if they are global - see https://github.com/dswisher/swish-mapper/issues/2
             var name = xsdElement.Name;
@@ -73,7 +73,7 @@ namespace SwishMapper.Parsing
                 return context.Elements[name];
             }
 
-            var element = new DataElement(xsdElement.Name);
+            var element = new XsdElement(xsdElement.Name);
 
             element.Depth = context.Depth;
 
@@ -96,12 +96,12 @@ namespace SwishMapper.Parsing
         }
 
 
-        private void Walk(DataElement element, XmlSchemaComplexType complexType, XsdParserContext context)
+        private void Walk(XsdElement element, XmlSchemaComplexType complexType, XsdParserContext context)
         {
             // Pick out any attributes, and add them to the element
             foreach (XmlSchemaAttribute xsdAttribute in complexType.Attributes)
             {
-                var attribute = new DataAttribute(xsdAttribute.Name);
+                var attribute = new XsdAttribute(xsdAttribute.Name);
 
                 attribute.DataType = xsdAttribute.AttributeSchemaType.Datatype.ValueType.Name;
 
@@ -128,13 +128,13 @@ namespace SwishMapper.Parsing
         }
 
 
-        private void Walk(DataElement element, XmlSchemaSimpleType simpleType, XsdParserContext context)
+        private void Walk(XsdElement element, XmlSchemaSimpleType simpleType, XsdParserContext context)
         {
             element.DataType = simpleType.Datatype.ValueType.Name;
         }
 
 
-        private void Walk(DataElement element, XmlSchemaSequence sequence, XsdParserContext context)
+        private void Walk(XsdElement element, XmlSchemaSequence sequence, XsdParserContext context)
         {
             foreach (XmlSchemaAnnotated item in sequence.Items)
             {
