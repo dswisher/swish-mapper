@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using RazorEngine.Templating;
 using Serilog;
 using SwishMapper.Parsing;
-using Old = SwishMapper.Parsing.Old;
 
 namespace SwishMapper.Cli
 {
@@ -38,13 +37,8 @@ namespace SwishMapper.Cli
 
             services.AddSingleton<App>();
 
-            // TODO - remove - deprecated!
-            services.AddSingleton<Old.IProjectParser, Old.ProjectParser>();
-            services.AddSingleton<OldApp>();
-
             using (var serviceProvider = services.BuildServiceProvider())
             {
-                // var app = serviceProvider.GetRequiredService<OldApp>();
                 var app = serviceProvider.GetRequiredService<App>();
 
                 try
