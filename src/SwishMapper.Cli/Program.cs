@@ -6,9 +6,6 @@ using Microsoft.Extensions.Logging;
 using RazorEngine.Templating;
 using Serilog;
 using SwishMapper.Parsing;
-using SwishMapper.Parsing.Project;
-using SwishMapper.Reports;
-using SwishMapper.Work;
 using Old = SwishMapper.Parsing.Old;
 
 namespace SwishMapper.Cli
@@ -34,22 +31,14 @@ namespace SwishMapper.Cli
 
             var services = new ServiceCollection();
 
+            services.UseMapper();
+
             services.AddSingleton(new LoggerFactory().AddSerilog(Log.Logger));
-            services.AddSingleton<ILexerFactory, LexerFactory>();
-            services.AddSingleton<IMappingParser, MappingParser>();
-            services.AddSingleton<IMappingProcessor, MappingProcessor>();
-            services.AddSingleton<IProjectParser, ProjectParser>();
-            services.AddSingleton<IProjectPlanner, ProjectPlanner>();
-            services.AddSingleton<IReportPlanner, ReportPlanner>();
-            services.AddSingleton<IXsdParser, XsdParser>();
-            services.AddSingleton<App>();
-
-            services.AddTransient<DataProjectAssembler>();
-            services.AddTransient<DataModelAssembler>();
-            services.AddTransient<XsdPopulator>();
-
             services.AddLogging(l => l.AddConsole());
 
+            services.AddSingleton<App>();
+
+            // TODO - remove - deprecated!
             services.AddSingleton<Old.IProjectParser, Old.ProjectParser>();
             services.AddSingleton<OldApp>();
 

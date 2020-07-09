@@ -8,6 +8,6 @@ namespace SwishMapper.Reports
 {
     public interface IReportPlanner
     {
-        IEnumerable<IReport> CreateWork(DataProject dataProject, ProjectDefinition projectDefinition);
+        IEnumerable<IReportWorker> CreateWork(DataProject dataProject, ProjectDefinition projectDefinition);
     }
 }

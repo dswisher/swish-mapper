@@ -19,6 +19,9 @@
     </ItemGroup>
 
     <ItemGroup>
+        <EmbeddedResource Include="Reports/Content/style.css" />
+
+        <EmbeddedResource Include="Reports/Templates/layout.cshtml" />
         <EmbeddedResource Include="Reports/Templates/model-report.cshtml" />
     </ItemGroup>
 </Project>

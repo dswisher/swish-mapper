@@ -1,3 +1,30 @@
+@{Layout = "layout";}
 
-Hello from a template, @Model.Name!
+<h1>@Model.Name Model</h1>
 
+@foreach (var entity in Model.Entities.OrderBy(x => x.Name))
+{
+    <h2>@entity.Name</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th colspan="2">Attributes</th>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <th>Data Type</th>
+            </tr>
+        <thead>
+
+        <tbody>
+            @foreach (var attribute in entity.Attributes.OrderBy(x => x.Name))
+            {
+                <tr>
+                    <td>@attribute.Name</td>
+                    <td>@attribute.DataType</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

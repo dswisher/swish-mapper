@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace SwishMapper.Reports
 {
-    public interface IReport
+    public interface IReportWorker
     {
         Task RunAsync();
     }

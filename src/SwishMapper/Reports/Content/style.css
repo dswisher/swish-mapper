@@ -1,0 +1,40 @@
+
+html {
+    font-family: sans-serif;
+}
+
+body {
+    margin: 1em;
+}
+
+h1 {
+    text-align: center;
+    border: solid 1px #ccc;
+}
+
+h2 {
+    border: solid 1px #ccc;
+    background-color: #eee;
+    padding: 5px
+    margin-top: 40px;
+}
+
+table {
+    border-collapse: collapse;
+    margin-left: 1em;
+}
+
+thead {
+    background-color: lightcyan;
+}
+
+td, th {
+    border: solid 1px #CCC;
+    padding: 0.1em;
+    white-space: nowrap;
+}
+
+td, th {
+    font-size: 0.8em;
+}
+

@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SwishMapper.Models.Data
 {
@@ -22,5 +23,23 @@ namespace SwishMapper.Models.Data
         /// The attributes of this entity.
         /// </summary>
         public IList<DataAttribute> Attributes { get { return attributes; } }
+
+
+        public DataAttribute FindOrCreateAttribute(string name)
+        {
+            var attribute = attributes.FirstOrDefault(x => x.Name == name);
+
+            if (attribute == null)
+            {
+                attribute = new DataAttribute
+                {
+                    Name = name
+                };
+
+                attributes.Add(attribute);
+            }
+
+            return attribute;
+        }
     }
 }

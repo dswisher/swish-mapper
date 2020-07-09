@@ -6,8 +6,12 @@ namespace SwishMapper.Models.Data
         /// <summary>
         /// The name of this attribute.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
-        // TODO - need datatype
+        /// <summary>
+        /// The data type of this attribute.
+        /// </summary>
+        // TODO - how to handle complex types? Perhaps this should be a class?
+        public string DataType { get; set; }
     }
 }
