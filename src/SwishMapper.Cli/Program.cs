@@ -3,9 +3,11 @@ using System;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RazorEngine.Templating;
 using Serilog;
 using SwishMapper.Parsing;
 using SwishMapper.Parsing.Project;
+using SwishMapper.Reports;
 using SwishMapper.Work;
 using Old = SwishMapper.Parsing.Old;
 
@@ -38,6 +40,7 @@ namespace SwishMapper.Cli
             services.AddSingleton<IMappingProcessor, MappingProcessor>();
             services.AddSingleton<IProjectParser, ProjectParser>();
             services.AddSingleton<IProjectPlanner, ProjectPlanner>();
+            services.AddSingleton<IReportPlanner, ReportPlanner>();
             services.AddSingleton<IXsdParser, XsdParser>();
             services.AddSingleton<App>();
 
@@ -65,6 +68,11 @@ namespace SwishMapper.Cli
                     ae.Handle(ex =>
                     {
                         if (ex is ParserException)
+                        {
+                            Log.Error(ex.Message);
+                            return true;
+                        }
+                        else if (ex is TemplateCompilationException)
                         {
                             Log.Error(ex.Message);
                             return true;

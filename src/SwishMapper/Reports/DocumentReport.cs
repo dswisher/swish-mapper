@@ -6,7 +6,7 @@ using SwishMapper.Models;
 
 namespace SwishMapper.Reports
 {
-    public class DocumentReport : IReport
+    public class DocumentReport : IOldReport
     {
         private readonly XsdDocument doc;
 

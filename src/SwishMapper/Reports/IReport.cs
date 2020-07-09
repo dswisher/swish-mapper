@@ -1,10 +1,10 @@
 
-using SwishMapper.Formatters;
+using System.Threading.Tasks;
 
 namespace SwishMapper.Reports
 {
     public interface IReport
     {
-        DocRoot Build();
+        Task RunAsync();
     }
 }

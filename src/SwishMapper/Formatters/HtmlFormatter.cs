@@ -15,7 +15,7 @@ namespace SwishMapper.Formatters
         }
 
 
-        public void Write(IReport report)
+        public void Write(IOldReport report)
         {
             var root = report.Build();
 

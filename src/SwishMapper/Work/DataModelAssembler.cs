@@ -28,7 +28,11 @@ namespace SwishMapper.Work
         public async Task<DataModel> RunAsync()
         {
             // Create the data model that we'll populate...
-            var model = new DataModel();
+            var model = new DataModel
+            {
+                Id = Id,
+                Name = Name
+            };
 
             // Go through all the populators, and have 'em do the needful.
             // TODO - do we care at all about ordering?

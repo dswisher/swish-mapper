@@ -10,6 +10,8 @@ namespace SwishMapper.Models.Project
     {
         private readonly List<ProjectModel> models = new List<ProjectModel>();
 
+        public string ReportPath { get; set; } = "OUTPUT";
+
         public IList<ProjectModel> Models { get { return models; } }
     }
 }

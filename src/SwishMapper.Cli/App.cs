@@ -1,9 +1,12 @@
 
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 using SwishMapper.Parsing.Project;
+using SwishMapper.Reports;
 using SwishMapper.Work;
 
 namespace SwishMapper.Cli
@@ -12,14 +15,17 @@ namespace SwishMapper.Cli
     {
         private readonly IProjectParser projectParser;
         private readonly IProjectPlanner projectPlanner;
+        private readonly IReportPlanner reportPlanner;
         private readonly ILogger logger;
 
         public App(IProjectParser projectParser,
                    IProjectPlanner projectPlanner,
+                   IReportPlanner reportPlanner,
                    ILogger<App> logger)
         {
             this.projectParser = projectParser;
             this.projectPlanner = projectPlanner;
+            this.reportPlanner = reportPlanner;
             this.logger = logger;
         }
 
@@ -41,10 +47,10 @@ namespace SwishMapper.Cli
             var dataProject = await work.RunAsync();
 
             // Create the list of report tasks from the project model
-            // TODO
+            var reports = reportPlanner.CreateWork(dataProject, projectModel);
 
-            // Generate the reports, given the data project
-            // TODO
+            // Generate all the desired reports
+            await Task.WhenAll(reports.Select(x => x.RunAsync()));
 
             // All done!
             logger.LogDebug("Done.");
