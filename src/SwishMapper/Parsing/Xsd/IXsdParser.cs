@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 using SwishMapper.Models;
 
-namespace SwishMapper.Parsing
+namespace SwishMapper.Parsing.Xsd
 {
     public interface IXsdParser
     {

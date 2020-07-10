@@ -4,7 +4,7 @@ using System.Xml.Schema;
 
 using SwishMapper.Models;
 
-namespace SwishMapper.Parsing
+namespace SwishMapper.Parsing.Xsd
 {
     public class XsdParserContext
     {

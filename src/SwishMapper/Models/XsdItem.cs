@@ -20,5 +20,8 @@ namespace SwishMapper.Models
         /// The type of data this attribute/element holds.
         /// </summary>
         public string DataType { get; set; }
+
+        public string MinOccurs { get; set; }
+        public string MaxOccurs { get; set; }
     }
 }

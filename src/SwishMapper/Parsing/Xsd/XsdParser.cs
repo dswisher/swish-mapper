@@ -6,7 +6,7 @@ using System.Xml.Schema;
 
 using SwishMapper.Models;
 
-namespace SwishMapper.Parsing
+namespace SwishMapper.Parsing.Xsd
 {
     public class XsdParser : IXsdParser
     {
@@ -76,6 +76,8 @@ namespace SwishMapper.Parsing
             var element = new XsdElement(xsdElement.Name);
 
             element.Depth = context.Depth;
+            element.MinOccurs = xsdElement.MinOccursString;
+            element.MaxOccurs = xsdElement.MaxOccursString;
 
             var childContext = context.Push(element);
 

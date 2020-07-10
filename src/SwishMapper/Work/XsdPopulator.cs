@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 using SwishMapper.Models.Data;
-using SwishMapper.Parsing;
+using SwishMapper.Parsing.Xsd;
 
 namespace SwishMapper.Work
 {
@@ -36,6 +36,13 @@ namespace SwishMapper.Work
             // Merge the schema info into the data model
             foreach (var xsdElement in xsdDoc.Elements)
             {
+                // If this element is a simple one, skip it. While we could look at the data
+                // type, instead we make sure it has at least on attribute and/or one child element.
+                if ((xsdElement.Attributes.Count == 0) && (xsdElement.Elements.Count == 0))
+                {
+                    continue;
+                }
+
                 // Find or create the entity
                 var entity = model.FindOrCreateEntity(xsdElement.Name);
 
@@ -54,6 +61,10 @@ namespace SwishMapper.Work
                 foreach (var xsdChild in xsdElement.Elements)
                 {
                     var attribute = entity.FindOrCreateAttribute(xsdChild.Name);
+
+                    attribute.DataType = xsdChild.DataType;
+                    attribute.MinOccurs = xsdChild.MinOccurs;
+                    attribute.MaxOccurs = xsdChild.MaxOccurs;
 
                     // TODO - set attribute properties
                 }

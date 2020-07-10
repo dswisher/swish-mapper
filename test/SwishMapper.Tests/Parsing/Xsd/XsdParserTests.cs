@@ -3,11 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using FluentAssertions;
-using SwishMapper.Parsing;
+using SwishMapper.Parsing.Xsd;
 using SwishMapper.Tests.TestHelpers;
 using Xunit;
 
-namespace SwishMapper.Tests.Parsing
+namespace SwishMapper.Tests.Parsing.Xsd
 {
     public class XsdParserTests
     {
@@ -126,6 +126,25 @@ namespace SwishMapper.Tests.Parsing
             child.Name.Should().Be("payload");
             child.DataType.Should().Be("String");
             child.Depth.Should().Be(1);
+        }
+
+
+        [Theory]
+        [InlineData("one-child-element.xsd", "payload", "3", "37")]
+        // TODO: [InlineData("ref-element.xsd", "payload", "1", "4")]
+        public async Task MinOccursAndMaxOccursAreParsed(string xsdName, string elementName, string minOccurs, string maxOccurs)
+        {
+            // Arrange
+            var path = FileFinder.FindXsd(xsdName);
+
+            // Act
+            var doc = await parser.ParseAsync(path, DocName, RootElementName, string.Empty);
+
+            // Assert
+            var element = doc.Elements.First(x => x.Name == elementName);
+
+            element.MinOccurs.Should().Be(minOccurs);
+            element.MaxOccurs.Should().Be(maxOccurs);
         }
     }
 }

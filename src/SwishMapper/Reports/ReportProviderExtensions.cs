@@ -3,6 +3,7 @@ using System;
 using System.IO;
 
 using Microsoft.Extensions.DependencyInjection;
+using SwishMapper.Models.Data;
 
 namespace SwishMapper.Reports
 {
@@ -16,6 +17,17 @@ namespace SwishMapper.Reports
             copy.OutputPath = Path.Combine(outputDir, filename);
 
             return copy;
+        }
+
+
+        public static ModelReport ModelReport(this IServiceProvider provider, DataModel model, string path)
+        {
+            var report = provider.GetRequiredService<ModelReport>();
+
+            report.OutputPath = path;
+            report.Model = model;
+
+            return report;
         }
     }
 }

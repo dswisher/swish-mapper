@@ -1,10 +1,10 @@
 
 using FluentAssertions;
 using SwishMapper.Models;
-using SwishMapper.Parsing;
+using SwishMapper.Parsing.Xsd;
 using Xunit;
 
-namespace SwishMapper.Tests.Parsing
+namespace SwishMapper.Tests.Parsing.Xsd
 {
     public class XsdParserContextTests
     {

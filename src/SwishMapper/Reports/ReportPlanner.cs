@@ -61,9 +61,10 @@ namespace SwishMapper.Reports
             {
                 var path = Path.Combine(outDir.FullName, $"{model.Id}.html");
 
-                // TODO - resolve ModelReport from service provider and set props!
-                yield return new ModelReport(model, path);
+                yield return serviceProvider.ModelReport(model, path);
             }
+
+            // TODO - create mapping report(s)
 
             // TODO - create an index page
         }

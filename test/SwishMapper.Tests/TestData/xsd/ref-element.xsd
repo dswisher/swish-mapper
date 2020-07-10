@@ -3,7 +3,7 @@
     <xs:element name="message">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="payload"/>
+                <xs:element ref="payload" minOccurs="1" maxOccurs="4"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

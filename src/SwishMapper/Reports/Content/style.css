@@ -38,3 +38,7 @@ td, th {
     font-size: 0.8em;
 }
 
+td.right {
+    text-align: right;
+}
+

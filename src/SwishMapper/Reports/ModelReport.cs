@@ -1,24 +1,30 @@
 
 using System.Threading.Tasks;
 
+using Microsoft.Extensions.Logging;
 using SwishMapper.Models.Data;
 
 namespace SwishMapper.Reports
 {
     public class ModelReport : RazorReport<DataModel>
     {
-        private readonly DataModel model;
+        private readonly ILogger logger;
 
-        public ModelReport(DataModel model, string outputPath)
-            : base("model-report", outputPath)
+        public ModelReport(ILogger<ModelReport> logger)
+            : base("model-report")
         {
-            this.model = model;
+            this.logger = logger;
         }
+
+
+        public DataModel Model { get; set; }
 
 
         public override Task RunAsync()
         {
-            CompileAndRun(model);
+            logger.LogInformation("Writing ModelReport for {Name} to {Path}.", Model.Name, OutputPath);
+
+            CompileAndRun(Model);
 
             return Task.CompletedTask;
         }

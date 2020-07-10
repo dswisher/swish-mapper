@@ -10,14 +10,15 @@ namespace SwishMapper.Reports
     public abstract class RazorReport<T> : IReportWorker
     {
         private readonly string templateName;
-        private readonly string outputPath;
 
 
-        public RazorReport(string templateName, string outputPath)
+        public RazorReport(string templateName)
         {
             this.templateName = templateName;
-            this.outputPath = outputPath;
         }
+
+
+        public string OutputPath { get; set; }
 
 
         public abstract Task RunAsync();
@@ -26,9 +27,8 @@ namespace SwishMapper.Reports
         protected void CompileAndRun(T model)
         {
             // Run the report
-            using (var writer = new StreamWriter(outputPath))
+            using (var writer = new StreamWriter(OutputPath))
             {
-                // service.Run(templateName, writer, typeof(T), model);
                 Engine.Razor.Run(templateName, writer, typeof(T), model);
             }
         }

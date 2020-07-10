@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using SwishMapper.Parsing;
 using SwishMapper.Parsing.Project;
+using SwishMapper.Parsing.Xsd;
 using SwishMapper.Reports;
 using SwishMapper.Work;
 
