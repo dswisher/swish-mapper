@@ -10,6 +10,7 @@ using RazorEngine.Configuration;
 using RazorEngine.Templating;
 using SwishMapper.Models.Data;
 using SwishMapper.Models.Project;
+using SwishMapper.Models.Reports;
 
 namespace SwishMapper.Reports
 {
@@ -48,25 +49,35 @@ namespace SwishMapper.Reports
             var razorService = RazorEngineService.Create(razorConfig);
 
             razorService.Compile("model-report", typeof(DataModel));
+            razorService.Compile("index-page", typeof(IndexModel));
 
             Engine.Razor = razorService;
 
             logger.LogDebug("...razor setup complete, elapsed: {Time}.", watch.Elapsed.ToString(@"hh\:mm\:ss\.fff"));
 
+            // Create the index data model, so we can add to it as we're planning out other stuff
+            var indexModel = new IndexModel();
+
             // Copy static (embedded) files to the output directory
             yield return serviceProvider.CopyEmbedded("style.css", outDir.FullName);
 
             // Create a model report for each model
+            var section = indexModel.CreateSection("Models");
+
             foreach (var model in dataProject.Models)
             {
-                var path = Path.Combine(outDir.FullName, $"{model.Id}.html");
+                var filename = $"{model.Id}.html";
+                var path = Path.Combine(outDir.FullName, filename);
+
+                section.CreateEntry(model.Name, filename);
 
                 yield return serviceProvider.ModelReport(model, path);
             }
 
             // TODO - create mapping report(s)
 
-            // TODO - create an index page
+            // Create the index page
+            yield return serviceProvider.IndexPage(indexModel, Path.Combine(outDir.FullName, "index.html"));
         }
     }
 }

@@ -23,5 +23,6 @@
 
         <EmbeddedResource Include="Reports/Templates/layout.cshtml" />
         <EmbeddedResource Include="Reports/Templates/model-report.cshtml" />
+        <EmbeddedResource Include="Reports/Templates/index-page.cshtml" />
     </ItemGroup>
 </Project>

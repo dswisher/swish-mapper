@@ -25,6 +25,7 @@ namespace SwishMapper
             services.AddTransient<XsdPopulator>();
 
             services.AddTransient<CopyEmbeddedWorker>();
+            services.AddTransient<IndexPage>();
             services.AddTransient<ModelReport>();
 
             return services;

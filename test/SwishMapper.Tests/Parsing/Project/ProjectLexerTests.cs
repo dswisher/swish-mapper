@@ -104,6 +104,8 @@ namespace SwishMapper.Tests.Parsing
 
         [Theory]
         [InlineData("model")]
+        [InlineData("xsd")]
+        [InlineData("name")]
         public void CanLexKeyword(string word)
         {
             // Arrange
@@ -182,6 +184,22 @@ namespace SwishMapper.Tests.Parsing
 
                 context.Lexer.LexToken();
                 context.Lexer.Token.Kind.Should().Be(TokenKind.EOF);
+            }
+        }
+
+
+        [Theory]
+        [InlineData("\"\"", "")]
+        [InlineData("\"foo\"", "foo")]
+        public void CanLexString(string content, string text)
+        {
+            // Arrange
+            using (var context = new Context(content))
+            {
+                // Act and assert
+                context.Lexer.LexToken();
+                context.Lexer.Token.Kind.Should().Be(TokenKind.String);
+                context.Lexer.Token.Text.Should().Be(text);
             }
         }
 

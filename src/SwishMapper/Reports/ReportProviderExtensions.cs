@@ -4,6 +4,7 @@ using System.IO;
 
 using Microsoft.Extensions.DependencyInjection;
 using SwishMapper.Models.Data;
+using SwishMapper.Models.Reports;
 
 namespace SwishMapper.Reports
 {
@@ -23,6 +24,17 @@ namespace SwishMapper.Reports
         public static ModelReport ModelReport(this IServiceProvider provider, DataModel model, string path)
         {
             var report = provider.GetRequiredService<ModelReport>();
+
+            report.OutputPath = path;
+            report.Model = model;
+
+            return report;
+        }
+
+
+        public static IndexPage IndexPage(this IServiceProvider provider, IndexModel model, string path)
+        {
+            var report = provider.GetRequiredService<IndexPage>();
 
             report.OutputPath = path;
             report.Model = model;

@@ -1,4 +1,5 @@
 
+using System.IO;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
@@ -31,7 +32,7 @@ namespace SwishMapper.Parsing.Project
                 // Keep parsing until nothing is left.
                 while (lexer.Token.Kind != TokenKind.EOF)
                 {
-                    ParseDirective(definition, lexer);
+                    ParseStatement(definition, lexer);
                 }
             }
 
@@ -85,7 +86,7 @@ namespace SwishMapper.Parsing.Project
         }
 
 
-        private void ParseDirective(ProjectDefinition definition, ProjectLexer lexer)
+        private void ParseStatement(ProjectDefinition definition, ProjectLexer lexer)
         {
             VerifyToken(lexer, TokenKind.Keyword);
 
@@ -112,7 +113,61 @@ namespace SwishMapper.Parsing.Project
 
             Consume(lexer, TokenKind.LeftCurly);
 
-            // TODO - parse model innards
+            while (lexer.Token.Kind == TokenKind.Keyword)
+            {
+                var keyword = Consume(lexer, TokenKind.Keyword);
+
+                switch (keyword)
+                {
+                    case "name":
+                        model.Name = Consume(lexer, TokenKind.String);
+                        OptionallyConsume(lexer, TokenKind.Semicolon);
+                        break;
+
+                    case "xsd":
+                        ParsePopulator(model, lexer, ProjectModelPopulatorType.Xsd);
+                        break;
+
+                    default:
+                        throw new ParserException($"Unexpected model keyword: {lexer.Token.Text}.", lexer.Token);
+                }
+            }
+
+            Consume(lexer, TokenKind.RightCurly);
+        }
+
+
+        private void ParsePopulator(ProjectModel model, ProjectLexer lexer, ProjectModelPopulatorType type)
+        {
+            var populator = new ProjectModelPopulator
+            {
+                Type = type
+            };
+
+            model.Populators.Add(populator);
+
+            Consume(lexer, TokenKind.LeftCurly);
+
+            while (lexer.Token.Kind == TokenKind.Keyword)
+            {
+                var keyword = Consume(lexer, TokenKind.Keyword);
+
+                switch (keyword)
+                {
+                    case "path":
+                        populator.Path = ConsumeFile(lexer);
+                        OptionallyConsume(lexer, TokenKind.Semicolon);
+                        break;
+
+                    case "root":
+                        populator.RootEntity = Consume(lexer, TokenKind.String);
+                        OptionallyConsume(lexer, TokenKind.Semicolon);
+                        break;
+
+                    default:
+                        throw new ParserException($"Unexpected populator keyword: {lexer.Token.Text}.", lexer.Token);
+                }
+            }
 
             Consume(lexer, TokenKind.RightCurly);
         }
@@ -122,7 +177,7 @@ namespace SwishMapper.Parsing.Project
         {
             if (lexer.Token.Kind != kind)
             {
-                throw new ParserException($"Expecting token kind {kind}, but found {lexer.Token.Kind}.", lexer.Token);
+                throw new ParserException($"Expecting token kind {kind}, but found {lexer.Token.Kind}: {lexer.Token.Text}.", lexer.Token);
             }
 
             if ((text != null) && (lexer.Token.Text != text))
@@ -141,6 +196,23 @@ namespace SwishMapper.Parsing.Project
             lexer.LexToken();
 
             return result;
+        }
+
+
+        private string ConsumeFile(ProjectLexer lexer)
+        {
+            var fragment = Consume(lexer, TokenKind.String);
+
+            return Path.Combine(Path.GetDirectoryName(lexer.FilePath), fragment);
+        }
+
+
+        private void OptionallyConsume(ProjectLexer lexer, TokenKind kind)
+        {
+            if (lexer.Token.Kind == kind)
+            {
+                lexer.LexToken();
+            }
         }
     }
 }

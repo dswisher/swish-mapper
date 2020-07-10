@@ -66,7 +66,6 @@ namespace SwishMapper.Cli
                 }
                 catch (Exception ex)
                 {
-                    // TODO - catch specific exceptions, like ParserException, and emit prettier messages
                     Log.Error(ex, "Unhandled exception in main.");
                 }
             }

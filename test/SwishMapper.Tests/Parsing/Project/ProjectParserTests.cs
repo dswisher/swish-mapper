@@ -1,11 +1,13 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SwishMapper.Models.Project;
 using SwishMapper.Parsing;
 using SwishMapper.Parsing.Project;
 using SwishMapper.Tests.TestHelpers;
@@ -67,6 +69,57 @@ namespace SwishMapper.Tests.Parsing.Project
 
             // Assert
             project.Models.Should().Contain(x => x.Id == modelId);
+        }
+
+
+        [Theory]
+        [InlineData("one-model.sm", "my model")]
+        public async Task ModelNameIsParsed(string filename, string modelName)
+        {
+            // Arrange
+            var path = FileFinder.FindProjectFile(filename);
+
+            // Act
+            var project = await parser.ParseAsync(path.FullName);
+
+            // Assert
+            project.Models.Should().Contain(x => x.Name == modelName);
+        }
+
+
+        [Theory]
+        [InlineData("one-model.sm", "solo", ProjectModelPopulatorType.Xsd)]
+        public async Task PopulatorsAreParsed(string filename, string modelId, ProjectModelPopulatorType type)
+        {
+            // Arrange
+            var path = FileFinder.FindProjectFile(filename);
+
+            // Act
+            var project = await parser.ParseAsync(path.FullName);
+
+            // Assert
+            var model = project.Models.First(x => x.Id == modelId);
+
+            model.Populators.Should().Contain(x => x.Type == type);
+        }
+
+
+        [Theory]
+        [InlineData("one-model.sm", "solo", "bar/foo.xsd")]
+        public async Task PopulatorPathsAreRelativeToProjectFile(string filename, string modelId, string fragment)
+        {
+            // Arrange
+            var path = FileFinder.FindProjectFile(filename);
+
+            var expected = Path.Combine(path.DirectoryName, fragment);
+
+            // Act
+            var project = await parser.ParseAsync(path.FullName);
+
+            // Assert
+            var populator = project.Models.First(x => x.Id == modelId).Populators.First();
+
+            populator.Path.Should().Be(expected);
         }
     }
 }

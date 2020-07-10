@@ -1,0 +1,16 @@
+@{Layout = "layout";}
+
+<h1>Data Project</h1>
+
+@foreach (var section in Model.Sections)
+{
+    <h2>@section.Name</h2>
+
+    <ul>
+    @foreach (var entry in section.Entries)
+    {
+        <li><a href="@entry.Path">@entry.Name</a></li>
+    }
+    </ul>
+}
+

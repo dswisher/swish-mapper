@@ -16,6 +16,8 @@ namespace SwishMapper.Parsing.Project
         private readonly ILogger logger;
         private readonly TextReader reader;
 
+        private readonly string filename;
+
         private readonly StringBuilder builder = new StringBuilder();
 
         private bool atEOF;
@@ -28,6 +30,10 @@ namespace SwishMapper.Parsing.Project
             Keywords = new HashSet<string>();
 
             Keywords.Add("model");
+            Keywords.Add("name");
+            Keywords.Add("path");
+            Keywords.Add("root");
+            Keywords.Add("xsd");
 
             PunctuationStarters = new HashSet<char>();
 
@@ -39,24 +45,26 @@ namespace SwishMapper.Parsing.Project
 
 
         public ProjectLexer(string path, ILogger<ProjectLexer> logger)
-            : this(new StreamReader(path), Path.GetFileName(path), logger)
+            : this(new StreamReader(path), path, logger)
         {
         }
 
 
-        public ProjectLexer(TextReader reader, string filename, ILogger<ProjectLexer> logger)
+        public ProjectLexer(TextReader reader, string path, ILogger<ProjectLexer> logger)
         {
             this.logger = logger;
             this.reader = reader;
 
-            Filename = filename;
+            FilePath = path;
+
+            filename = Path.GetFileName(path);
 
             lineNumber = 1;
             linePos = 1;
         }
 
 
-        public string Filename { get; private set; }
+        public string FilePath { get; private set; }
         public LexerToken Token { get; private set; }
 
         private char Current => (char)reader.Peek();
@@ -79,6 +87,10 @@ namespace SwishMapper.Parsing.Project
                 CreateToken(TokenKind.EOF);
                 atEOF = true;
             }
+            else if (Current == '"')
+            {
+                ScanString();
+            }
             else if (char.IsLetter(Current))
             {
                 ScanIdentifierOrKeyword();
@@ -89,7 +101,7 @@ namespace SwishMapper.Parsing.Project
             }
             else
             {
-                throw new ParserException($"Unexpected character '{Current}'.", Filename, lineNumber, linePos);
+                throw new ParserException($"Unexpected character '{Current}'.", filename, lineNumber, linePos);
             }
         }
 
@@ -102,7 +114,7 @@ namespace SwishMapper.Parsing.Project
             }
             catch (Exception ex)
             {
-                logger.LogWarning(ex, "Error disposing MappingLexer, filename: {Name}.", Filename);
+                logger.LogWarning(ex, "Error disposing MappingLexer, filename: {Name}.", filename);
             }
         }
 
@@ -136,7 +148,7 @@ namespace SwishMapper.Parsing.Project
                 Text = builder.ToString(),
                 LineNumber = lineNumber,
                 LinePosition = linePos,
-                Filename = Filename
+                Filename = filename
             };
 
             builder.Clear();
@@ -157,6 +169,20 @@ namespace SwishMapper.Parsing.Project
             }
 
             CreateToken(Keywords.Contains(builder.ToString()) ? TokenKind.Keyword : TokenKind.Identifier);
+        }
+
+
+        private void ScanString()
+        {
+            Advance();
+            while (!IsEOF() && (Current != '"'))
+            {
+                Consume();
+            }
+
+            Advance();
+
+            CreateToken(TokenKind.String);
         }
 
 
@@ -184,7 +210,7 @@ namespace SwishMapper.Parsing.Project
                     break;
 
                 default:
-                    throw new ParserException($"Unexpected punctuation character '{Current}'.", Filename, lineNumber, linePos);
+                    throw new ParserException($"Unexpected punctuation character '{Current}'.", filename, lineNumber, linePos);
             }
         }
 
@@ -201,7 +227,7 @@ namespace SwishMapper.Parsing.Project
             }
             else
             {
-                throw new ParserException($"Unexpected arrow character '{Current}'.", Filename, lineNumber, linePos);
+                throw new ParserException($"Unexpected arrow character '{Current}'.", filename, lineNumber, linePos);
             }
         }
 
