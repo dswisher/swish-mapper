@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SwishMapper.Parsing;
+using SwishMapper.Parsing.Project;
 using SwishMapper.Tests.TestHelpers;
 using Xunit;
 
@@ -11,12 +12,13 @@ namespace SwishMapper.Tests.Parsing
     public class LexerFactoryTests
     {
         private readonly Mock<ILogger<MappingLexer>> mappingLogger = new Mock<ILogger<MappingLexer>>();
+        private readonly Mock<ILogger<ProjectLexer>> projectLogger = new Mock<ILogger<ProjectLexer>>();
 
         private readonly LexerFactory factory;
 
         public LexerFactoryTests()
         {
-            factory = new LexerFactory(mappingLogger.Object);
+            factory = new LexerFactory(mappingLogger.Object, projectLogger.Object);
         }
 
 

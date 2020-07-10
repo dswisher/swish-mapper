@@ -1,0 +1,11 @@
+
+model solo
+{
+    # name "Watchlist Report";
+    # xsd
+    # {
+    #      path "foo.xsd";
+    #      root "TopElement";
+    # }
+}
+

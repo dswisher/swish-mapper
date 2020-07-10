@@ -1,7 +1,0 @@
-
-# Sources
-source Source1 ../incoming1.xsd SourceRoot
-
-# Sinks
-sink Sink1 foo/outgoing1.xsd SinkRoot
-
