@@ -11,6 +11,7 @@ namespace SwishMapper.Work
     public class DataProjectAssembler : IWorker<DataProject>
     {
         private readonly List<DataModelAssembler> modelWorkers = new List<DataModelAssembler>();
+        private readonly List<MapLoader> mapWorkers = new List<MapLoader>();
 
         private readonly ILogger logger;
 
@@ -34,7 +35,10 @@ namespace SwishMapper.Work
             }
 
             // Process all the mappings, and get them into the project, too.
-            // TODO - process mappings
+            foreach (var map in mapWorkers)
+            {
+                await map.RunAsync(project);
+            }
 
             // Return the resulting project that we've built
             return project;
@@ -51,6 +55,11 @@ namespace SwishMapper.Work
                 {
                     child.Dump(childContext);
                 }
+
+                foreach (var child in mapWorkers)
+                {
+                    child.Dump(childContext);
+                }
             }
         }
 
@@ -58,6 +67,12 @@ namespace SwishMapper.Work
         public void AddWorker(DataModelAssembler worker)
         {
             modelWorkers.Add(worker);
+        }
+
+
+        public void AddWorker(MapLoader worker)
+        {
+            mapWorkers.Add(worker);
         }
     }
 }

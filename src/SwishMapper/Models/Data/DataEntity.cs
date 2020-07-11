@@ -15,10 +15,23 @@ namespace SwishMapper.Models.Data
         private readonly List<DataAttribute> attributes = new List<DataAttribute>();
         private readonly List<DataModelSource> sources = new List<DataModelSource>();
 
+
+        public DataEntity(DataModel parent, string name)
+        {
+            Parent = parent;
+            Name = name;
+        }
+
+
+        /// <summary>
+        /// The parent model of this entity.
+        /// </summary>
+        public DataModel Parent { get; private set; }
+
         /// <summary>
         /// The name of this entity.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
         /// <summary>
         /// Description about this entity.
@@ -36,16 +49,19 @@ namespace SwishMapper.Models.Data
         public IList<DataModelSource> Sources { get { return sources; } }
 
 
+        public DataAttribute FindAttribute(string name)
+        {
+            return attributes.FirstOrDefault(x => x.Name == name);
+        }
+
+
         public DataAttribute FindOrCreateAttribute(string name)
         {
             var attribute = attributes.FirstOrDefault(x => x.Name == name);
 
             if (attribute == null)
             {
-                attribute = new DataAttribute
-                {
-                    Name = name
-                };
+                attribute = new DataAttribute(this, name);
 
                 attributes.Add(attribute);
             }

@@ -48,6 +48,7 @@ namespace SwishMapper.Reports
 
             var razorService = RazorEngineService.Create(razorConfig);
 
+            razorService.Compile("mapping-report", typeof(DataMapping));
             razorService.Compile("model-report", typeof(DataModel));
             razorService.Compile("index-page", typeof(IndexModel));
 
@@ -74,7 +75,19 @@ namespace SwishMapper.Reports
                 yield return serviceProvider.ModelReport(model, path);
             }
 
-            // TODO - create mapping report(s)
+            // Create a mapping report for each mapping
+            section = indexModel.CreateSection("Mappings");
+
+            foreach (var map in dataProject.Maps)
+            {
+                // TODO - what if there are two maps between the same models? Need more foolproof naming.
+                var filename = $"{map.SourceModel.Id}-{map.SinkModel.Id}.html";
+                var path = Path.Combine(outDir.FullName, filename);
+
+                section.CreateEntry($"{map.SourceModel.Name} -> {map.SinkModel.Name}", filename);
+
+                yield return serviceProvider.MappingReport(map, path);
+            }
 
             // Create the index page
             yield return serviceProvider.IndexPage(indexModel, Path.Combine(outDir.FullName, "index.html"));

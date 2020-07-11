@@ -20,6 +20,12 @@ namespace SwishMapper.Models.Data
         public IList<DataModelSource> Sources { get { return sources; } }
 
 
+        public DataEntity FindEntity(string name)
+        {
+            return entities.ContainsKey(name) ? entities[name] : null;
+        }
+
+
         public DataEntity FindOrCreateEntity(string name, DataModelSource source)
         {
             // Locate an existing entity or create a new one.
@@ -31,10 +37,7 @@ namespace SwishMapper.Models.Data
             }
             else
             {
-                entity = new DataEntity
-                {
-                    Name = name
-                };
+                entity = new DataEntity(this, name);
 
                 entities.Add(name, entity);
             }

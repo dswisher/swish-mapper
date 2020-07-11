@@ -73,6 +73,11 @@ namespace SwishMapper.Cli
                             Log.Error(ex.Message);
                             return true;
                         }
+                        else if (ex is LoaderException)
+                        {
+                            Log.Error(ex.Message);
+                            return true;
+                        }
 
                         return false;
                     });

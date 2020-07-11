@@ -9,7 +9,9 @@ namespace SwishMapper.Models.Project
     public class ProjectDefinition
     {
         private readonly List<ProjectModel> models = new List<ProjectModel>();
+        private readonly List<ProjectMap> maps = new List<ProjectMap>();
 
         public IList<ProjectModel> Models { get { return models; } }
+        public IList<ProjectMap> Maps { get { return maps; } }
     }
 }

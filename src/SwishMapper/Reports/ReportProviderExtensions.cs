@@ -32,6 +32,17 @@ namespace SwishMapper.Reports
         }
 
 
+        public static MappingReport MappingReport(this IServiceProvider provider, DataMapping mapping, string path)
+        {
+            var report = provider.GetRequiredService<MappingReport>();
+
+            report.OutputPath = path;
+            report.Mapping = mapping;
+
+            return report;
+        }
+
+
         public static IndexPage IndexPage(this IServiceProvider provider, IndexModel model, string path)
         {
             var report = provider.GetRequiredService<IndexPage>();

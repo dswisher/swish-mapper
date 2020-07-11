@@ -44,8 +44,17 @@ namespace SwishMapper.Parsing.Project
         {
             VerifyToken(lexer, TokenKind.Keyword);
 
-            switch (lexer.Token.Text)
+            var text = lexer.Token.Text;
+
+            // TODO - change this (and other similar statements) to Advance()
+            lexer.LexToken();
+
+            switch (text)
             {
+                case "map":
+                    ParseMap(definition, lexer);
+                    break;
+
                 case "model":
                     ParseModel(definition, lexer);
                     break;
@@ -56,12 +65,47 @@ namespace SwishMapper.Parsing.Project
         }
 
 
+        private void ParseMap(ProjectDefinition definition, ProjectLexer lexer)
+        {
+            var map = new ProjectMap();
+            definition.Maps.Add(map);
+
+            Consume(lexer, TokenKind.LeftCurly);
+
+            while (lexer.Token.Kind == TokenKind.Keyword)
+            {
+                var keyword = Consume(lexer, TokenKind.Keyword);
+
+                switch (keyword)
+                {
+                    case "from":
+                        map.FromModelId = Consume(lexer, TokenKind.Identifier);
+                        OptionallyConsume(lexer, TokenKind.Semicolon);
+                        break;
+
+                    case "path":
+                        map.Path = ConsumeFile(lexer);
+                        OptionallyConsume(lexer, TokenKind.Semicolon);
+                        break;
+
+                    case "to":
+                        map.ToModelId = Consume(lexer, TokenKind.Identifier);
+                        OptionallyConsume(lexer, TokenKind.Semicolon);
+                        break;
+
+                    default:
+                        throw new ParserException($"Unexpected map keyword: {keyword}.", lexer.Token);
+                }
+            }
+
+            Consume(lexer, TokenKind.RightCurly);
+        }
+
+
         private void ParseModel(ProjectDefinition definition, ProjectLexer lexer)
         {
             var model = new ProjectModel();
             definition.Models.Add(model);
-
-            Consume(lexer, TokenKind.Keyword, "model");
 
             model.Id = Consume(lexer, TokenKind.Identifier);
 

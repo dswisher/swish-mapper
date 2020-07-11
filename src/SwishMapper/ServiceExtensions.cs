@@ -22,11 +22,13 @@ namespace SwishMapper
 
             services.AddTransient<DataProjectAssembler>();
             services.AddTransient<DataModelAssembler>();
+            services.AddTransient<MapLoader>();
             services.AddTransient<CsvPopulator>();
             services.AddTransient<XsdPopulator>();
 
             services.AddTransient<CopyEmbeddedWorker>();
             services.AddTransient<IndexPage>();
+            services.AddTransient<MappingReport>();
             services.AddTransient<ModelReport>();
 
             return services;

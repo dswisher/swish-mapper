@@ -42,7 +42,10 @@ namespace SwishMapper.Work
             }
 
             // Add a worker to process each mapping
-            // TODO - create work items to process each mapping
+            foreach (var map in project.Maps)
+            {
+                root.AddWorker(CreateWorker(map));
+            }
 
             // Dump the dependency tree, for debugging
             using (var writer = new StreamWriter(Path.Combine(tempDir.FullName, "work-plan.txt")))
@@ -53,6 +56,18 @@ namespace SwishMapper.Work
 
             // Return the dependency tree, for subsequent execution
             return root;
+        }
+
+
+        private MapLoader CreateWorker(ProjectMap map)
+        {
+            var worker = serviceProvider.GetRequiredService<MapLoader>();
+
+            worker.FromModelId = map.FromModelId;
+            worker.ToModelId = map.ToModelId;
+            worker.Path = map.Path;
+
+            return worker;
         }
 
 
