@@ -17,5 +17,7 @@ namespace SwishMapper.Models.Data
 
         public string MinOccurs { get; set; }
         public string MaxOccurs { get; set; }
+
+        public string Comment { get; set; }
     }
 }

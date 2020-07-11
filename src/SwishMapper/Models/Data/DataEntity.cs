@@ -19,6 +19,8 @@ namespace SwishMapper.Models.Data
         /// </summary>
         public string Name { get; set; }
 
+        public string Comment { get; set; }
+
         /// <summary>
         /// The attributes of this entity.
         /// </summary>

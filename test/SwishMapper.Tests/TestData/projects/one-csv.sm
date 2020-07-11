@@ -1,0 +1,11 @@
+
+model solo
+{
+    name "my model"
+
+    csv
+    {
+        path "bar/foo.csv";
+    }
+}
+

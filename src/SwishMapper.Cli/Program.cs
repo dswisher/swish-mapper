@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using RazorEngine.Templating;
 using Serilog;
 using SwishMapper.Parsing;
+using SwishMapper.Work;
 
 namespace SwishMapper.Cli
 {
@@ -56,6 +57,11 @@ namespace SwishMapper.Cli
                             return true;
                         }
                         else if (ex is TemplateCompilationException)
+                        {
+                            Log.Error(ex.Message);
+                            return true;
+                        }
+                        else if (ex is ProjectPlannerException)
                         {
                             Log.Error(ex.Message);
                             return true;

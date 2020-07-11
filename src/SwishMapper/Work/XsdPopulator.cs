@@ -27,7 +27,7 @@ namespace SwishMapper.Work
 
         public async Task RunAsync(DataModel model)
         {
-            logger.LogDebug("XsdPopulator.RunAsync: {Path} -> not yet implemented!", Path);
+            logger.LogWarning("XsdPopulator.RunAsync: {Path} -> still a WIP!", Path);
 
             // Parse the XML schema document
             // TODO - remove docName as a parser parameter

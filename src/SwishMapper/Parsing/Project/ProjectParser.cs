@@ -37,52 +37,6 @@ namespace SwishMapper.Parsing.Project
             }
 
             return Task.FromResult(definition);
-
-
-
-
-            // // TODO - for the moment, just hard-code something
-
-            // // One model
-            // var watchlist = new ProjectModel
-            // {
-            //     Id = "watchlist",
-            //     Name = "Watchlist Report"
-            // };
-
-            // watchlist.Populators.Add(new ProjectModelPopulator
-            // {
-            //     Type = ProjectModelPopulatorType.Xsd,
-            //     Path = "SAMPLES/PFA_XSD_22-Dec-07.xsd",
-            //     RootEntity = "PFA"
-            // });
-
-            // // TODO - add samples
-
-            // // Two model
-            // var dmi = new ProjectModel
-            // {
-            //     Id = "dmi",
-            //     Name = "DMI"
-
-            //     // TODO - add XSD
-            //     // TODO - add samples
-            // };
-
-            // dmi.Populators.Add(new ProjectModelPopulator
-            // {
-            //     Type = ProjectModelPopulatorType.Xsd,
-            //     Path = "SAMPLES/DMI_XML.xsd",
-            //     RootEntity = "DMIDocs"
-            // });
-
-            // // Finally, build the overall project definition
-            // var definition = new ProjectDefinition();
-
-            // definition.Models.Add(watchlist);
-            // definition.Models.Add(dmi);
-
-            // return definition;
         }
 
 
@@ -119,17 +73,21 @@ namespace SwishMapper.Parsing.Project
 
                 switch (keyword)
                 {
+                    case "csv":
+                        ParseCsvPopulator(model, lexer);
+                        break;
+
                     case "name":
                         model.Name = Consume(lexer, TokenKind.String);
                         OptionallyConsume(lexer, TokenKind.Semicolon);
                         break;
 
                     case "xsd":
-                        ParsePopulator(model, lexer, ProjectModelPopulatorType.Xsd);
+                        ParseXsdPopulator(model, lexer);
                         break;
 
                     default:
-                        throw new ParserException($"Unexpected model keyword: {lexer.Token.Text}.", lexer.Token);
+                        throw new ParserException($"Unexpected model keyword: {keyword}.", lexer.Token);
                 }
             }
 
@@ -137,11 +95,42 @@ namespace SwishMapper.Parsing.Project
         }
 
 
-        private void ParsePopulator(ProjectModel model, ProjectLexer lexer, ProjectModelPopulatorType type)
+        private void ParseCsvPopulator(ProjectModel model, ProjectLexer lexer)
         {
             var populator = new ProjectModelPopulator
             {
-                Type = type
+                Type = ProjectModelPopulatorType.Csv
+            };
+
+            model.Populators.Add(populator);
+
+            Consume(lexer, TokenKind.LeftCurly);
+
+            while (lexer.Token.Kind == TokenKind.Keyword)
+            {
+                var keyword = Consume(lexer, TokenKind.Keyword);
+
+                switch (keyword)
+                {
+                    case "path":
+                        populator.Path = ConsumeFile(lexer);
+                        OptionallyConsume(lexer, TokenKind.Semicolon);
+                        break;
+
+                    default:
+                        throw new ParserException($"Unexpected populator keyword: {keyword}.", lexer.Token);
+                }
+            }
+
+            Consume(lexer, TokenKind.RightCurly);
+        }
+
+
+        private void ParseXsdPopulator(ProjectModel model, ProjectLexer lexer)
+        {
+            var populator = new ProjectModelPopulator
+            {
+                Type = ProjectModelPopulatorType.Xsd
             };
 
             model.Populators.Add(populator);
@@ -165,7 +154,7 @@ namespace SwishMapper.Parsing.Project
                         break;
 
                     default:
-                        throw new ParserException($"Unexpected populator keyword: {lexer.Token.Text}.", lexer.Token);
+                        throw new ParserException($"Unexpected populator keyword: {keyword}.", lexer.Token);
                 }
             }
 

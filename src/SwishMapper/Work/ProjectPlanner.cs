@@ -51,15 +51,28 @@ namespace SwishMapper.Work
             {
                 switch (populator.Type)
                 {
+                    case ProjectModelPopulatorType.Csv:
+                        worker.Populators.Add(CreateCsvPopulator(populator));
+                        break;
+
                     case ProjectModelPopulatorType.Xsd:
                         worker.Populators.Add(CreateXsdPopulator(populator));
                         break;
 
                     default:
-                        // TODO - throw a planner exception
-                        break;
+                        throw new ProjectPlannerException($"Unhandled populator type when planning project: {populator.Type}.");
                 }
             }
+
+            return worker;
+        }
+
+
+        private CsvPopulator CreateCsvPopulator(ProjectModelPopulator model)
+        {
+            var worker = serviceProvider.GetRequiredService<CsvPopulator>();
+
+            worker.Path = model.Path;
 
             return worker;
         }

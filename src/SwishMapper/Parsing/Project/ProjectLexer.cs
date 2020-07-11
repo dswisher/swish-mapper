@@ -29,6 +29,7 @@ namespace SwishMapper.Parsing.Project
         {
             Keywords = new HashSet<string>();
 
+            Keywords.Add("csv");
             Keywords.Add("model");
             Keywords.Add("name");
             Keywords.Add("path");

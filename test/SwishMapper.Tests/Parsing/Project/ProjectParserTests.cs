@@ -58,7 +58,7 @@ namespace SwishMapper.Tests.Parsing.Project
 
 
         [Theory]
-        [InlineData("one-model.sm", "solo")]
+        [InlineData("one-xsd.sm", "solo")]
         public async Task ModelIdIsParsed(string filename, string modelId)
         {
             // Arrange
@@ -73,7 +73,7 @@ namespace SwishMapper.Tests.Parsing.Project
 
 
         [Theory]
-        [InlineData("one-model.sm", "my model")]
+        [InlineData("one-xsd.sm", "my model")]
         public async Task ModelNameIsParsed(string filename, string modelName)
         {
             // Arrange
@@ -88,7 +88,8 @@ namespace SwishMapper.Tests.Parsing.Project
 
 
         [Theory]
-        [InlineData("one-model.sm", "solo", ProjectModelPopulatorType.Xsd)]
+        [InlineData("one-csv.sm", "solo", ProjectModelPopulatorType.Csv)]
+        [InlineData("one-xsd.sm", "solo", ProjectModelPopulatorType.Xsd)]
         public async Task PopulatorsAreParsed(string filename, string modelId, ProjectModelPopulatorType type)
         {
             // Arrange
@@ -105,7 +106,8 @@ namespace SwishMapper.Tests.Parsing.Project
 
 
         [Theory]
-        [InlineData("one-model.sm", "solo", "bar/foo.xsd")]
+        [InlineData("one-csv.sm", "solo", "bar/foo.csv")]
+        [InlineData("one-xsd.sm", "solo", "bar/foo.xsd")]
         public async Task PopulatorPathsAreRelativeToProjectFile(string filename, string modelId, string fragment)
         {
             // Arrange
