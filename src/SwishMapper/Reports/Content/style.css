@@ -22,6 +22,7 @@ h2 {
 table {
     border-collapse: collapse;
     margin-left: 1em;
+    margin-top: 10px;
 }
 
 thead {
@@ -31,7 +32,6 @@ thead {
 td, th {
     border: solid 1px #CCC;
     padding: 0.1em;
-    white-space: nowrap;
 }
 
 td, th {

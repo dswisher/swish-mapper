@@ -23,7 +23,15 @@ namespace SwishMapper.Work
 
         public async Task RunAsync(DataModel model)
         {
-            logger.LogWarning("CsvPopulator.RunAsync: {Path} -> not yet implemented!", Path);
+            logger.LogWarning("CsvPopulator.RunAsync: {Path} -> still a WIP!", Path);
+
+            var source = new DataModelSource
+            {
+                ShortName = "csv",      // TODO - xyzzy - have project planner set the short name!
+                Path = Path
+            };
+
+            model.Sources.Add(source);
 
             using (var reader = new StreamReader(Path))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
@@ -48,7 +56,7 @@ namespace SwishMapper.Work
                     }
 
                     // Find or create the entity
-                    var entity = model.FindOrCreateEntity(entityName);
+                    var entity = model.FindOrCreateEntity(entityName, source);
 
                     // Attributes could be in one of two columns.
                     var attributeName = csv.GetField(1);
@@ -67,7 +75,16 @@ namespace SwishMapper.Work
 
                         // TODO - if the target datatype, etc., has a value - check for conflict!
 
-                        attribute.DataType = csv.GetField(3);
+                        if (!string.IsNullOrEmpty(attribute.DataType) && (attribute.DataType != csv.GetField(3)))
+                        {
+                            logger.LogWarning("Datatype conflict from CSV file on {Entity}.{Attribute}: {Old} vs {New}",
+                                    entityName, attributeName, attribute.DataType, csv.GetField(3));
+                        }
+                        else
+                        {
+                            attribute.DataType = csv.GetField(3);
+                        }
+
                         // maxlength - 4
                         // attribute spec - 5 (aka required)
                         attribute.MinOccurs = csv.GetField(6);

@@ -2,9 +2,33 @@
 
 <h1>@Model.Name Model</h1>
 
+<h2>Entities</h2>
+
 @foreach (var entity in Model.Entities.OrderBy(x => x.Name))
 {
-    <h2>@entity.Name</h2>
+    <h3>@entity.Name</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th colspan="2">Details</th>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Comment</td>
+                <td>@entity.Comment</td>
+            </tr>
+            <tr>
+                <td>Sources</td>
+                <td>@string.Join(", ", entity.Sources.Select(x => x.ShortName).OrderBy(x => x))</td>
+            </tr>
+        </tbody>
+    </table>
 
     <table>
         <thead>
@@ -22,7 +46,6 @@
                 <th>Max</th>
             </tr>
         <thead>
-
         <tbody>
             @foreach (var attribute in entity.Attributes.OrderBy(x => x.Name))
             {
@@ -37,3 +60,25 @@
         </tbody>
     </table>
 }
+
+
+<h2>Data Model Sources</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Short Name</th>
+            <th>Path</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var source in Model.Sources.OrderBy(x => x.ShortName))
+        {
+            <tr>
+                <td>@source.ShortName</td>
+                <td>@source.Path</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

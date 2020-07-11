@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SwishMapper.Models.Data
 {
@@ -9,27 +10,42 @@ namespace SwishMapper.Models.Data
     public class DataModel
     {
         private readonly Dictionary<string, DataEntity> entities = new Dictionary<string, DataEntity>();
+        private readonly List<DataModelSource> sources = new List<DataModelSource>();
+
 
         public string Name { get; set; }
         public string Id { get; set; }
 
         public IEnumerable<DataEntity> Entities { get { return entities.Values; } }
+        public IList<DataModelSource> Sources { get { return sources; } }
 
 
-        public DataEntity FindOrCreateEntity(string name)
+        public DataEntity FindOrCreateEntity(string name, DataModelSource source)
         {
+            // Locate an existing entity or create a new one.
+            DataEntity entity;
+
             if (entities.ContainsKey(name))
             {
-                return entities[name];
+                entity = entities[name];
+            }
+            else
+            {
+                entity = new DataEntity
+                {
+                    Name = name
+                };
+
+                entities.Add(name, entity);
             }
 
-            var entity = new DataEntity
+            // Add the source
+            if (!entity.Sources.Any(x => x.ShortName == source.ShortName))
             {
-                Name = name
-            };
+                entity.Sources.Add(source);
+            }
 
-            entities.Add(name, entity);
-
+            // Return what we've got!
             return entity;
         }
     }

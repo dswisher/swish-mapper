@@ -13,18 +13,27 @@ namespace SwishMapper.Models.Data
     public class DataEntity
     {
         private readonly List<DataAttribute> attributes = new List<DataAttribute>();
+        private readonly List<DataModelSource> sources = new List<DataModelSource>();
 
         /// <summary>
         /// The name of this entity.
         /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Description about this entity.
+        /// </summary>
         public string Comment { get; set; }
 
         /// <summary>
         /// The attributes of this entity.
         /// </summary>
         public IList<DataAttribute> Attributes { get { return attributes; } }
+
+        /// <summary>
+        /// The sources used to determine the definition of this entity.
+        /// </summary>
+        public IList<DataModelSource> Sources { get { return sources; } }
 
 
         public DataAttribute FindOrCreateAttribute(string name)

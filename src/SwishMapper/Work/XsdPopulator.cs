@@ -29,6 +29,14 @@ namespace SwishMapper.Work
         {
             logger.LogWarning("XsdPopulator.RunAsync: {Path} -> still a WIP!", Path);
 
+            var source = new DataModelSource
+            {
+                ShortName = "xsd",      // TODO - xyzzy - have project planner set the short name!
+                Path = Path
+            };
+
+            model.Sources.Add(source);
+
             // Parse the XML schema document
             // TODO - remove docName as a parser parameter
             var xsdDoc = await parser.ParseAsync(Path, model.Name, RootElement, string.Empty);
@@ -44,7 +52,7 @@ namespace SwishMapper.Work
                 }
 
                 // Find or create the entity
-                var entity = model.FindOrCreateEntity(xsdElement.Name);
+                var entity = model.FindOrCreateEntity(xsdElement.Name, source);
 
                 // Add the attributes as attributes
                 foreach (var xsdChild in xsdElement.Attributes)
