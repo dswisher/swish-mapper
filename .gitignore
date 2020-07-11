@@ -4,6 +4,7 @@ obj/
 
 src/SwishMapper.Cli/SAMPLES/
 src/SwishMapper.Cli/OUTPUT/
+src/SwishMapper.Cli/SCRATCH/
 
 src/SwishMapper.Sampler/my-samples.json
 

@@ -80,5 +80,11 @@ namespace SwishMapper.Work
 
             logger.LogDebug("XsdPopulator, {Path}, model now has {Num} elements.", Path, model.Entities.Count());
         }
+
+
+        public void Dump(PlanDumperContext context)
+        {
+            context.WriteHeader(this, "{0}", Path);
+        }
     }
 }

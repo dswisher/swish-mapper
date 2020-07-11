@@ -46,5 +46,19 @@ namespace SwishMapper.Work
             // Return what we've built
             return model;
         }
+
+
+        public void Dump(PlanDumperContext context)
+        {
+            context.WriteHeader(this, "{0}: {1}", Id, Name);
+
+            using (var childContext = context.Push())
+            {
+                foreach (var child in populators)
+                {
+                    child.Dump(childContext);
+                }
+            }
+        }
     }
 }

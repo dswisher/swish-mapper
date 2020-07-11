@@ -1,10 +1,12 @@
 ﻿
 using System;
+using System.IO;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RazorEngine.Templating;
 using Serilog;
+using SwishMapper.Models;
 using SwishMapper.Parsing;
 using SwishMapper.Work;
 
@@ -27,7 +29,12 @@ namespace SwishMapper.Cli
                 return;
             }
 
-            var projectName = args[0];
+            var settings = new AppSettings
+            {
+                ProjectFilePath = new FileInfo(args[0]).FullName,
+                ReportDir = new DirectoryInfo("OUTPUT").FullName,
+                TempDir = new DirectoryInfo("SCRATCH").FullName
+            };
 
             var services = new ServiceCollection();
 
@@ -45,7 +52,7 @@ namespace SwishMapper.Cli
                 try
                 {
                     // TODO - add/use cancellation token!
-                    app.RunAsync(projectName).Wait();
+                    app.RunAsync(settings).Wait();
                 }
                 catch (AggregateException ae)
                 {

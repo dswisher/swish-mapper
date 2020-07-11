@@ -100,5 +100,11 @@ namespace SwishMapper.Work
                 }
             }
         }
+
+
+        public void Dump(PlanDumperContext context)
+        {
+            context.WriteHeader(this, "{0}", Path);
+        }
     }
 }

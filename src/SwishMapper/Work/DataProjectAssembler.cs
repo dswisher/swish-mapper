@@ -41,6 +41,20 @@ namespace SwishMapper.Work
         }
 
 
+        public void Dump(PlanDumperContext context)
+        {
+            context.WriteHeader(this);
+
+            using (var childContext = context.Push())
+            {
+                foreach (var child in modelWorkers)
+                {
+                    child.Dump(childContext);
+                }
+            }
+        }
+
+
         public void AddWorker(DataModelAssembler worker)
         {
             modelWorkers.Add(worker);

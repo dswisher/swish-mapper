@@ -1,8 +1,10 @@
 
 using System;
+using System.IO;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SwishMapper.Models;
 using SwishMapper.Models.Project;
 
 namespace SwishMapper.Work
@@ -20,9 +22,15 @@ namespace SwishMapper.Work
         }
 
 
-        public DataProjectAssembler CreateWork(ProjectDefinition project)
+        public DataProjectAssembler CreateWork(ProjectDefinition project, AppSettings settings)
         {
-            logger.LogDebug("ProjectPlanner.CreateWork -> not yet implemented!");
+            // Grab the temp directory and make sure it exists
+            var tempDir = new DirectoryInfo(settings.TempDir);
+            if (!tempDir.Exists)
+            {
+                logger.LogInformation("Creating temp directory: {Path}.", tempDir.FullName);
+                tempDir.Create();
+            }
 
             // Create the worker that assembles a data project from its components (models, mappings)
             var root = serviceProvider.GetRequiredService<DataProjectAssembler>();
@@ -36,6 +44,14 @@ namespace SwishMapper.Work
             // Add a worker to process each mapping
             // TODO - create work items to process each mapping
 
+            // Dump the dependency tree, for debugging
+            using (var writer = new StreamWriter(Path.Combine(tempDir.FullName, "work-plan.txt")))
+            using (var context = new PlanDumperContext(writer))
+            {
+                root.Dump(context);
+            }
+
+            // Return the dependency tree, for subsequent execution
             return root;
         }
 

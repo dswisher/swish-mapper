@@ -8,8 +8,8 @@ using Microsoft.Extensions.Logging;
 using RazorEngine;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
+using SwishMapper.Models;
 using SwishMapper.Models.Data;
-using SwishMapper.Models.Project;
 using SwishMapper.Models.Reports;
 
 namespace SwishMapper.Reports
@@ -27,10 +27,10 @@ namespace SwishMapper.Reports
         }
 
 
-        public IEnumerable<IReportWorker> CreateWork(DataProject dataProject, ProjectDefinition projectDefinition)
+        public IEnumerable<IReportWorker> CreateWork(DataProject dataProject, AppSettings settings)
         {
             // Grab the output directory and make sure it exists
-            var outDir = new DirectoryInfo(projectDefinition.ReportPath);
+            var outDir = new DirectoryInfo(settings.ReportDir);
             if (!outDir.Exists)
             {
                 logger.LogInformation("Creating report output directory: {Path}.", outDir.FullName);
