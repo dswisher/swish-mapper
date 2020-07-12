@@ -10,7 +10,7 @@ namespace SwishMapper.Work
 {
     public class DataModelAssembler : IWorker<DataModel>
     {
-        private readonly List<IPopulator> populators = new List<IPopulator>();
+        private readonly List<IModelMerger> mergers = new List<IModelMerger>();
 
         private readonly ILogger logger;
 
@@ -22,7 +22,7 @@ namespace SwishMapper.Work
         public string Name { get; set; }
         public string Id { get; set; }
 
-        public IList<IPopulator> Populators { get { return populators; } }
+        public IList<IModelMerger> Mergers { get { return mergers; } }
 
 
         public async Task<DataModel> RunAsync()
@@ -34,9 +34,9 @@ namespace SwishMapper.Work
                 Name = Name
             };
 
-            // Go through all the populators, and have 'em do the needful.
+            // Go through all the mergers, and have 'em do the needful.
             // TODO - do we care at all about ordering?
-            foreach (var pop in populators)
+            foreach (var pop in mergers)
             {
                 await pop.RunAsync(model);
             }
@@ -54,7 +54,7 @@ namespace SwishMapper.Work
 
             using (var childContext = context.Push())
             {
-                foreach (var child in populators)
+                foreach (var child in mergers)
                 {
                     child.Dump(childContext);
                 }

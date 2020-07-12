@@ -20,10 +20,12 @@ namespace SwishMapper
             services.AddSingleton<IReportPlanner, ReportPlanner>();
             services.AddSingleton<IXsdParser, XsdParser>();
 
-            services.AddTransient<DataProjectAssembler>();
+            services.AddTransient<CsvLoader>();
             services.AddTransient<DataModelAssembler>();
+            services.AddTransient<DataProjectAssembler>();
             services.AddTransient<MapLoader>();
-            services.AddTransient<CsvPopulator>();
+            services.AddTransient<ModelCleaner>();
+            services.AddTransient<ModelMerger>();
             services.AddTransient<XsdPopulator>();
 
             services.AddTransient<CopyEmbeddedWorker>();

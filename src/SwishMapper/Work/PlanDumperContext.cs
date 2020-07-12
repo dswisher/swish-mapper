@@ -40,6 +40,12 @@ namespace SwishMapper.Work
         }
 
 
+        public void WriteHeader(IModelMerger worker)
+        {
+            Write("{0}", worker.GetType().Name);
+        }
+
+
         public void WriteHeader<T>(IWorker<T> worker)
         {
             Write("{0}<{1}>", worker.GetType().Name, typeof(T).Name);

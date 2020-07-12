@@ -83,11 +83,11 @@ namespace SwishMapper.Work
                 switch (populator.Type)
                 {
                     case ProjectModelPopulatorType.Csv:
-                        worker.Populators.Add(CreateCsvPopulator(populator));
+                        worker.Mergers.Add(CreateCsvLoader(populator, model));
                         break;
 
                     case ProjectModelPopulatorType.Xsd:
-                        worker.Populators.Add(CreateXsdPopulator(populator));
+                        worker.Mergers.Add(CreateXsdPopulator(populator));
                         break;
 
                     default:
@@ -99,13 +99,28 @@ namespace SwishMapper.Work
         }
 
 
-        private CsvPopulator CreateCsvPopulator(ProjectModelPopulator model)
+        private IModelMerger CreateCsvLoader(ProjectModelPopulator modelPopulator, ProjectModel projectModel)
         {
-            var worker = serviceProvider.GetRequiredService<CsvPopulator>();
+            // Create the loader
+            var loader = serviceProvider.GetRequiredService<CsvLoader>();
 
-            worker.Path = model.Path;
+            // TODO - verify the path exists, and if not, throw an exception
 
-            return worker;
+            loader.Path = modelPopulator.Path;
+            loader.ModelId = projectModel.Id;
+            loader.ModelName = projectModel.Name;
+
+            // Wrap the loader in a cleaner
+            var cleaner = serviceProvider.GetRequiredService<ModelCleaner>();
+
+            cleaner.Input = loader;
+
+            // Wrap the cleaner in a merger
+            var merger = serviceProvider.GetRequiredService<ModelMerger>();
+
+            merger.Input = cleaner;
+
+            return merger;
         }
 
 
@@ -113,7 +128,7 @@ namespace SwishMapper.Work
         {
             var worker = serviceProvider.GetRequiredService<XsdPopulator>();
 
-            // TODO - verify the path exists and if not, throw a planner exception
+            // TODO - verify the path exists and if not, throw an exception
 
             worker.Path = model.Path;
             worker.RootElement = model.RootEntity;

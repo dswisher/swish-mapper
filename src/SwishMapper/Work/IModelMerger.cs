@@ -5,7 +5,10 @@ using SwishMapper.Models.Data;
 
 namespace SwishMapper.Work
 {
-    public interface IPopulator
+    /// <summary>
+    /// A worker that merges content into an already existing model.
+    /// </summary>
+    public interface IModelMerger
     {
         Task RunAsync(DataModel model);
         void Dump(PlanDumperContext context);

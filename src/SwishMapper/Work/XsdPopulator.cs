@@ -8,7 +8,7 @@ using SwishMapper.Parsing.Xsd;
 
 namespace SwishMapper.Work
 {
-    public class XsdPopulator : IPopulator
+    public class XsdPopulator : IModelMerger
     {
         private readonly IXsdParser parser;
         private readonly ILogger logger;

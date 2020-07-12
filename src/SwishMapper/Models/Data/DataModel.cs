@@ -28,6 +28,12 @@ namespace SwishMapper.Models.Data
 
         public DataEntity FindOrCreateEntity(string name, DataModelSource source)
         {
+            return FindOrCreateEntity(name, new[] { source });
+        }
+
+
+        public DataEntity FindOrCreateEntity(string name, IEnumerable<DataModelSource> sources)
+        {
             // Locate an existing entity or create a new one.
             DataEntity entity;
 
@@ -43,9 +49,12 @@ namespace SwishMapper.Models.Data
             }
 
             // Add the source
-            if (!entity.Sources.Any(x => x.ShortName == source.ShortName))
+            foreach (var source in sources)
             {
-                entity.Sources.Add(source);
+                if (!entity.Sources.Any(x => x.ShortName == source.ShortName))
+                {
+                    entity.Sources.Add(source);
+                }
             }
 
             // Return what we've got!
