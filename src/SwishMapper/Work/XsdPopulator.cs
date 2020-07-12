@@ -57,7 +57,7 @@ namespace SwishMapper.Work
                 // Add the attributes as attributes
                 foreach (var xsdChild in xsdElement.Attributes)
                 {
-                    var attribute = entity.FindOrCreateAttribute(xsdChild.Name);
+                    var attribute = entity.FindOrCreateAttribute(xsdChild.Name, source);
 
                     // TODO - if the datatype is set and conflicts, log a warning?
                     attribute.DataType = xsdChild.DataType;
@@ -68,7 +68,7 @@ namespace SwishMapper.Work
                 // Add the child elements as attributes with complex types
                 foreach (var xsdChild in xsdElement.Elements)
                 {
-                    var attribute = entity.FindOrCreateAttribute(xsdChild.Name);
+                    var attribute = entity.FindOrCreateAttribute(xsdChild.Name, source);
 
                     attribute.DataType = xsdChild.DataType;
                     attribute.MinOccurs = xsdChild.MinOccurs;

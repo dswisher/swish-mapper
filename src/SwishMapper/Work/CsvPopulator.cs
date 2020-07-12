@@ -72,7 +72,7 @@ namespace SwishMapper.Work
                     // If we have an attribute, set it, otherwise set the comment.
                     if (!string.IsNullOrEmpty(attributeName))
                     {
-                        var attribute = entity.FindOrCreateAttribute(attributeName);
+                        var attribute = entity.FindOrCreateAttribute(attributeName, source);
 
                         // TODO - if the target datatype, etc., has a value - check for conflict!
 

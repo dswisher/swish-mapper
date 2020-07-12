@@ -33,12 +33,13 @@
     <table>
         <thead>
             <tr>
-                <th colspan="5">Attributes</th>
+                <th colspan="6">Attributes</th>
             </tr>
             <tr>
                 <th rowspan="2">Name</th>
                 <th rowspan="2">Data Type</th>
                 <th colspan="2">Occurs</th>
+                <th rowspan="2">Sources</th>
                 <th rowspan="2">Comment</th>
             </tr>
             <tr>
@@ -54,6 +55,7 @@
                     <td>@attribute.DataType</td>
                     <td class="right">@attribute.MinOccurs</td>
                     <td class="right">@attribute.MaxOccurs</td>
+                    <td>@string.Join(", ", attribute.Sources.Select(x => x.ShortName).OrderBy(x => x))</td>
                     <td>@attribute.Comment</td>
                 </tr>
             }

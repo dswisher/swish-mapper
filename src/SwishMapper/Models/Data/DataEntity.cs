@@ -55,7 +55,7 @@ namespace SwishMapper.Models.Data
         }
 
 
-        public DataAttribute FindOrCreateAttribute(string name)
+        public DataAttribute FindOrCreateAttribute(string name, DataModelSource source)
         {
             var attribute = attributes.FirstOrDefault(x => x.Name == name);
 
@@ -65,6 +65,8 @@ namespace SwishMapper.Models.Data
 
                 attributes.Add(attribute);
             }
+
+            attribute.Sources.Add(source);
 
             return attribute;
         }
