@@ -87,7 +87,7 @@ namespace SwishMapper.Work
                         break;
 
                     case ProjectModelPopulatorType.Xsd:
-                        worker.Mergers.Add(CreateXsdPopulator(populator));
+                        worker.Mergers.Add(CreateXsdLoader(populator, model));
                         break;
 
                     default:
@@ -124,16 +124,29 @@ namespace SwishMapper.Work
         }
 
 
-        private XsdPopulator CreateXsdPopulator(ProjectModelPopulator model)
+        private IModelMerger CreateXsdLoader(ProjectModelPopulator modelPopulator, ProjectModel projectModel)
         {
-            var worker = serviceProvider.GetRequiredService<XsdPopulator>();
+            // Create the loader
+            var loader = serviceProvider.GetRequiredService<XsdLoader>();
 
-            // TODO - verify the path exists and if not, throw an exception
+            // TODO - verify the path exists, and if not, throw an exception
 
-            worker.Path = model.Path;
-            worker.RootElement = model.RootEntity;
+            loader.Path = modelPopulator.Path;
+            loader.RootElement = modelPopulator.RootEntity;
+            loader.ModelId = projectModel.Id;
+            loader.ModelName = projectModel.Name;
 
-            return worker;
+            // Wrap the loader in a cleaner
+            var cleaner = serviceProvider.GetRequiredService<ModelCleaner>();
+
+            cleaner.Input = loader;
+
+            // Wrap the cleaner in a merger
+            var merger = serviceProvider.GetRequiredService<ModelMerger>();
+
+            merger.Input = cleaner;
+
+            return merger;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace SwishMapper
             services.AddTransient<MapLoader>();
             services.AddTransient<ModelCleaner>();
             services.AddTransient<ModelMerger>();
-            services.AddTransient<XsdPopulator>();
+            services.AddTransient<XsdLoader>();
 
             services.AddTransient<CopyEmbeddedWorker>();
             services.AddTransient<IndexPage>();

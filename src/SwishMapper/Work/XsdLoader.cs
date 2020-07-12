@@ -1,5 +1,4 @@
 
-using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
@@ -8,26 +7,32 @@ using SwishMapper.Parsing.Xsd;
 
 namespace SwishMapper.Work
 {
-    public class XsdPopulator : IModelMerger
+    public class XsdLoader : IModelProducer
     {
         private readonly IXsdParser parser;
         private readonly ILogger logger;
 
-        public XsdPopulator(IXsdParser parser,
-                            ILogger<XsdPopulator> logger)
+        public XsdLoader(IXsdParser parser,
+                         ILogger<CsvLoader> logger)
         {
             this.parser = parser;
             this.logger = logger;
         }
 
 
+        public string ModelId { get; set; }
+        public string ModelName { get; set; }
         public string Path { get; set; }
         public string RootElement { get; set; }
 
 
-        public async Task RunAsync(DataModel model)
+        public async Task<DataModel> RunAsync()
         {
-            logger.LogWarning("XsdPopulator.RunAsync: {Path} -> still a WIP!", Path);
+            var model = new DataModel
+            {
+                Id = ModelId,
+                Name = ModelName
+            };
 
             var source = new DataModelSource
             {
@@ -39,17 +44,19 @@ namespace SwishMapper.Work
 
             // Parse the XML schema document
             // TODO - remove docName as a parser parameter
+            // TODO - remove RootElement as a parser parameter - just return ALL elements
             var xsdDoc = await parser.ParseAsync(Path, model.Name, RootElement, string.Empty);
 
-            // Merge the schema info into the data model
+            // Populate the model from the parsed schema
             foreach (var xsdElement in xsdDoc.Elements)
             {
+                // TODO - still want to skip elements? Leave that for cleanup?
                 // If this element is a simple one, skip it. While we could look at the data
                 // type, instead we make sure it has at least on attribute and/or one child element.
-                if ((xsdElement.Attributes.Count == 0) && (xsdElement.Elements.Count == 0))
-                {
-                    continue;
-                }
+                // if ((xsdElement.Attributes.Count == 0) && (xsdElement.Elements.Count == 0))
+                // {
+                //     continue;
+                // }
 
                 // Find or create the entity
                 var entity = model.FindOrCreateEntity(xsdElement.Name, source);
@@ -59,10 +66,9 @@ namespace SwishMapper.Work
                 {
                     var attribute = entity.FindOrCreateAttribute(xsdChild.Name, source);
 
-                    // TODO - if the datatype is set and conflicts, log a warning?
                     attribute.DataType = xsdChild.DataType;
 
-                    // TODO - set other properties: minOccurs, maxOccurs, etc.
+                    // TODO - set other properties: max-length, required, etc.
                 }
 
                 // Add the child elements as attributes with complex types
@@ -78,7 +84,7 @@ namespace SwishMapper.Work
                 }
             }
 
-            logger.LogDebug("XsdPopulator, {Path}, model now has {Num} elements.", Path, model.Entities.Count());
+            return model;
         }
 
 

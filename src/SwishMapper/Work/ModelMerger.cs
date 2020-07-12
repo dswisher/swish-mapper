@@ -70,8 +70,8 @@ namespace SwishMapper.Work
             var source = getter(sourceEntity);
             var target = getter(targetEntity);
 
-            // If the target is empty, we can't have a conflict
-            if (string.IsNullOrEmpty(target))
+            // If the source or target is empty, we can't have a conflict
+            if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(target))
             {
                 setter(targetEntity, source);
             }
@@ -93,8 +93,8 @@ namespace SwishMapper.Work
             var source = getter(sourceAttribute);
             var target = getter(targetAttribute);
 
-            // If the target is empty, we can't have a conflict
-            if (string.IsNullOrEmpty(target))
+            // If the source or target is empty, we can't have a conflict
+            if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(target))
             {
                 setter(targetAttribute, source);
             }
