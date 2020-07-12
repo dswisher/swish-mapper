@@ -48,7 +48,7 @@ namespace SwishMapper.Reports
 
             var razorService = RazorEngineService.Create(razorConfig);
 
-            razorService.Compile("mapping-report", typeof(DataMapping));
+            razorService.Compile("mapping-report", typeof(MappingReportModel));
             razorService.Compile("model-report", typeof(DataModel));
             razorService.Compile("index-page", typeof(IndexModel));
 

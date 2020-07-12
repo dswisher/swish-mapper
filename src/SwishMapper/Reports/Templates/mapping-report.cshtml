@@ -1,5 +1,53 @@
 @{Layout = "layout";}
 
-<h1>Mapping</h1>
+<h1>@Model.Name Mapping</h1>
 
-<p>TBD</p>
+@foreach (var entity in Model.Entities.OrderBy(x => x.Name))
+{
+    <h3>@entity.Name</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th colspan="4">Mappings</th>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <th>Source XPath</th>
+                <th>Sink XPath</th>
+                <th>Comments</th>
+            </tr>
+        <thead>
+        <tbody>
+            @foreach (var attribute in entity.Attributes.OrderBy(x => x.Name))
+            {
+                if (attribute.Maps.Count > 0)
+                {
+                    var first = true;
+                    foreach (var map in attribute.Maps)
+                    {
+                        <tr>
+                            @if (first)
+                            {
+                                first = false;
+                                <td rowspan="@attribute.Maps.Count">@attribute.Name</td>
+                            }
+
+                            <td>@map.FromXPath</td>
+                            <td>@map.ToXPath</td>
+                            <td>@map.Comments</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td>@attribute.Name</td>
+                        <td colspan="3">(unmapped)</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+
