@@ -9,6 +9,7 @@ src/SwishMapper.Cli/OUTPUT/
 src/SwishMapper.Cli/SCRATCH/
 
 src/SwishMapper.Sampler/my-samples.json
+src/SwishMapper.Sampler/OUTPUT/
 
 test/SwishMapper.Tests/coverage.opencover.xml
 test/SwishMapper.Tests/coveragereport/
