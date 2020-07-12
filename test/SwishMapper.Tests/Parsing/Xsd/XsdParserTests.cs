@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
 using SwishMapper.Parsing.Xsd;
 using SwishMapper.Tests.TestHelpers;
 using Xunit;
@@ -14,11 +16,13 @@ namespace SwishMapper.Tests.Parsing.Xsd
         private const string DocName = "test-xsd";
         private const string RootElementName = "message";
 
+        private readonly Mock<ILogger<XsdParser>> logger = new Mock<ILogger<XsdParser>>();
+
         private readonly XsdParser parser;
 
         public XsdParserTests()
         {
-            parser = new XsdParser();
+            parser = new XsdParser(logger.Object);
         }
 
 

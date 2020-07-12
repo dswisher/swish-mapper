@@ -4,24 +4,27 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Schema;
 
+using Microsoft.Extensions.Logging;
 using SwishMapper.Models;
 
 namespace SwishMapper.Parsing.Xsd
 {
     public class XsdParser : IXsdParser
     {
+        private readonly ILogger logger;
+
+        public XsdParser(ILogger<XsdParser> logger)
+        {
+            this.logger = logger;
+        }
+
+
         public Task<XsdDocument> ParseAsync(string path, string docName, string rootElementName, string rootElementNamespace)
         {
             // Load the XSD into a schema set and compile it up
             var schemaSet = new XmlSchemaSet();
 
-            // TODO - handle xsd:include, see https://github.com/dswisher/swish-mapper/issues/1
-
-            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read))
-            using (var reader = XmlReader.Create(stream))
-            {
-                schemaSet.Add(null, reader);
-            }
+            AddSchemaToSet(schemaSet, path);
 
             schemaSet.Compile();
 
@@ -46,6 +49,31 @@ namespace SwishMapper.Parsing.Xsd
             }
 
             return Task.FromResult(doc);
+        }
+
+
+        private void AddSchemaToSet(XmlSchemaSet set, string path)
+        {
+            logger.LogInformation("Loading XmlSchema from {Path}.", path);
+
+            // Load the schema, and add it to the set.
+            XmlSchema schema;
+
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read))
+            using (var reader = XmlReader.Create(stream))
+            {
+                schema = XmlSchema.Read(reader, null);
+
+                set.Add(schema);
+            }
+
+            // Process any includes that the schema might contain.
+            foreach (XmlSchemaInclude include in schema.Includes)
+            {
+                var includePath = Path.Combine(Path.GetDirectoryName(path), include.SchemaLocation);
+
+                AddSchemaToSet(set, includePath);
+            }
         }
 
 
