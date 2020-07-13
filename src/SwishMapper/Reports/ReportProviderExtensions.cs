@@ -27,6 +27,7 @@ namespace SwishMapper.Reports
 
             report.OutputPath = path;
             report.Model = model;
+            report.Title = model.Name;
 
             return report;
         }
@@ -38,6 +39,7 @@ namespace SwishMapper.Reports
 
             report.OutputPath = path;
             report.Mapping = mapping;
+            report.Title = $"Mapping: {mapping.SourceModel.Name} -> {mapping.SinkModel.Name}";
 
             return report;
         }
@@ -49,6 +51,7 @@ namespace SwishMapper.Reports
 
             report.OutputPath = path;
             report.Model = model;
+            report.Title = "Data Project Index";
 
             return report;
         }

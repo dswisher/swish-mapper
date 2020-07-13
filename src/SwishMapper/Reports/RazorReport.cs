@@ -19,6 +19,7 @@ namespace SwishMapper.Reports
 
 
         public string OutputPath { get; set; }
+        public string Title { get; set; }
 
 
         public abstract Task RunAsync();
@@ -29,7 +30,10 @@ namespace SwishMapper.Reports
             // Run the report
             using (var writer = new StreamWriter(OutputPath))
             {
-                Engine.Razor.Run(templateName, writer, typeof(T), model);
+                DynamicViewBag bag = new DynamicViewBag();
+                bag.AddValue("Title", Title);
+
+                Engine.Razor.Run(templateName, writer, typeof(T), model, bag);
             }
         }
     }

@@ -60,27 +60,27 @@ namespace SwishMapper.Cli
                     {
                         if (ex is ParserException)
                         {
-                            Log.Error(ex.Message);
+                            Log.Error("{Type}: {Message}", ex.GetType().Name, ex.Message);
                             return true;
                         }
                         else if (ex is TypeException)
                         {
-                            Log.Error(ex.Message);
+                            Log.Error("{Type}: {Message}", ex.GetType().Name, ex.Message);
                             return true;
                         }
                         else if (ex is TemplateCompilationException)
                         {
-                            Log.Error(ex.Message);
+                            Log.Error("{Type}: {Message}", ex.GetType().Name, ex.Message);
                             return true;
                         }
                         else if (ex is ProjectPlannerException)
                         {
-                            Log.Error(ex.Message);
+                            Log.Error("{Type}: {Message}", ex.GetType().Name, ex.Message);
                             return true;
                         }
                         else if (ex is LoaderException)
                         {
-                            Log.Error(ex.Message);
+                            Log.Error("{Type}: {Message}", ex.GetType().Name, ex.Message);
                             return true;
                         }
 
