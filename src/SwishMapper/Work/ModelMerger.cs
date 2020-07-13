@@ -45,6 +45,7 @@ namespace SwishMapper.Work
                     var targetAttribute = targetEntity.FindOrCreateAttribute(sourceAttribute.Name, sourceAttribute.Sources);
 
                     MergeProperty(targetAttribute, sourceAttribute, "DataType", x => x.DataType, (x, y) => x.DataType = y);
+
                     MergeProperty(targetAttribute, sourceAttribute, "MinOccurs", x => x.MinOccurs, (x, y) => x.MinOccurs = y);
                     MergeProperty(targetAttribute, sourceAttribute, "MaxOccurs", x => x.MaxOccurs, (x, y) => x.MaxOccurs = y);
                     MergeProperty(targetAttribute, sourceAttribute, "Comment", x => x.Comment, (x, y) => x.Comment = y);
@@ -70,8 +71,14 @@ namespace SwishMapper.Work
             var source = getter(sourceEntity);
             var target = getter(targetEntity);
 
+            // If we don't have data, we're done.
+            if (string.IsNullOrEmpty(source))
+            {
+                return;
+            }
+
             // If the source or target is empty, we can't have a conflict
-            if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(target))
+            if (string.IsNullOrEmpty(target))
             {
                 setter(targetEntity, source);
             }
@@ -93,8 +100,44 @@ namespace SwishMapper.Work
             var source = getter(sourceAttribute);
             var target = getter(targetAttribute);
 
+            // If we don't have data, we're done.
+            if (string.IsNullOrEmpty(source))
+            {
+                return;
+            }
+
             // If the source or target is empty, we can't have a conflict
-            if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(target))
+            if (string.IsNullOrEmpty(target))
+            {
+                setter(targetAttribute, source);
+            }
+            else if (source != target)
+            {
+                var modelId = sourceAttribute.Parent.Parent.Id;
+                var entityName = sourceAttribute.Parent.Name;
+
+                var sourceSource = sourceAttribute.Sources.First()?.ShortName;
+
+                logger.LogWarning("Merge conflict from {Source} on {Model}, {Entity}.{Attribute}, {PropName} has current value '{Old}', proposed value is '{New}'.",
+                        sourceSource, modelId, entityName, sourceAttribute.Name, propertyName, target, source);
+            }
+        }
+
+
+        private void MergeProperty(DataAttribute targetAttribute, DataAttribute sourceAttribute, string propertyName,
+                Func<DataAttribute, DataType> getter, Action<DataAttribute, DataType> setter)
+        {
+            var source = getter(sourceAttribute);
+            var target = getter(targetAttribute);
+
+            // If we don't have data, we're done.
+            if (source == null)
+            {
+                return;
+            }
+
+            // If the target is empty, we can't have a conflict
+            if (target == null)
             {
                 setter(targetAttribute, source);
             }

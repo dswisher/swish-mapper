@@ -42,3 +42,7 @@ td.right {
     text-align: right;
 }
 
+td.highlight {
+    background-color: yellow;
+}
+

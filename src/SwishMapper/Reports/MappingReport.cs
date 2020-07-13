@@ -38,17 +38,24 @@ namespace SwishMapper.Reports
                 Name = $"{Mapping.SourceModel.Name} -> {Mapping.SinkModel.Name}"
             };
 
-            // TODO - create empty entries for all entities/attributes in the sink model
-
+            // Add the maps. For now, keep track of the entities...
             foreach (var map in Mapping.Maps)
             {
                 // The report is sink-oriented, so find the sink entity and attribute...
                 var sinkEntity = model.FindOrCreateEntity(map.ToAttribute.Parent.Name);
                 var sinkAttribute = sinkEntity.FindOrCreateAttribute(map.ToAttribute.Name);
 
+                // Add the map
                 sinkAttribute.Maps.Add(map);
+
+                // Add ALL attributes for this entity
+                foreach (var attribute in map.ToAttribute.Parent.Attributes)
+                {
+                    sinkEntity.FindOrCreateAttribute(attribute.Name);
+                }
             }
 
+            // Return what we've build
             return model;
         }
     }

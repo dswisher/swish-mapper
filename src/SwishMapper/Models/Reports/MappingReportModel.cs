@@ -9,7 +9,9 @@ namespace SwishMapper.Models.Reports
 
         public string Name { get; set; }
 
+
         public IEnumerable<MappingReportEntity> Entities { get { return entities.Values; } }
+
 
         public MappingReportEntity FindOrCreateEntity(string name)
         {

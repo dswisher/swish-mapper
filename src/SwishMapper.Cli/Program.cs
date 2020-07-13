@@ -63,6 +63,11 @@ namespace SwishMapper.Cli
                             Log.Error(ex.Message);
                             return true;
                         }
+                        else if (ex is TypeException)
+                        {
+                            Log.Error(ex.Message);
+                            return true;
+                        }
                         else if (ex is TemplateCompilationException)
                         {
                             Log.Error(ex.Message);

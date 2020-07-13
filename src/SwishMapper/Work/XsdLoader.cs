@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 using SwishMapper.Models.Data;
+using SwishMapper.Parsing;
 using SwishMapper.Parsing.Xsd;
 
 namespace SwishMapper.Work
@@ -10,12 +11,15 @@ namespace SwishMapper.Work
     public class XsdLoader : IModelProducer
     {
         private readonly IXsdParser parser;
+        private readonly ITypeFactory typeFactory;
         private readonly ILogger logger;
 
         public XsdLoader(IXsdParser parser,
+                         ITypeFactory typeFactory,
                          ILogger<CsvLoader> logger)
         {
             this.parser = parser;
+            this.typeFactory = typeFactory;
             this.logger = logger;
         }
 
@@ -24,6 +28,7 @@ namespace SwishMapper.Work
         public string ModelName { get; set; }
         public string Path { get; set; }
         public string RootElement { get; set; }
+        public string ShortName { get; set; }
 
 
         public async Task<DataModel> RunAsync()
@@ -36,7 +41,7 @@ namespace SwishMapper.Work
 
             var source = new DataModelSource
             {
-                ShortName = "xsd",      // TODO - xyzzy - have project planner set the short name!
+                ShortName = ShortName,
                 Path = Path
             };
 
@@ -66,7 +71,7 @@ namespace SwishMapper.Work
                 {
                     var attribute = entity.FindOrCreateAttribute(xsdChild.Name, source);
 
-                    attribute.DataType = xsdChild.DataType;
+                    attribute.DataType = typeFactory.Make(xsdChild.DataType);
 
                     // TODO - set other properties: max-length, required, etc.
                 }
@@ -76,7 +81,12 @@ namespace SwishMapper.Work
                 {
                     var attribute = entity.FindOrCreateAttribute(xsdChild.Name, source);
 
-                    attribute.DataType = xsdChild.DataType;
+                    if (xsdChild.DataType != null)
+                    {
+                        // TODO - throw exception if DataType is null!
+                        attribute.DataType = typeFactory.Make(xsdChild.DataType, xsdChild.Name);
+                    }
+
                     attribute.MinOccurs = xsdChild.MinOccurs;
                     attribute.MaxOccurs = xsdChild.MaxOccurs;
 

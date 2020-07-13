@@ -18,6 +18,7 @@ namespace SwishMapper
             services.AddSingleton<IProjectParser, ProjectParser>();
             services.AddSingleton<IProjectPlanner, ProjectPlanner>();
             services.AddSingleton<IReportPlanner, ReportPlanner>();
+            services.AddSingleton<ITypeFactory, TypeFactory>();
             services.AddSingleton<IXsdParser, XsdParser>();
 
             services.AddTransient<CsvLoader>();

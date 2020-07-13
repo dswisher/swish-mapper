@@ -107,6 +107,7 @@ namespace SwishMapper.Work
             // TODO - verify the path exists, and if not, throw an exception
 
             loader.Path = modelPopulator.Path;
+            loader.ShortName = "csv";
             loader.ModelId = projectModel.Id;
             loader.ModelName = projectModel.Name;
 
@@ -132,6 +133,7 @@ namespace SwishMapper.Work
             // TODO - verify the path exists, and if not, throw an exception
 
             loader.Path = modelPopulator.Path;
+            loader.ShortName = "xsd";
             loader.RootElement = modelPopulator.RootEntity;
             loader.ModelId = projectModel.Id;
             loader.ModelName = projectModel.Name;

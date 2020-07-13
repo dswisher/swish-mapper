@@ -32,9 +32,7 @@ namespace SwishMapper.Models.Data
         /// <summary>
         /// The data type of this attribute.
         /// </summary>
-        // TODO - how to handle complex types? Perhaps this should be a class?
-        public string DataType { get; set; }
-
+        public DataType DataType { get; set; }
 
         public string MinOccurs { get; set; }
         public string MaxOccurs { get; set; }

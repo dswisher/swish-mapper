@@ -6,15 +6,19 @@ using System.Threading.Tasks;
 using CsvHelper;
 using Microsoft.Extensions.Logging;
 using SwishMapper.Models.Data;
+using SwishMapper.Parsing;
 
 namespace SwishMapper.Work
 {
     public class CsvLoader : IModelProducer
     {
+        private readonly ITypeFactory typeFactory;
         private readonly ILogger logger;
 
-        public CsvLoader(ILogger<CsvLoader> logger)
+        public CsvLoader(ITypeFactory typeFactory,
+                         ILogger<CsvLoader> logger)
         {
+            this.typeFactory = typeFactory;
             this.logger = logger;
         }
 
@@ -22,6 +26,7 @@ namespace SwishMapper.Work
         public string ModelId { get; set; }
         public string ModelName { get; set; }
         public string Path { get; set; }
+        public string ShortName { get; set; }
 
 
         public async Task<DataModel> RunAsync()
@@ -34,7 +39,7 @@ namespace SwishMapper.Work
 
             var source = new DataModelSource
             {
-                ShortName = "csv",      // TODO - xyzzy - have project planner set the short name!
+                ShortName = ShortName,
                 Path = Path
             };
 
@@ -80,7 +85,9 @@ namespace SwishMapper.Work
                     {
                         var attribute = entity.FindOrCreateAttribute(attributeName, source);
 
-                        attribute.DataType = csv.GetField(3);
+                        var csvDataType = csv.GetField(3).Trim();
+
+                        attribute.DataType = typeFactory.Make(csvDataType, attributeName);
 
                         // TODO - use remaining attributes
                         // maxlength - 4
