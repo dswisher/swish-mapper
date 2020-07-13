@@ -1,4 +1,5 @@
 
+using System;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
@@ -55,13 +56,13 @@ namespace SwishMapper.Work
             // Populate the model from the parsed schema
             foreach (var xsdElement in xsdDoc.Elements)
             {
-                // TODO - still want to skip elements? Leave that for cleanup?
-                // If this element is a simple one, skip it. While we could look at the data
-                // type, instead we make sure it has at least on attribute and/or one child element.
-                // if ((xsdElement.Attributes.Count == 0) && (xsdElement.Elements.Count == 0))
-                // {
-                //     continue;
-                // }
+                // Simple elements (string, int, etc) have a datatype. It appears that complex
+                // elements (for which we want to create entities) have a null datatype. So,
+                // here we skip elements with a null datatype.
+                if (xsdElement.DataType != null)
+                {
+                    continue;
+                }
 
                 // Find or create the entity
                 var entity = model.FindOrCreateEntity(xsdElement.Name, source);
