@@ -1,0 +1,12 @@
+
+model solo
+{
+    name "my model"
+
+    samples watchlist-full
+    {
+        files "./dmi-202007*.zip";
+        zip-mask "DMI_XML_.*";
+    }
+}
+

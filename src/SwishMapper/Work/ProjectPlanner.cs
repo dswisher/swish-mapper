@@ -1,5 +1,6 @@
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -38,7 +39,7 @@ namespace SwishMapper.Work
             // Add a worker to create each data model
             foreach (var model in project.Models)
             {
-                root.AddWorker(CreateWorker(model));
+                root.AddWorker(CreateWorker(model, settings));
             }
 
             // Add a worker to process each mapping
@@ -71,7 +72,7 @@ namespace SwishMapper.Work
         }
 
 
-        private DataModelAssembler CreateWorker(ProjectModel model)
+        private DataModelAssembler CreateWorker(ProjectModel model, AppSettings settings)
         {
             var worker = serviceProvider.GetRequiredService<DataModelAssembler>();
 
@@ -83,11 +84,15 @@ namespace SwishMapper.Work
                 switch (populator.Type)
                 {
                     case ProjectModelPopulatorType.Csv:
-                        worker.Mergers.Add(CreateCsvLoader(populator, model));
+                        worker.Mergers.Add(CreateCsvLoader((CsvProjectModelPopulator)populator, model));
                         break;
 
                     case ProjectModelPopulatorType.Xsd:
-                        worker.Mergers.Add(CreateXsdLoader(populator, model));
+                        worker.Mergers.Add(CreateXsdLoader((XsdProjectModelPopulator)populator, model));
+                        break;
+
+                    case ProjectModelPopulatorType.Sample:
+                        worker.Mergers.Add(CreateSampleLoader((SampleProjectModelPopulator)populator, model, settings));
                         break;
 
                     default:
@@ -99,7 +104,33 @@ namespace SwishMapper.Work
         }
 
 
-        private IModelMerger CreateCsvLoader(ProjectModelPopulator modelPopulator, ProjectModel projectModel)
+        private IModelMerger CreateSampleLoader(SampleProjectModelPopulator modelPopulator, ProjectModel projectModel, AppSettings settings)
+        {
+            // Going through lots of files to gather up the samples takes quite some time. To amortize
+            // the impact, we do the sampling and write a summary to the scratch area. The normal pipeline
+            // reads this summary and loads it into the model. The process begins by creating a sample writer...
+            var writer = serviceProvider.GetRequiredService<SampleWriter>();
+
+            writer.OutputPath = Path.Combine(settings.TempDir, $"{projectModel.Id}-{modelPopulator.Id}.json");
+            writer.InputFiles = modelPopulator.Files;
+            writer.ZipMask = modelPopulator.ZipMask;
+
+            // Create the loader
+            var loader = serviceProvider.GetRequiredService<SampleLoader>();
+
+            loader.Path = writer.OutputPath;
+            loader.Writer = writer;
+
+            // Wrap the loader in a merger
+            var merger = serviceProvider.GetRequiredService<ModelMerger>();
+
+            merger.Input = loader;
+
+            return merger;
+        }
+
+
+        private IModelMerger CreateCsvLoader(CsvProjectModelPopulator modelPopulator, ProjectModel projectModel)
         {
             // Create the loader
             var loader = serviceProvider.GetRequiredService<CsvLoader>();
@@ -125,7 +156,7 @@ namespace SwishMapper.Work
         }
 
 
-        private IModelMerger CreateXsdLoader(ProjectModelPopulator modelPopulator, ProjectModel projectModel)
+        private IModelMerger CreateXsdLoader(XsdProjectModelPopulator modelPopulator, ProjectModel projectModel)
         {
             // Create the loader
             var loader = serviceProvider.GetRequiredService<XsdLoader>();

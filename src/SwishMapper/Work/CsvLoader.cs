@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using CsvHelper;
 using Microsoft.Extensions.Logging;
+using SwishMapper.Extensions;
 using SwishMapper.Models.Data;
 using SwishMapper.Parsing;
 
@@ -64,7 +65,7 @@ namespace SwishMapper.Work
                     // If we have an entity name, update it, otherwise keep using the last seen name.
                     if (!string.IsNullOrEmpty(csv.GetField(0)))
                     {
-                        entityName = csv.GetField(0);
+                        entityName = csv.GetField(0).Crush();
                     }
 
                     // Find or create the entity

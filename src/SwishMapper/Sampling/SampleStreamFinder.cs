@@ -27,8 +27,10 @@ namespace SwishMapper.Sampling
                 zipMask = new Regex(options.ZipMask, RegexOptions.Compiled | RegexOptions.IgnoreCase);
             }
 
-            foreach (var path in options.InputFiles)
+            foreach (var file in options.InputFiles)
             {
+                var path = file.Path;
+
                 if (path.EndsWith(".zip"))
                 {
                     using (var zip = ZipFile.OpenRead(path))

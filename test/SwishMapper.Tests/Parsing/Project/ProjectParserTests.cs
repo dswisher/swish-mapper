@@ -90,6 +90,7 @@ namespace SwishMapper.Tests.Parsing.Project
         [Theory]
         [InlineData("one-csv.sm", "solo", ProjectModelPopulatorType.Csv)]
         [InlineData("one-xsd.sm", "solo", ProjectModelPopulatorType.Xsd)]
+        [InlineData("one-sample.sm", "solo", ProjectModelPopulatorType.Sample)]
         public async Task PopulatorsAreParsed(string filename, string modelId, ProjectModelPopulatorType type)
         {
             // Arrange
@@ -121,7 +122,18 @@ namespace SwishMapper.Tests.Parsing.Project
             // Assert
             var populator = project.Models.First(x => x.Id == modelId).Populators.First();
 
-            populator.Path.Should().Be(expected);
+            if (populator is CsvProjectModelPopulator)
+            {
+                ((CsvProjectModelPopulator)populator).Path.Should().Be(expected);
+            }
+            else if (populator is XsdProjectModelPopulator)
+            {
+                ((XsdProjectModelPopulator)populator).Path.Should().Be(expected);
+            }
+            else
+            {
+                true.Should().BeFalse();
+            }
         }
     }
 }

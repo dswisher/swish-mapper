@@ -96,7 +96,7 @@ namespace SwishMapper.Sampling
                     var desiredSamples = 5;
                     if ((uniques < 50) || (uniques < total * 0.01))
                     {
-                        desiredSamples = uniques;
+                        desiredSamples = Math.Max(uniques, 35);
                     }
 
                     // Create the item and add it to the result

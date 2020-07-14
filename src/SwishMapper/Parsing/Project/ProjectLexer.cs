@@ -30,14 +30,17 @@ namespace SwishMapper.Parsing.Project
             Keywords = new HashSet<string>();
 
             Keywords.Add("csv");
+            Keywords.Add("files");
             Keywords.Add("from");
             Keywords.Add("map");
             Keywords.Add("model");
             Keywords.Add("name");
             Keywords.Add("path");
             Keywords.Add("root");
+            Keywords.Add("samples");
             Keywords.Add("to");
             Keywords.Add("xsd");
+            Keywords.Add("zip-mask");
 
             PunctuationStarters = new HashSet<char>();
 

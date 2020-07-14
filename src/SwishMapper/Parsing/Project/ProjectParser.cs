@@ -1,4 +1,6 @@
 
+using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -126,6 +128,10 @@ namespace SwishMapper.Parsing.Project
                         OptionallyConsume(lexer, TokenKind.Semicolon);
                         break;
 
+                    case "samples":
+                        ParseSamplePopulator(model, lexer);
+                        break;
+
                     case "xsd":
                         ParseXsdPopulator(model, lexer);
                         break;
@@ -141,7 +147,7 @@ namespace SwishMapper.Parsing.Project
 
         private void ParseCsvPopulator(ProjectModel model, ProjectLexer lexer)
         {
-            var populator = new ProjectModelPopulator
+            var populator = new CsvProjectModelPopulator
             {
                 Type = ProjectModelPopulatorType.Csv
             };
@@ -172,7 +178,7 @@ namespace SwishMapper.Parsing.Project
 
         private void ParseXsdPopulator(ProjectModel model, ProjectLexer lexer)
         {
-            var populator = new ProjectModelPopulator
+            var populator = new XsdProjectModelPopulator
             {
                 Type = ProjectModelPopulatorType.Xsd
             };
@@ -199,6 +205,40 @@ namespace SwishMapper.Parsing.Project
 
                     default:
                         throw new ParserException($"Unexpected populator keyword: {keyword}.", lexer.Token);
+                }
+            }
+
+            Consume(lexer, TokenKind.RightCurly);
+        }
+
+
+        private void ParseSamplePopulator(ProjectModel model, ProjectLexer lexer)
+        {
+            var populator = new SampleProjectModelPopulator
+            {
+                Type = ProjectModelPopulatorType.Sample,
+                Id = Consume(lexer, TokenKind.Identifier)
+            };
+
+            model.Populators.Add(populator);
+
+            Consume(lexer, TokenKind.LeftCurly);
+
+            while (lexer.Token.Kind == TokenKind.Keyword)
+            {
+                var keyword = Consume(lexer, TokenKind.Keyword);
+
+                switch (keyword)
+                {
+                    case "files":
+                        populator.Files.AddRange(ConsumeWildcardFiles(lexer));
+                        OptionallyConsume(lexer, TokenKind.Semicolon);
+                        break;
+
+                    case "zip-mask":
+                        populator.ZipMask = Consume(lexer, TokenKind.String);
+                        OptionallyConsume(lexer, TokenKind.Semicolon);
+                        break;
                 }
             }
 
@@ -237,6 +277,24 @@ namespace SwishMapper.Parsing.Project
             var fragment = Consume(lexer, TokenKind.String);
 
             return Path.Combine(Path.GetDirectoryName(lexer.FilePath), fragment);
+        }
+
+
+        private IEnumerable<SampleInputFile> ConsumeWildcardFiles(ProjectLexer lexer)
+        {
+            var mask = Consume(lexer, TokenKind.String);
+
+            var directory = new DirectoryInfo(Path.GetDirectoryName(mask));
+            var filemask = Path.GetFileName(mask);
+
+            foreach (var info in directory.GetFiles(filemask).OrderBy(x => x.Name))
+            {
+                yield return new SampleInputFile
+                {
+                    Path = info.FullName,
+                    LastWriteUtc = info.LastWriteTimeUtc
+                };
+            }
         }
 
 
