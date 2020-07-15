@@ -124,7 +124,7 @@ namespace SwishMapper.Work
             loader.ModelName = projectModel.Name;
 
             // Wrap the loader in a merger
-            var merger = serviceProvider.GetRequiredService<ModelMerger>();
+            var merger = serviceProvider.GetRequiredService<IModelMerger>();
 
             merger.Input = loader;
 
@@ -150,7 +150,7 @@ namespace SwishMapper.Work
             cleaner.Input = loader;
 
             // Wrap the cleaner in a merger
-            var merger = serviceProvider.GetRequiredService<ModelMerger>();
+            var merger = serviceProvider.GetRequiredService<IModelMerger>();
 
             merger.Input = cleaner;
 
@@ -177,7 +177,7 @@ namespace SwishMapper.Work
             cleaner.Input = loader;
 
             // Wrap the cleaner in a merger
-            var merger = serviceProvider.GetRequiredService<ModelMerger>();
+            var merger = serviceProvider.GetRequiredService<IModelMerger>();
 
             merger.Input = cleaner;
 

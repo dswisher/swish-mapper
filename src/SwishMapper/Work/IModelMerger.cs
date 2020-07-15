@@ -10,6 +10,8 @@ namespace SwishMapper.Work
     /// </summary>
     public interface IModelMerger
     {
+        IModelProducer Input { get; set; }
+
         Task RunAsync(DataModel model);
         void Dump(PlanDumperContext context);
     }

@@ -35,13 +35,15 @@ namespace SwishMapper.Work
             };
 
             // Go through all the mergers, and have 'em do the needful.
-            // TODO - do we care at all about ordering?
-            foreach (var pop in mergers)
+            foreach (var merger in mergers)
             {
-                await pop.RunAsync(model);
+                await merger.RunAsync(model);
             }
 
             logger.LogDebug("DataModelAssembler, {Name}, entity count = {Num}.", Name, model.Entities.Count());
+
+            // Go through and set the "referenced by" field
+            SetReferencedBy(model);
 
             // Return what we've built
             return model;
@@ -57,6 +59,28 @@ namespace SwishMapper.Work
                 foreach (var child in mergers)
                 {
                     child.Dump(childContext);
+                }
+            }
+        }
+
+
+        private void SetReferencedBy(DataModel model)
+        {
+            foreach (var entity in model.Entities)
+            {
+                foreach (var attribute in entity.Attributes)
+                {
+                    if (attribute.DataType?.Type == PrimitiveType.Ref)
+                    {
+                        var target = model.FindEntity(attribute.DataType.RefName);
+
+                        // TODO - xyzzy - if target isn't found, we have an issue - throw a loader exception?
+
+                        if (target != null)
+                        {
+                            target.ReferencedBy.Add(entity);
+                        }
+                    }
                 }
             }
         }

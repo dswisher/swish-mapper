@@ -72,10 +72,10 @@ namespace SwishMapper.Work
                     var entity = model.FindOrCreateEntity(entityName, source);
 
                     // Attributes could be in one of two columns.
-                    var attributeName = csv.GetField(1);
+                    var attributeName = csv.GetField(1).Crush();
                     if (string.IsNullOrEmpty(attributeName))
                     {
-                        attributeName = csv.GetField(2);
+                        attributeName = csv.GetField(2).Crush();
                     }
 
                     // Grab the comment (if any)
@@ -88,16 +88,30 @@ namespace SwishMapper.Work
 
                         var csvDataType = csv.GetField(3).Trim();
 
-                        attribute.DataType = typeFactory.Make(csvDataType, attributeName);
-
                         // TODO - use remaining attributes
-                        // maxlength - 4
+                        var csvMaxLength = csv.GetField(4);
+
                         // attribute spec - 5 (aka required)
                         attribute.MinOccurs = csv.GetField(6);
                         attribute.MaxOccurs = csv.GetField(7);
 
                         // tokens - 8 (aka enum values)
 
+                        int? maxLength = null;
+                        if (!string.IsNullOrEmpty(csvMaxLength))
+                        {
+                            int i;
+                            if (int.TryParse(csvMaxLength, out i))
+                            {
+                                maxLength = i;
+                            }
+                            else
+                            {
+                                // TODO - throw a loader exception!
+                            }
+                        }
+
+                        attribute.DataType = typeFactory.Make(csvDataType, attributeName, maxLength);
                         attribute.Comment = comment;
                     }
                     else if (!string.IsNullOrEmpty(comment))

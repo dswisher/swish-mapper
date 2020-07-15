@@ -1,17 +1,31 @@
 @{Layout = "layout";}
+@using SwishMapper.Models.Data
 
 <h1>@Model.Name Model</h1>
 
-<h2>Entities</h2>
+<h2>Contents</h2>
+
+<ul class="toc">
+<li><a href="#section-entities">Entities</a></li>
+<ul>
+@foreach (var entity in Model.Entities.OrderBy(x => x.Name))
+{
+    <li class="subitem"><a href="#@entity.Name">@entity.Name</a></li>
+}
+</ul>
+<li><a href="#section-data-model-sources">Data Model Sources</a></li>
+</ul>
+
+<h2 id="section-entities">Entities</h2>
 
 @foreach (var entity in Model.Entities.OrderBy(x => x.Name))
 {
-    <h3>@entity.Name</h3>
+    <h3 id="@entity.Name">@entity.Name</h3>
 
     <table>
         <thead>
             <tr>
-                <th colspan="2">Details</th>
+                <th colspan="2">Entity Details</th>
             </tr>
             <tr>
                 <th>Name</th>
@@ -26,6 +40,15 @@
             <tr>
                 <td>Sources</td>
                 <td>@string.Join(", ", entity.Sources.Select(x => x.ShortName).OrderBy(x => x))</td>
+            </tr>
+            <tr>
+                <td>Referenced By</td>
+                <td>
+                    @foreach (var rb in entity.ReferencedBy)
+                    {
+                        <span class="comma"><a href="#@rb.Name">@rb.Name</a></span>
+                    }
+                </td>
             </tr>
         </tbody>
     </table>
@@ -52,7 +75,14 @@
             {
                 <tr>
                     <td>@attribute.Name</td>
-                    <td>@attribute.DataType</td>
+                    @if (attribute.DataType?.Type == PrimitiveType.Ref)
+                    {
+                        <td>ref(<a href="#@attribute.DataType.RefName">@attribute.DataType.RefName</a>)</td>
+                    }
+                    else
+                    {
+                        <td>@attribute.DataType</td>
+                    }
                     <td class="right">@attribute.MinOccurs</td>
                     <td class="right">@attribute.MaxOccurs</td>
                     <td>@string.Join(", ", attribute.Sources.Select(x => x.ShortName).OrderBy(x => x))</td>
@@ -100,7 +130,7 @@
 }
 
 
-<h2>Data Model Sources</h2>
+<h2 id="section-data-model-sources">Data Model Sources</h2>
 
 <table>
     <thead>

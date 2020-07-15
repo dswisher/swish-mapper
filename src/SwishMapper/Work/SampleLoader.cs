@@ -80,7 +80,7 @@ namespace SwishMapper.Work
                 {
                     SampleId = SampleId,
                     Path = dataPoint.Path,
-                    Top5 = dataPoint.Samples.Select(x => x.Value)
+                    Top5 = dataPoint.Samples.Select(x => x.Value).Take(5)
                 });
             }
 

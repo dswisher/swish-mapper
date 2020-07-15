@@ -11,13 +11,13 @@ namespace SwishMapper.Parsing
         private static readonly DataType StringType = new DataType(PrimitiveType.String);
 
 
-        public DataType Make(string dataTypeName)
+        public DataType Make(string dataTypeName, int? maxLength)
         {
-            return Make(dataTypeName, null);
+            return Make(dataTypeName, null, maxLength);
         }
 
 
-        public DataType Make(string dataTypeName, string entityName)
+        public DataType Make(string dataTypeName, string entityName, int? maxLength)
         {
             switch (dataTypeName.ToUpper())
             {
@@ -41,7 +41,14 @@ namespace SwishMapper.Parsing
                     return new DataType(entityName);
 
                 case "STRING":
-                    return StringType;
+                    if (maxLength.HasValue)
+                    {
+                        return new DataType(PrimitiveType.String, maxLength);
+                    }
+                    else
+                    {
+                        return StringType;
+                    }
 
                 default:
                     throw new TypeException($"Unable to construct a type from dataTypeName '{dataTypeName}' and entityName '{entityName}'.");

@@ -46,3 +46,30 @@ td.highlight {
     background-color: yellow;
 }
 
+ul.toc {
+    columns: 3;
+}
+
+li.subitem {
+    font-size: 0.85em;
+}
+
+/* See https://stackoverflow.com/a/27836948/282725 */
+/*
+.comma:not(:first-child) {
+    margin-left: -.3em;  
+}
+
+.comma:empty {
+    display: none;
+}
+
+.comma:not(:first-child):before {
+    content: ", ";
+}
+*/
+
+.comma:not(:last-child):after {
+    content: ", ";
+}
+

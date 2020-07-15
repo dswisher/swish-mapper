@@ -16,14 +16,16 @@ namespace SwishMapper.Models.Data
         Ref
     }
 
+
     /// <summary>
     /// Representation of an attribute's data type.
     /// </summary>
     public class DataType : IEquatable<DataType>
     {
-        public DataType(PrimitiveType type)
+        public DataType(PrimitiveType type, int? maxLength = null)
         {
             Type = type;
+            MaxLength = maxLength;
         }
 
 
@@ -40,6 +42,7 @@ namespace SwishMapper.Models.Data
 
 
         public PrimitiveType Type { get; private set; }
+        public int? MaxLength { get; private set; }
 
         public string RefName { get; private set; }
 
@@ -75,9 +78,42 @@ namespace SwishMapper.Models.Data
             {
                 return $"ref({RefName})";
             }
+            else if ((Type == PrimitiveType.String) && MaxLength.HasValue)
+            {
+                return $"string({MaxLength.Value})";
+            }
             else
             {
                 return Type.ToString().ToLower();
+            }
+        }
+
+
+        public static DataType FromString(string type)
+        {
+            if (type.Contains("("))
+            {
+                var bits = type.Split(new[] { "(", ")" }, StringSplitOptions.RemoveEmptyEntries);
+
+                var primitiveType = Enum.Parse<PrimitiveType>(bits[0], true);
+
+                switch (primitiveType)
+                {
+                    case PrimitiveType.Ref:
+                        return new DataType(bits[1]);
+
+                    case PrimitiveType.String:
+                        return new DataType(primitiveType, int.Parse(bits[1]));
+
+                    default:
+                        throw new System.Exception($"Unable to parse type: {type}.");
+                }
+            }
+            else
+            {
+                var primitiveType = Enum.Parse<PrimitiveType>(type, true);
+
+                return new DataType(primitiveType);
             }
         }
 
@@ -100,7 +136,7 @@ namespace SwishMapper.Models.Data
                 return RefName.Equals(other.RefName);
             }
 
-            return Type.Equals(other.Type);
+            return Type.Equals(other.Type) && MaxLength.Equals(other.MaxLength);
         }
 
 

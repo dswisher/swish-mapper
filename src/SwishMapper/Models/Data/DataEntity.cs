@@ -14,6 +14,7 @@ namespace SwishMapper.Models.Data
     {
         private readonly List<DataAttribute> attributes = new List<DataAttribute>();
         private readonly List<DataModelSource> sources = new List<DataModelSource>();
+        private readonly List<DataEntity> referencedBy = new List<DataEntity>();
 
 
         public DataEntity(DataModel parent, string name)
@@ -47,6 +48,11 @@ namespace SwishMapper.Models.Data
         /// The sources used to determine the definition of this entity.
         /// </summary>
         public IList<DataModelSource> Sources { get { return sources; } }
+
+        /// <summary>
+        /// Other entities that reference this entity.
+        /// </summary>
+        public IList<DataEntity> ReferencedBy { get { return referencedBy; } }
 
 
         public bool HasSamples
