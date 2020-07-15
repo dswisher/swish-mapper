@@ -61,6 +61,33 @@
             }
         </tbody>
     </table>
+
+    @if (entity.HasSamples)
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="2">Samples</th>
+                </tr>
+                <tr>
+                    <th>Attribute</th>
+                    <th>Path</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var attribute in entity.Attributes.Where(x => x.Samples.Count > 0).OrderBy(x => x.Name))
+                {
+                    foreach (var sample in attribute.Samples)
+                    {
+                        <tr>
+                            <td>@attribute.Name</td>
+                            <td>@sample.Path</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
 }
 
 

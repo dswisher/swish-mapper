@@ -1,6 +1,5 @@
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -118,8 +117,11 @@ namespace SwishMapper.Work
             // Create the loader
             var loader = serviceProvider.GetRequiredService<SampleLoader>();
 
-            loader.Path = writer.OutputPath;
+            loader.InputPath = writer.OutputPath;
             loader.Writer = writer;
+            loader.ShortName = "sample";
+            loader.ModelId = projectModel.Id;
+            loader.ModelName = projectModel.Name;
 
             // Wrap the loader in a merger
             var merger = serviceProvider.GetRequiredService<ModelMerger>();

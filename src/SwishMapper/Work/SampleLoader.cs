@@ -19,7 +19,10 @@ namespace SwishMapper.Work
         }
 
 
-        public string Path { get; set; }
+        public string ModelId { get; set; }
+        public string ModelName { get; set; }
+        public string InputPath { get; set; }
+        public string ShortName { get; set; }
         public SampleWriter Writer { get; set; }
 
 
@@ -30,14 +33,54 @@ namespace SwishMapper.Work
 
             // Load the sample file
             SampleJson content;
-            using (var stream = new FileStream(Path, FileMode.Open, FileAccess.Read))
+            using (var stream = new FileStream(InputPath, FileMode.Open, FileAccess.Read))
             {
                 content = await JsonSerializer.DeserializeAsync<SampleJson>(stream);
+
+                logger.LogDebug("Loaded samples from {Name}, found {Num1} filenames and {Num2} data points.",
+                        InputPath, content.Filenames.Count, content.DataPoints.Count);
             }
 
             // Create a model from the sample file
-            // TODO - xyzzy - implement SampleLoader RunAsync
-            var model = new DataModel();
+            var model = new DataModel
+            {
+                Id = ModelId,
+                Name = ModelName
+            };
+
+            var source = new DataModelSource
+            {
+                ShortName = ShortName,
+                Path = InputPath
+            };
+
+            model.Sources.Add(source);
+
+            foreach (var dataPoint in content.DataPoints)
+            {
+                var bits = dataPoint.Path.Split('/');
+                if (bits.Length < 2)
+                {
+                    throw new LoaderException($"Sample {dataPoint.Path} has too few segments!");
+                }
+
+                var entityName = bits[bits.Length - 2];
+                var attributeName = bits[bits.Length - 1];
+
+                if (attributeName.StartsWith("@"))
+                {
+                    attributeName = attributeName.Substring(1);
+                }
+
+                var entity = model.FindOrCreateEntity(entityName, source);
+                var attribute = entity.FindOrCreateAttribute(attributeName, source);
+
+                attribute.Samples.Add(new DataAttributeSample
+                {
+                    // TODO - xyzzy - populate the other sample data properties
+                    Path = dataPoint.Path
+                });
+            }
 
             logger.LogWarning("SampleLoader - still a WIP!");
 

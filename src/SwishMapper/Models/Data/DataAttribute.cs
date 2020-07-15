@@ -11,6 +11,7 @@ namespace SwishMapper.Models.Data
         private readonly List<DataAttributeMap> incomingMaps = new List<DataAttributeMap>();
         private readonly List<DataAttributeMap> outgoingMaps = new List<DataAttributeMap>();
         private readonly List<DataModelSource> sources = new List<DataModelSource>();
+        private readonly List<DataAttributeSample> samples = new List<DataAttributeSample>();
 
 
         public DataAttribute(DataEntity parent, string name)
@@ -39,8 +40,9 @@ namespace SwishMapper.Models.Data
 
         public string Comment { get; set; }
 
-        public IList<DataAttributeMap> IncomingMaps { get { return incomingMaps; } }
-        public IList<DataAttributeMap> OutgoingMaps { get { return outgoingMaps; } }
+        public List<DataAttributeMap> IncomingMaps { get { return incomingMaps; } }
+        public List<DataAttributeMap> OutgoingMaps { get { return outgoingMaps; } }
+        public List<DataAttributeSample> Samples { get { return samples; } }
 
         /// <summary>
         /// The sources used to determine the definition of this attribtue.

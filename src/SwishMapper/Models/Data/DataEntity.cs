@@ -49,6 +49,15 @@ namespace SwishMapper.Models.Data
         public IList<DataModelSource> Sources { get { return sources; } }
 
 
+        public bool HasSamples
+        {
+            get
+            {
+                return attributes.Any(x => x.Samples.Count > 0);
+            }
+        }
+
+
         public DataAttribute FindAttribute(string name)
         {
             return attributes.FirstOrDefault(x => x.Name == name);

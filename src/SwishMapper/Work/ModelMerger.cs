@@ -49,6 +49,8 @@ namespace SwishMapper.Work
                     MergeProperty(targetAttribute, sourceAttribute, "MinOccurs", x => x.MinOccurs, (x, y) => x.MinOccurs = y);
                     MergeProperty(targetAttribute, sourceAttribute, "MaxOccurs", x => x.MaxOccurs, (x, y) => x.MaxOccurs = y);
                     MergeProperty(targetAttribute, sourceAttribute, "Comment", x => x.Comment, (x, y) => x.Comment = y);
+
+                    targetAttribute.Samples.AddRange(sourceAttribute.Samples);
                 }
             }
         }

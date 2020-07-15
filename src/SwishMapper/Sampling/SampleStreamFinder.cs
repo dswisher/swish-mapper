@@ -39,13 +39,11 @@ namespace SwishMapper.Sampling
                         {
                             if (!Path.GetExtension(entry.Name).Equals(".xml", StringComparison.OrdinalIgnoreCase))
                             {
-                                // logger.LogDebug("zip entry -> not XML - extension is {Ext} - skipping", Path.GetExtension(entry.Name));
                                 continue;
                             }
 
                             if ((zipMask != null) && !zipMask.IsMatch(entry.Name))
                             {
-                                // logger.LogDebug("zip entry -> not a match for ZipMask - {Name}", entry.Name);
                                 continue;
                             }
 
