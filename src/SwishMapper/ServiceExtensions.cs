@@ -14,8 +14,6 @@ namespace SwishMapper
         public static ServiceCollection UseMapper(this ServiceCollection services)
         {
             services.AddSingleton<ILexerFactory, LexerFactory>();
-            services.AddSingleton<IMappingParser, MappingParser>();
-            services.AddSingleton<IMappingProcessor, MappingProcessor>();
             services.AddSingleton<IProjectParser, ProjectParser>();
             services.AddSingleton<IProjectPlanner, ProjectPlanner>();
             services.AddSingleton<IReportPlanner, ReportPlanner>();

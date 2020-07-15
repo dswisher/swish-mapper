@@ -25,7 +25,7 @@ namespace SwishMapper.Tests.Parsing.Project
 
         public ProjectParserTests()
         {
-            factory = new LexerFactory(null, lexerLogger.Object);
+            factory = new LexerFactory(lexerLogger.Object);
             parser = new ProjectParser(factory, logger.Object);
         }
 
