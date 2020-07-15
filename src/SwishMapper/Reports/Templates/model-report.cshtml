@@ -67,21 +67,30 @@
         <table>
             <thead>
                 <tr>
-                    <th colspan="2">Samples</th>
+                    <th colspan="4">Samples</th>
                 </tr>
                 <tr>
                     <th>Attribute</th>
+                    <th>Sample</th>
                     <th>Path</th>
+                    <th>Top 5 Values</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var attribute in entity.Attributes.Where(x => x.Samples.Count > 0).OrderBy(x => x.Name))
                 {
+                    var first = true;
                     foreach (var sample in attribute.Samples)
                     {
                         <tr>
-                            <td>@attribute.Name</td>
+                            @if (first)
+                            {
+                                first = false;
+                                <td rowspan="@attribute.Samples.Count">@attribute.Name</td>
+                            }
+                            <td>@sample.SampleId</td>
                             <td>@sample.Path</td>
+                            <td>@string.Join(", ", @sample.Top5)</td>
                         </tr>
                     }
                 }

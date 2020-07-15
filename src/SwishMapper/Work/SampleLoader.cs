@@ -1,5 +1,6 @@
 
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -22,7 +23,7 @@ namespace SwishMapper.Work
         public string ModelId { get; set; }
         public string ModelName { get; set; }
         public string InputPath { get; set; }
-        public string ShortName { get; set; }
+        public string SampleId { get; set; }
         public SampleWriter Writer { get; set; }
 
 
@@ -50,7 +51,7 @@ namespace SwishMapper.Work
 
             var source = new DataModelSource
             {
-                ShortName = ShortName,
+                ShortName = SampleId,
                 Path = InputPath
             };
 
@@ -77,8 +78,9 @@ namespace SwishMapper.Work
 
                 attribute.Samples.Add(new DataAttributeSample
                 {
-                    // TODO - xyzzy - populate the other sample data properties
-                    Path = dataPoint.Path
+                    SampleId = SampleId,
+                    Path = dataPoint.Path,
+                    Top5 = dataPoint.Samples.Select(x => x.Value)
                 });
             }
 

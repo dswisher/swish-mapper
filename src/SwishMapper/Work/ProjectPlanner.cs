@@ -119,7 +119,7 @@ namespace SwishMapper.Work
 
             loader.InputPath = writer.OutputPath;
             loader.Writer = writer;
-            loader.ShortName = "sample";
+            loader.SampleId = modelPopulator.Id;
             loader.ModelId = projectModel.Id;
             loader.ModelName = projectModel.Name;
 

@@ -39,5 +39,22 @@ namespace SwishMapper.Tests.Parsing
 
             lexer.Dispose();
         }
+
+
+        [Fact]
+        public void CanCreateProjectLexer()
+        {
+            // Arrange - any valid project file works
+            var path = FileFinder.FindProjectFile("one-xsd.sm").FullName;
+
+            // Act
+            var lexer = factory.CreateProjectLexer(path);
+
+            // Assert
+            lexer.Should().NotBeNull();
+            lexer.FilePath.Should().Be(path);
+
+            lexer.Dispose();
+        }
     }
 }
