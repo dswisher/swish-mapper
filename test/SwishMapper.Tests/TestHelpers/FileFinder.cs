@@ -11,6 +11,12 @@ namespace SwishMapper.Tests.TestHelpers
         }
 
 
+        public static string FindCsv(string name)
+        {
+            return Path.Join(FindDataDir().FullName, "csv", name);
+        }
+
+
         public static FileInfo FindProjectFile(string name)
         {
             return new FileInfo(Path.Join(FindDataDir().FullName, "projects", name));

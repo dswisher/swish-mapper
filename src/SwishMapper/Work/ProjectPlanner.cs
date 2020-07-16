@@ -134,7 +134,13 @@ namespace SwishMapper.Work
 
         private IModelMerger CreateCsvLoader(CsvProjectModelPopulator modelPopulator, ProjectModel projectModel)
         {
-            // Create the loader
+            // Create the normalizer. This reads the CSV file itself and transforms the rows into a
+            // fixed format that will be consumed by the loader.
+            var normalizer = serviceProvider.GetRequiredService<CsvNormalizer>();
+
+            normalizer.Path = modelPopulator.Path;
+
+            // Create the loader.
             var loader = serviceProvider.GetRequiredService<CsvLoader>();
 
             // TODO - verify the path exists, and if not, throw an exception
@@ -143,6 +149,7 @@ namespace SwishMapper.Work
             loader.ShortName = "csv";
             loader.ModelId = projectModel.Id;
             loader.ModelName = projectModel.Name;
+            loader.Input = normalizer;
 
             // Wrap the loader in a cleaner
             var cleaner = serviceProvider.GetRequiredService<ModelCleaner>();

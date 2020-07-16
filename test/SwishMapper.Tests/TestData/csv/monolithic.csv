@@ -1,0 +1,6 @@
+HEADER1
+entity-name, attr1, attr2, type  , maxlen, required, min-occur, max-occur, tokens, comments
+entity1    ,      ,      ,       ,       ,         ,          ,          ,       , the first entity
+           , kind ,      , string, 13    , required,          ,          ,       , the kind of thing
+           ,      , name , int   , 2     , optional,    1     , unbounded, A|B   ,    
+entity2    ,      ,      ,       ,       ,         ,          ,          ,       , the second entity

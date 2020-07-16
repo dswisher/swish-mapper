@@ -1,13 +1,8 @@
 
-using System;
-
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SwishMapper.Models.Data;
-using SwishMapper.Parsing;
-using SwishMapper.Parsing.Project;
-using SwishMapper.Tests.TestHelpers;
 using SwishMapper.Work;
 using Xunit;
 

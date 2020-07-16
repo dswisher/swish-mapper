@@ -29,6 +29,7 @@ namespace SwishMapper
 
             // TODO - use interfaces for these!!!
             services.AddTransient<CsvLoader>();
+            services.AddTransient<CsvNormalizer>();
             services.AddTransient<DataModelAssembler>();
             services.AddTransient<DataProjectAssembler>();
             services.AddTransient<MapLoader>();

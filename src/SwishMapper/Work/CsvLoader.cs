@@ -28,6 +28,7 @@ namespace SwishMapper.Work
         public string ModelName { get; set; }
         public string Path { get; set; }
         public string ShortName { get; set; }
+        public CsvNormalizer Input { get; set; }
 
 
         public async Task<DataModel> RunAsync()
@@ -46,78 +47,39 @@ namespace SwishMapper.Work
 
             model.Sources.Add(source);
 
-            using (var reader = new StreamReader(Path))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            var rows = await Input.RunAsync();
+
+            foreach (var row in rows)
             {
-                // TODO - for a first pass, I'm hard-coding the setup required to read a file for my
-                // specific situation. It can be generalized later.
-                // This is all a HACK!
+                // Find or create the entity and attribute
+                var entity = model.FindOrCreateEntity(row.EntityName, source);
 
-                // Skip two header rows, and set up some variables.
-                await csv.ReadAsync();
-                await csv.ReadAsync();
-
-                var entityName = string.Empty;
-
-                // Keep reading rows until we run out...
-                while (await csv.ReadAsync())
+                if (string.IsNullOrEmpty(row.AttributeName))
                 {
-                    // If we have an entity name, update it, otherwise keep using the last seen name.
-                    if (!string.IsNullOrEmpty(csv.GetField(0)))
+                    entity.Comment = row.Comment;
+                }
+                else
+                {
+                    var attribute = entity.FindOrCreateAttribute(row.AttributeName, source);
+
+                    int? maxLength = null;
+                    if (!string.IsNullOrEmpty(row.MaxLength))
                     {
-                        entityName = csv.GetField(0).Crush();
-                    }
-
-                    // Find or create the entity
-                    var entity = model.FindOrCreateEntity(entityName, source);
-
-                    // Attributes could be in one of two columns.
-                    var attributeName = csv.GetField(1).Crush();
-                    if (string.IsNullOrEmpty(attributeName))
-                    {
-                        attributeName = csv.GetField(2).Crush();
-                    }
-
-                    // Grab the comment (if any)
-                    var comment = csv.GetField(9);
-
-                    // If we have an attribute, set it, otherwise set the comment.
-                    if (!string.IsNullOrEmpty(attributeName))
-                    {
-                        var attribute = entity.FindOrCreateAttribute(attributeName, source);
-
-                        var csvDataType = csv.GetField(3).Trim();
-
-                        // TODO - use remaining attributes
-                        var csvMaxLength = csv.GetField(4);
-
-                        // attribute spec - 5 (aka required)
-                        attribute.MinOccurs = csv.GetField(6);
-                        attribute.MaxOccurs = csv.GetField(7);
-
-                        // tokens - 8 (aka enum values)
-
-                        int? maxLength = null;
-                        if (!string.IsNullOrEmpty(csvMaxLength))
+                        int i;
+                        if (int.TryParse(row.MaxLength, out i))
                         {
-                            int i;
-                            if (int.TryParse(csvMaxLength, out i))
-                            {
-                                maxLength = i;
-                            }
-                            else
-                            {
-                                // TODO - throw a loader exception!
-                            }
+                            maxLength = i;
                         }
+                        else
+                        {
+                            // TODO - throw a loader exception!
+                        }
+                    }
 
-                        attribute.DataType = typeFactory.Make(csvDataType, attributeName, maxLength);
-                        attribute.Comment = comment;
-                    }
-                    else if (!string.IsNullOrEmpty(comment))
-                    {
-                        entity.Comment = comment;
-                    }
+                    attribute.MinOccurs = row.MinOccurs;
+                    attribute.MaxOccurs = row.MaxOccurs;
+                    attribute.DataType = typeFactory.Make(row.DataType, row.AttributeName, maxLength);
+                    attribute.Comment = row.Comment;
                 }
             }
 
@@ -128,6 +90,11 @@ namespace SwishMapper.Work
         public void Dump(PlanDumperContext context)
         {
             context.WriteHeader(this, "{0}", Path);
+
+            using (var childContext = context.Push())
+            {
+                Input.Dump(childContext);
+            }
         }
     }
 }
