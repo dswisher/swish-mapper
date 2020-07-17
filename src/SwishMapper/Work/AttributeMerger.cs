@@ -21,12 +21,15 @@ namespace SwishMapper.Work
         {
             var mismatchCount = 0;
 
-            // TODO - xyzzy - be smarter about data type conflicts - i.e., if both are strings, and only one has a length, just use the length
             mismatchCount += MergeProperty(targetAttribute, sourceAttribute, "DataType", x => x.DataType, (x, y) => x.DataType = y);
-
             mismatchCount += MergeProperty(targetAttribute, sourceAttribute, "MinOccurs", x => x.MinOccurs, (x, y) => x.MinOccurs = y);
             mismatchCount += MergeProperty(targetAttribute, sourceAttribute, "MaxOccurs", x => x.MaxOccurs, (x, y) => x.MaxOccurs = y);
             mismatchCount += MergeProperty(targetAttribute, sourceAttribute, "Comment", x => x.Comment, (x, y) => x.Comment = y);
+
+            if (sourceAttribute.IsXmlAttribute)
+            {
+                targetAttribute.IsXmlAttribute = true;
+            }
 
             targetAttribute.Samples.AddRange(sourceAttribute.Samples);
 

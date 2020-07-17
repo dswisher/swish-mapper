@@ -1,5 +1,4 @@
 
-using System;
 using System.Threading.Tasks;
 
 using FluentAssertions;
@@ -35,17 +34,23 @@ namespace SwishMapper.Tests.Work
             // Assert
             rows.Should().HaveCount(4);
 
-            // Entity name
-            rows[0].EntityName.Should().Be("entity1");
-            rows[1].EntityName.Should().Be("entity1");
-            rows[2].EntityName.Should().Be("entity1");
-            rows[3].EntityName.Should().Be("entity2");
+            // Element name
+            rows[0].ElementName.Should().Be("element1");
+            rows[1].ElementName.Should().Be("element1");
+            rows[2].ElementName.Should().Be("element1");
+            rows[3].ElementName.Should().Be("element2");
 
             // Attribute name
             rows[0].AttributeName.Should().BeNullOrEmpty();
             rows[1].AttributeName.Should().Be("kind");
-            rows[2].AttributeName.Should().Be("name");
+            rows[2].AttributeName.Should().BeNullOrEmpty();
             rows[3].AttributeName.Should().BeNullOrEmpty();
+
+            // Child element name
+            rows[0].ChildElementName.Should().BeNullOrEmpty();
+            rows[1].ChildElementName.Should().BeNullOrEmpty();
+            rows[2].ChildElementName.Should().Be("name");
+            rows[3].ChildElementName.Should().BeNullOrEmpty();
 
             // Data type
             rows[0].DataType.Should().BeNullOrEmpty();

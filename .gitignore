@@ -8,6 +8,7 @@ src/SwishMapper.Cli/SAMPLES/
 src/SwishMapper.Cli/OUTPUT/
 src/SwishMapper.Cli/SCRATCH/
 src/SwishMapper.Cli/do-feeds.sh
+src/SwishMapper.Cli/do-test.sh
 
 src/SwishMapper.Sampler/my-samples.json
 src/SwishMapper.Sampler/OUTPUT/

@@ -24,12 +24,13 @@ namespace SwishMapper
             services.AddTransient<ISampleStreamFinder, SampleStreamFinder>();
             services.AddTransient<IXmlSampler, XmlSampler>();
 
-            services.AddTransient<IModelMerger, ModelMerger>();
             services.AddTransient<IAttributeMerger, AttributeMerger>();
+            services.AddTransient<ICsvNormalizer, CsvNormalizer>();
+            services.AddTransient<ICsvToXsdTranslator, CsvToXsdTranslator>();
+            services.AddTransient<IModelMerger, ModelMerger>();
+            services.AddTransient<IXsdToModelTranslator, XsdToModelTranslator>();
 
             // TODO - use interfaces for these!!!
-            services.AddTransient<CsvLoader>();
-            services.AddTransient<CsvNormalizer>();
             services.AddTransient<DataModelAssembler>();
             services.AddTransient<DataProjectAssembler>();
             services.AddTransient<MapLoader>();

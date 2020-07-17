@@ -27,6 +27,7 @@ namespace SwishMapper.Parsing.Xsd
         }
 
 
+        // TODO - xyzzy - depth is obsolete?
         public int Depth { get; private set; }
         public XmlSchemaSet SchemaSet { get { return schemaSet; } }
         public IDictionary<string, XsdElement> Elements { get { return elements; } }

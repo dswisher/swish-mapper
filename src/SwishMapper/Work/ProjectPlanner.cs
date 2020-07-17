@@ -83,7 +83,7 @@ namespace SwishMapper.Work
                 switch (populator.Type)
                 {
                     case ProjectModelPopulatorType.Csv:
-                        worker.Mergers.Add(CreateCsvLoader((CsvProjectModelPopulator)populator, model));
+                        worker.Mergers.Add(CreateCsvLoader((CsvProjectModelPopulator)populator, model, settings));
                         break;
 
                     case ProjectModelPopulatorType.Xsd:
@@ -132,34 +132,37 @@ namespace SwishMapper.Work
         }
 
 
-        private IModelMerger CreateCsvLoader(CsvProjectModelPopulator modelPopulator, ProjectModel projectModel)
+        private IModelMerger CreateCsvLoader(CsvProjectModelPopulator modelPopulator, ProjectModel projectModel, AppSettings settings)
         {
             // Create the normalizer. This reads the CSV file itself and transforms the rows into a
             // fixed format that will be consumed by the loader.
-            var normalizer = serviceProvider.GetRequiredService<CsvNormalizer>();
-
-            normalizer.Path = modelPopulator.Path;
-
-            // Create the loader.
-            var loader = serviceProvider.GetRequiredService<CsvLoader>();
+            var normalizer = serviceProvider.GetRequiredService<ICsvNormalizer>();
 
             // TODO - verify the path exists, and if not, throw an exception
 
-            loader.Path = modelPopulator.Path;
-            loader.ShortName = "csv";
-            loader.ModelId = projectModel.Id;
-            loader.ModelName = projectModel.Name;
-            loader.Input = normalizer;
+            normalizer.Path = modelPopulator.Path;
 
-            // Wrap the loader in a cleaner
-            var cleaner = serviceProvider.GetRequiredService<ModelCleaner>();
+            // Create the CSV-to-XSD translator
+            var csvToXsd = serviceProvider.GetRequiredService<ICsvToXsdTranslator>();
 
-            cleaner.Input = loader;
+            csvToXsd.Input = normalizer;
 
-            // Wrap the cleaner in a merger
+            // TODO - make debugging an optional flag, either on the command-line or perhaps in the project file
+            csvToXsd.DebugDumpPath = Path.Combine(settings.TempDir, $"{projectModel.Id}-csvToXsd.json");
+
+            // Create the XSD-to-model translator
+            var xsdToModel = serviceProvider.GetRequiredService<IXsdToModelTranslator>();
+
+            xsdToModel.Input = csvToXsd;
+            xsdToModel.Path = modelPopulator.Path;
+            xsdToModel.ShortName = "csv";
+            xsdToModel.ModelId = projectModel.Id;
+            xsdToModel.ModelName = projectModel.Name;
+
+            // Wrap it all up in a merger
             var merger = serviceProvider.GetRequiredService<IModelMerger>();
 
-            merger.Input = cleaner;
+            merger.Input = xsdToModel;
 
             return merger;
         }
@@ -177,6 +180,8 @@ namespace SwishMapper.Work
             loader.RootElement = modelPopulator.RootEntity;
             loader.ModelId = projectModel.Id;
             loader.ModelName = projectModel.Name;
+
+            // TODO - xyzzy - replumb this to use xsd-to-model translator
 
             // Wrap the loader in a cleaner
             var cleaner = serviceProvider.GetRequiredService<ModelCleaner>();

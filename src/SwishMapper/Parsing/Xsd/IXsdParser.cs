@@ -7,6 +7,6 @@ namespace SwishMapper.Parsing.Xsd
 {
     public interface IXsdParser
     {
-        Task<XsdDocument> ParseAsync(string path, string docName, string rootElementName, string rootElementNamespace);
+        Task<XsdDocument> ParseAsync(string path, string rootElementName, string rootElementNamespace);
     }
 }

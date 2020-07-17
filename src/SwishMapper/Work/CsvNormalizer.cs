@@ -11,7 +11,7 @@ using SwishMapper.Models;
 
 namespace SwishMapper.Work
 {
-    public class CsvNormalizer
+    public class CsvNormalizer : ICsvNormalizer
     {
         private readonly ILogger logger;
 
@@ -48,19 +48,16 @@ namespace SwishMapper.Work
                     var row = new CsvRow();
                     rows.Add(row);
 
-                    // If we have an entity name, update it, otherwise keep using the last seen name.
-                    row.EntityName = csv.GetField(0).Crush();
-                    if (string.IsNullOrEmpty(row.EntityName))
+                    // If we have an element name, update it, otherwise keep using the last seen name.
+                    row.ElementName = csv.GetField(0).Crush();
+                    if (string.IsNullOrEmpty(row.ElementName))
                     {
-                        row.EntityName = priorRow.EntityName;
+                        row.ElementName = priorRow.ElementName;
                     }
 
-                    // Attributes could be in one of two columns.
+                    // One of the two _may_ be set; if not, the row applies to the element
                     row.AttributeName = csv.GetField(1).Crush();
-                    if (string.IsNullOrEmpty(row.AttributeName))
-                    {
-                        row.AttributeName = csv.GetField(2).Crush();
-                    }
+                    row.ChildElementName = csv.GetField(2).Crush();
 
                     // The remaining properties are straightforward
                     row.DataType = csv.GetField(3).Trim();

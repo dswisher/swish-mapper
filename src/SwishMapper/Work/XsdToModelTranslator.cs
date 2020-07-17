@@ -4,21 +4,17 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SwishMapper.Models.Data;
 using SwishMapper.Parsing;
-using SwishMapper.Parsing.Xsd;
 
 namespace SwishMapper.Work
 {
-    public class XsdLoader : IModelProducer
+    public class XsdToModelTranslator : IXsdToModelTranslator
     {
-        private readonly IXsdParser parser;
         private readonly ITypeFactory typeFactory;
         private readonly ILogger logger;
 
-        public XsdLoader(IXsdParser parser,
-                         ITypeFactory typeFactory,
-                         ILogger<XsdLoader> logger)
+        public XsdToModelTranslator(ITypeFactory typeFactory,
+                                    ILogger<XsdToModelTranslator> logger)
         {
-            this.parser = parser;
             this.typeFactory = typeFactory;
             this.logger = logger;
         }
@@ -27,12 +23,14 @@ namespace SwishMapper.Work
         public string ModelId { get; set; }
         public string ModelName { get; set; }
         public string Path { get; set; }
-        public string RootElement { get; set; }
         public string ShortName { get; set; }
+
+        public ICsvToXsdTranslator Input { get; set; }
 
 
         public async Task<DataModel> RunAsync()
         {
+            // Set up the model
             var model = new DataModel
             {
                 Id = ModelId,
@@ -47,20 +45,20 @@ namespace SwishMapper.Work
 
             model.Sources.Add(source);
 
-            // Parse the XML schema document
-            // TODO - remove RootElement as a parser parameter - just return ALL elements
-            var xsdDoc = await parser.ParseAsync(Path, RootElement, string.Empty);
+            // Get the document that we'll be translating to a model
+            var xsdDoc = await Input.RunAsync();
 
-            // Populate the model from the parsed schema
+            // Populate the model
             foreach (var xsdElement in xsdDoc.Elements)
             {
+                // TODO - xyzzy - need a better way to filter out the leaf elements
                 // Simple elements (string, int, etc) have a datatype. It appears that complex
                 // elements (for which we want to create entities) have a null datatype. So,
                 // here we skip elements with a null datatype.
-                if (xsdElement.DataType != null)
-                {
-                    continue;
-                }
+                // if (xsdElement.DataType != "ref")
+                // {
+                //     continue;
+                // }
 
                 // Find or create the entity
                 var entity = model.FindOrCreateEntity(xsdElement.Name, source);
@@ -70,7 +68,25 @@ namespace SwishMapper.Work
                 {
                     var attribute = entity.FindOrCreateAttribute(xsdChild.Name, source);
 
-                    attribute.DataType = typeFactory.Make(xsdChild.DataType);
+                    int? maxLength = null;
+                    if (!string.IsNullOrEmpty(xsdChild.MaxLength))
+                    {
+                        int i;
+                        if (int.TryParse(xsdChild.MaxLength, out i))
+                        {
+                            maxLength = i;
+                        }
+                        else
+                        {
+                            // TODO - throw a loader exception!
+                        }
+                    }
+
+                    attribute.DataType = typeFactory.Make(xsdChild.DataType, maxLength);
+                    attribute.Comment = xsdChild.Comment;
+                    attribute.MinOccurs = xsdChild.MinOccurs;
+                    attribute.MaxOccurs = xsdChild.MaxOccurs;
+                    attribute.IsXmlAttribute = true;
 
                     // TODO - set other properties: max-length, required, etc.
                 }
@@ -93,13 +109,19 @@ namespace SwishMapper.Work
                 }
             }
 
+            // Return our glorious result
             return model;
         }
 
 
         public void Dump(PlanDumperContext context)
         {
-            context.WriteHeader(this, "{0}", Path);
+            context.WriteHeader(this);
+
+            using (var childContext = context.Push())
+            {
+                Input.Dump(childContext);
+            }
         }
     }
 }

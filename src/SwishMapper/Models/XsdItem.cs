@@ -23,5 +23,8 @@ namespace SwishMapper.Models
 
         public string MinOccurs { get; set; }
         public string MaxOccurs { get; set; }
+
+        public string MaxLength { get; set; }
+        public string Comment { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SwishMapper.Models
 {
@@ -18,15 +19,6 @@ namespace SwishMapper.Models
 
 
         /// <summary>
-        /// The depth of this element.
-        /// </summary>
-        /// <remarks>
-        /// The root element has a depth of zero. If an element appears in multiple places in the
-        /// hierarchy, this is the minimum value.
-        /// </remarks>
-        public int Depth { get; set; }
-
-        /// <summary>
         /// The attributes of this element.
         /// </summary>
         public IList<XsdAttribute> Attributes { get { return attributes; } }
@@ -35,5 +27,35 @@ namespace SwishMapper.Models
         /// The child elements of this element.
         /// </summary>
         public IList<XsdElement> Elements { get { return elements; } }
+
+
+        public XsdAttribute FindOrCreateAttribute(string name)
+        {
+            var attribute = attributes.FirstOrDefault(x => x.Name == name);
+
+            if (attribute == null)
+            {
+                attribute = new XsdAttribute(name);
+
+                attributes.Add(attribute);
+            }
+
+            return attribute;
+        }
+
+
+        public XsdElement FindOrCreateElement(string name)
+        {
+            var element = elements.FirstOrDefault(x => x.Name == name);
+
+            if (element == null)
+            {
+                element = new XsdElement(name);
+
+                elements.Add(element);
+            }
+
+            return element;
+        }
     }
 }

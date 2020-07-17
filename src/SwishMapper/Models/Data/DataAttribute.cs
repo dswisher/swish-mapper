@@ -39,6 +39,7 @@ namespace SwishMapper.Models.Data
         public string MaxOccurs { get; set; }
 
         public string Comment { get; set; }
+        public bool IsXmlAttribute { get; set; }
 
         public List<DataAttributeMap> IncomingMaps { get { return incomingMaps; } }
         public List<DataAttributeMap> OutgoingMaps { get { return outgoingMaps; } }

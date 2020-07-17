@@ -19,7 +19,7 @@ namespace SwishMapper.Parsing.Xsd
         }
 
 
-        public Task<XsdDocument> ParseAsync(string path, string docName, string rootElementName, string rootElementNamespace)
+        public Task<XsdDocument> ParseAsync(string path, string rootElementName, string rootElementNamespace)
         {
             // Load the XSD into a schema set and compile it up
             var schemaSet = new XmlSchemaSet();
@@ -39,7 +39,6 @@ namespace SwishMapper.Parsing.Xsd
 
             var doc = new XsdDocument
             {
-                Name = docName,
                 RootElement = rootElement
             };
 
@@ -103,7 +102,6 @@ namespace SwishMapper.Parsing.Xsd
 
             var element = new XsdElement(xsdElement.Name);
 
-            element.Depth = context.Depth;
             element.MinOccurs = xsdElement.MinOccursString;
             element.MaxOccurs = xsdElement.MaxOccursString;
 

@@ -14,11 +14,6 @@ namespace SwishMapper.Models
         private readonly Dictionary<string, XsdElement> elements = new Dictionary<string, XsdElement>();
 
         /// <summary>
-        /// The name of this document.
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
         /// The top-most element in the document.
         /// </summary>
         public XsdElement RootElement { get; set; }
@@ -27,9 +22,31 @@ namespace SwishMapper.Models
         public IEnumerable<XsdElement> Elements { get { return elements.Values; } }
 
 
+        // TODO - xyzed - remove this
         public void AddElement(XsdElement element)
         {
             elements.Add(element.Name, element);
+        }
+
+
+        public XsdElement FindOrCreateElement(string name)
+        {
+            if (elements.ContainsKey(name))
+            {
+                return elements[name];
+            }
+
+            var element = new XsdElement(name);
+
+            elements.Add(name, element);
+
+            return element;
+        }
+
+
+        public XsdElement FindElement(string name)
+        {
+            return elements.ContainsKey(name) ? elements[name] : null;
         }
     }
 }
