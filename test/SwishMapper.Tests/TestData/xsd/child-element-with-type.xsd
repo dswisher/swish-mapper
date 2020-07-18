@@ -10,7 +10,13 @@
 
     <xs:complexType name="Details">
         <xs:sequence>
-            <xs:element name="payload" type="xs:string" minOccurs="5" maxOccurs="7"/>
+            <xs:element name="payload" minOccurs="5" maxOccurs="7">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="17"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
 </xs:schema>

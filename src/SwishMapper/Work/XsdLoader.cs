@@ -45,6 +45,8 @@ namespace SwishMapper.Work
                     try
                     {
                         await JsonSerializer.SerializeAsync(stream, doc, jsonOptions);
+
+                        logger.LogDebug("Wrote XsdLoader intermediate debug output to {Path}.", DebugDumpPath);
                     }
                     catch (JsonException ex)
                     {

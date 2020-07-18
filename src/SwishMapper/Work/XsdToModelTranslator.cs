@@ -99,8 +99,29 @@ namespace SwishMapper.Work
 
                     if (xsdChild.DataType != null)
                     {
+                        int? maxLength = null;
+                        if (!string.IsNullOrEmpty(xsdChild.MaxLength))
+                        {
+                            int i;
+                            if (int.TryParse(xsdChild.MaxLength, out i))
+                            {
+                                maxLength = i;
+                            }
+                            else
+                            {
+                                // TODO - throw a loader exception!
+                            }
+                        }
+
                         // TODO - throw exception if DataType is null!
-                        attribute.DataType = typeFactory.Make(xsdChild.DataType, xsdChild.RefName);
+                        if (string.IsNullOrEmpty(xsdChild.RefName))
+                        {
+                            attribute.DataType = typeFactory.Make(xsdChild.DataType, maxLength);
+                        }
+                        else
+                        {
+                            attribute.DataType = typeFactory.Make(xsdChild.DataType, xsdChild.RefName);
+                        }
                     }
 
                     attribute.MinOccurs = xsdChild.MinOccurs;

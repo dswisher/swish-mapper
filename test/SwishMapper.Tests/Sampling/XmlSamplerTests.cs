@@ -88,6 +88,23 @@ namespace SwishMapper.Tests.Sampling
         }
 
 
+        [Theory]
+        [InlineData("<stuff xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"></stuff>", "xmlns:xsi")]
+        [InlineData("<stuff xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"></stuff>", "xmlns:xsd")]
+        public async Task RootNamespacesAreIgnored(string content, string name)
+        {
+            // Arrange
+            using (var stream = Content(content))
+            {
+                // Act
+                await sampler.SampleAsync(stream, accumulator);
+
+                // Assert
+                accumulator.Saw(name).Should().BeFalse();
+            }
+        }
+
+
         private SampleStream Content(string content)
         {
             var memory = new MemoryStream();

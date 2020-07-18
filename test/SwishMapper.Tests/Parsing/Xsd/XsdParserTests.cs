@@ -27,11 +27,14 @@ namespace SwishMapper.Tests.Parsing.Xsd
         [Theory]
         [InlineData("nested-sequences.xsd", new[] { "message" })]
         [InlineData("one-attribute.xsd", new[] { "message" })]
+        [InlineData("one-untyped-attribute.xsd", new[] { "message" })]
         [InlineData("one-child-element.xsd", new[] { "message" })]
         [InlineData("one-simple-element.xsd", new[] { "message" })]
         [InlineData("ref-element.xsd", new[] { "message", "payload" })]
         [InlineData("multiple-ref-elements.xsd", new[] { "message", "child1", "child2", "payload" })]
         [InlineData("child-element-with-type.xsd", new[] { "message", "Details" })]
+        [InlineData("nested-named-elements.xsd", new[] { "parent", "child1" })]
+        [InlineData("infinitely-recursive-types.xsd", new[] { "message", "detail-group", "details" })]
         public async Task ElementsAreTracked(string xsdName, string[] elementNames)
         {
             // Arrange
@@ -46,8 +49,9 @@ namespace SwishMapper.Tests.Parsing.Xsd
 
 
         [Theory]
-        [InlineData("one-simple-element.xsd", "message", "String")]
-        public async Task ElementDataTypesAreParsed(string xsdName, string elementName, string dataType)
+        [InlineData("one-simple-element.xsd", "message", null, "String")]
+        [InlineData("element-with-max-length.xsd", "message", "payload", "String")]
+        public async Task ElementDataTypesAreParsed(string xsdName, string elementName, string childName, string dataType)
         {
             // Arrange
             var path = FileFinder.FindXsd(xsdName);
@@ -58,12 +62,18 @@ namespace SwishMapper.Tests.Parsing.Xsd
             // Assert
             var element = GetVerifiedElement(doc, elementName);
 
+            if (childName != null)
+            {
+                element = GetVerifiedElement(element, childName);
+            }
+
             element.DataType.Should().Be(dataType);
         }
 
 
         [Theory]
         [InlineData("one-attribute.xsd", "message", "myAttribute", "String", "1", "1")]
+        [InlineData("one-untyped-attribute.xsd", "message", "myAttribute", "String", "0", "1")]
         [InlineData("ref-element.xsd", "payload", "myAttribute", "String", "0", "1")]
         [InlineData("multiple-ref-elements.xsd", "payload", "myAttribute", "String", "1", "1")]
         public async Task AttributeDataTypesAreParsed(string xsdName, string elementName, string attributeName, string dataType, string minOccurs, string maxOccurs)
@@ -111,6 +121,7 @@ namespace SwishMapper.Tests.Parsing.Xsd
         [Theory]
         [InlineData("one-child-element.xsd", "message", "payload", "3", "37")]
         [InlineData("ref-element.xsd", "message", "payload", "1", "4")]
+        [InlineData("nested-named-elements.xsd", "child1", "grandchild", "1", "1")]
         public async Task MinOccursAndMaxOccursAreParsed(string xsdName, string parentName, string childName, string minOccurs, string maxOccurs)
         {
             // Arrange
@@ -149,8 +160,8 @@ namespace SwishMapper.Tests.Parsing.Xsd
 
 
         [Theory]
-        [InlineData("nested-named-elements.xsd")]
-        public async Task NestedNamedElementsAreSplitOut(string xsdName)
+        [InlineData("nested-named-elements.xsd", "parent", "child1")]
+        public async Task NestedNamedElementsAreSplitOut(string xsdName, string parentName, string childName)
         {
             // Arrange
             var path = FileFinder.FindXsd(xsdName);
@@ -159,7 +170,49 @@ namespace SwishMapper.Tests.Parsing.Xsd
             var doc = await parser.ParseAsync(path);
 
             // Assert
-            // TODO
+            var parent = GetVerifiedElement(doc, parentName);
+            var child = GetVerifiedElement(parent, childName);
+
+            child.DataType.Should().Be("ref");
+            child.RefName.Should().Be(childName);
+        }
+
+
+        [Theory]
+        [InlineData("attribute-with-max-length.xsd", "message", "myAttribute", "10")]
+        public async Task MaxLengthIsExtractedFromAttribute(string xsdName, string elementName, string attributeName, string maxLength)
+        {
+            // Arrange
+            var path = FileFinder.FindXsd(xsdName);
+
+            // Act
+            var doc = await parser.ParseAsync(path);
+
+            // Assert
+            var element = GetVerifiedElement(doc, elementName);
+            var attribute = GetVerifiedAttribute(element, attributeName);
+
+            attribute.MaxLength.Should().Be(maxLength);
+        }
+
+
+        [Theory]
+        [InlineData("nested-named-elements.xsd", "parent", "child2", "10")]
+        [InlineData("element-with-max-length.xsd", "message", "payload", "13")]
+        [InlineData("child-element-with-type.xsd", "Details", "payload", "17")]
+        public async Task MaxLengthIsExtractedFromElement(string xsdName, string parentName, string childName, string maxLength)
+        {
+            // Arrange
+            var path = FileFinder.FindXsd(xsdName);
+
+            // Act
+            var doc = await parser.ParseAsync(path);
+
+            // Assert
+            var parent = GetVerifiedElement(doc, parentName);
+            var child = GetVerifiedElement(parent, childName);
+
+            child.MaxLength.Should().Be(maxLength);
         }
 
 

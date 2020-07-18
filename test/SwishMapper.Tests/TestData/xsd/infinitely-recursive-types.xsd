@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified">
+    <xs:element name="message">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="stuff" type="detail-group"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="detail-group">
+        <xs:sequence>
+            <xs:element name="nested" type="details"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="details">
+        <xs:sequence>
+            <xs:element name="really-nested" type="detail-group"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

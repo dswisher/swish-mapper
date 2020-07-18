@@ -88,7 +88,16 @@ namespace SwishMapper.Work
                         WriteIndented = true
                     };
 
-                    await JsonSerializer.SerializeAsync(stream, doc, jsonOptions);
+                    try
+                    {
+                        await JsonSerializer.SerializeAsync(stream, doc, jsonOptions);
+
+                        logger.LogDebug("Wrote CsvToXsdTranslator intermediate debug output to {Path}.", DebugDumpPath);
+                    }
+                    catch (JsonException ex)
+                    {
+                        logger.LogWarning("JSON Exception saving CsvToXsd debug dump: {Message}", ex.Message);
+                    }
                 }
             }
 

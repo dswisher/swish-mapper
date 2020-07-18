@@ -94,6 +94,11 @@ namespace SwishMapper.Sampling
                 // Go through all the attributes
                 while (reader.MoveToNextAttribute())
                 {
+                    if (reader.Name.StartsWith("xmlns:"))
+                    {
+                        continue;
+                    }
+
                     if (reader.Name == "xsi:nil")
                     {
                         continue;

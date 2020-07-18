@@ -1,6 +1,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Schema;
@@ -85,13 +86,13 @@ namespace SwishMapper.Parsing.Xsd
         {
             var xsdElement = doc.FindOrCreateElement(xmlSchemaElement.Name);
 
-            if (xmlSchemaElement.ElementSchemaType is XmlSchemaComplexType)
+            if (xmlSchemaElement.ElementSchemaType is XmlSchemaComplexType complex)
             {
-                ProcessComplexType(context, xsdElement, (XmlSchemaComplexType)xmlSchemaElement.ElementSchemaType);
+                ProcessComplexType(context, xsdElement, complex);
             }
-            else if (xmlSchemaElement.ElementSchemaType is XmlSchemaSimpleType)
+            else if (xmlSchemaElement.ElementSchemaType is XmlSchemaSimpleType simple)
             {
-                ProcessSimpleType(xsdElement, (XmlSchemaSimpleType)xmlSchemaElement.ElementSchemaType);
+                ProcessSimpleType(xsdElement, simple);
             }
             else
             {
@@ -107,7 +108,14 @@ namespace SwishMapper.Parsing.Xsd
             {
                 var xsdAttribute = xsdElement.FindOrCreateAttribute(xmlSchemaAttribute.Name);
 
-                xsdAttribute.DataType = xmlSchemaAttribute.AttributeSchemaType.Datatype.ValueType.Name;
+                if (xmlSchemaAttribute.AttributeSchemaType is XmlSchemaSimpleType simple)
+                {
+                    ProcessSimpleType(xsdAttribute, simple);
+                }
+                else
+                {
+                    xsdAttribute.DataType = xmlSchemaAttribute.AttributeSchemaType.Datatype.ValueType.Name;
+                }
 
                 switch (xmlSchemaAttribute.Use)
                 {
@@ -135,9 +143,9 @@ namespace SwishMapper.Parsing.Xsd
                 // No children
                 return;
             }
-            else if (complexType.Particle is XmlSchemaSequence)
+            else if (complexType.Particle is XmlSchemaSequence seq)
             {
-                ProcessSequence(context, xsdElement, (XmlSchemaSequence)complexType.Particle);
+                ProcessSequence(context, xsdElement, seq);
             }
             else
             {
@@ -146,9 +154,19 @@ namespace SwishMapper.Parsing.Xsd
         }
 
 
-        private void ProcessSimpleType(XsdElement xsdElement, XmlSchemaSimpleType simpleType)
+        private void ProcessSimpleType(XsdItem xsdItem, XmlSchemaSimpleType simpleType)
         {
-            xsdElement.DataType = simpleType.Datatype.ValueType.Name;
+            xsdItem.DataType = simpleType.Datatype.ValueType.Name;
+
+            var restriction = (XmlSchemaSimpleTypeRestriction)simpleType.Content;
+            if (restriction != null)
+            {
+                var maxLengthFacet = restriction.Facets.OfType<XmlSchemaMaxLengthFacet>().FirstOrDefault();
+                if (maxLengthFacet != null)
+                {
+                    xsdItem.MaxLength = maxLengthFacet.Value;
+                }
+            }
         }
 
 
@@ -156,13 +174,13 @@ namespace SwishMapper.Parsing.Xsd
         {
             foreach (XmlSchemaAnnotated item in sequence.Items)
             {
-                if (item is XmlSchemaElement)
+                if (item is XmlSchemaElement elem)
                 {
-                    ProcessChildElement(context, xsdElement, (XmlSchemaElement)item);
+                    ProcessChildElement(context, xsdElement, elem);
                 }
-                else if (item is XmlSchemaSequence)
+                else if (item is XmlSchemaSequence seq)
                 {
-                    ProcessSequence(context, xsdElement, (XmlSchemaSequence)item);
+                    ProcessSequence(context, xsdElement, seq);
                 }
                 else
                 {
@@ -189,53 +207,34 @@ namespace SwishMapper.Parsing.Xsd
             {
                 xsdChild = xsdParent.FindOrCreateElement(child.Name);
 
-                if ((child.ElementSchemaType.Datatype != null) && (child.ElementSchemaType.Datatype.ValueType != null))
-                {
-                    xsdChild.DataType = child.ElementSchemaType.Datatype.ValueType.Name;
-                }
-                else if ((child.SchemaTypeName != null) && !string.IsNullOrEmpty(child.SchemaTypeName.Name))
+                if (child.ElementSchemaType is XmlSchemaComplexType complex)
                 {
                     xsdChild.DataType = "ref";
-                    xsdChild.RefName = child.SchemaTypeName.Name;
 
-                    var targetType = context.SchemaSet.GlobalTypes[child.SchemaTypeName];
-
-                    if (targetType == null)
+                    if (!string.IsNullOrEmpty(child.SchemaTypeName.Name))
                     {
-                        throw new ParserException(child, $"Could not locate type '{child.SchemaTypeName.Name}' in global type list.");
-                    }
-                    else if (targetType is XmlSchemaComplexType)
-                    {
-                        var complex = (XmlSchemaComplexType)targetType;
-
-                        // Only process if it does not exist, to avoid stack overflow
-                        if (context.Document.FindElement(complex.Name) == null)
-                        {
-                            var targetElement = context.Document.FindOrCreateElement(complex.Name);
-
-                            ProcessComplexType(context, targetElement, complex);
-                        }
+                        xsdChild.RefName = child.SchemaTypeName.Name;
                     }
                     else
                     {
-                        // TODO - add a test - why couldn't it ref a string element, say?
-                        throw new ParserException(child, $"Found TargetType {child.SchemaType.Name}, but it is not complex!");
+                        xsdChild.RefName = child.Name;
+                    }
+
+                    // Only process if it does not already exist, to avoid stack overflow
+                    if (context.Document.FindElement(xsdChild.RefName) == null)
+                    {
+                        var xsdTarget = context.Document.FindOrCreateElement(xsdChild.RefName);
+
+                        ProcessComplexType(context, xsdTarget, complex);
                     }
                 }
-                else if (child.ElementSchemaType is XmlSchemaComplexType)
+                else if (child.ElementSchemaType is XmlSchemaSimpleType simple)
                 {
-                    xsdChild.DataType = "ref";
-                    xsdChild.RefName = child.Name;
-
-                    ProcessComplexType(context, xsdChild, (XmlSchemaComplexType)child.ElementSchemaType);
-                }
-                else if (child.ElementSchemaType is XmlSchemaSimpleType)
-                {
-                    throw new ParserException(child, $"Simple nested types are not yet handled!");
+                    ProcessSimpleType(xsdChild, simple);
                 }
                 else
                 {
-                    throw new ParserException(child, $"Both ElementSchemaType and SchemaTypeName are null for {xsdParent.Name}.{child.Name}.");
+                    throw new ParserException(child, $"Could not determine data type for child element: {xsdParent.Name}.{child.Name}.");
                 }
             }
 

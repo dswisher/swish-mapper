@@ -60,7 +60,15 @@ namespace SwishMapper.Cli
                     {
                         if (ex is ParserException)
                         {
-                            Log.Error("{Type}: {Message}", ex.GetType().Name, ex.Message);
+                            if (ex.InnerException != null)
+                            {
+                                Log.Error(ex, "Unhandled parsing exception.");
+                            }
+                            else
+                            {
+                                Log.Error("{Type}: {Message}", ex.GetType().Name, ex.Message);
+                            }
+
                             return true;
                         }
                         else if (ex is TypeException)
