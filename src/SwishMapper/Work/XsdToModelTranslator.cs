@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
+using SwishMapper.Models;
 using SwishMapper.Models.Data;
 using SwishMapper.Parsing;
 
@@ -25,7 +26,7 @@ namespace SwishMapper.Work
         public string Path { get; set; }
         public string ShortName { get; set; }
 
-        public ICsvToXsdTranslator Input { get; set; }
+        public IWorker<XsdDocument> Input { get; set; }
 
 
         public async Task<DataModel> RunAsync()
@@ -99,7 +100,7 @@ namespace SwishMapper.Work
                     if (xsdChild.DataType != null)
                     {
                         // TODO - throw exception if DataType is null!
-                        attribute.DataType = typeFactory.Make(xsdChild.DataType, xsdChild.Name);
+                        attribute.DataType = typeFactory.Make(xsdChild.DataType, xsdChild.RefName);
                     }
 
                     attribute.MinOccurs = xsdChild.MinOccurs;

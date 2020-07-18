@@ -74,11 +74,13 @@ namespace SwishMapper.Work
                     {
                         var target = model.FindEntity(attribute.DataType.RefName);
 
-                        // TODO - xyzzy - if target isn't found, we have an issue - throw a loader exception?
-
                         if (target != null)
                         {
                             target.ReferencedBy.Add(entity);
+                        }
+                        else
+                        {
+                            throw new LoaderException($"Model {model.Id}, {entity.Name}.{attribute.Name} refs {attribute.DataType.RefName}, which does not exist!");
                         }
                     }
                 }

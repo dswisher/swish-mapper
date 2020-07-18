@@ -21,6 +21,11 @@ namespace SwishMapper.Models
         /// </summary>
         public string DataType { get; set; }
 
+        /// <summary>
+        /// For reference (ref) data types, this is the target of the reference
+        /// </summary>
+        public string RefName { get; set; }
+
         public string MinOccurs { get; set; }
         public string MaxOccurs { get; set; }
 

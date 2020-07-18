@@ -10,7 +10,7 @@
 
     <xs:element name="payload">
         <xs:complexType>
-            <xs:attribute name="myAttribute" type="xs:string" use="required" />
+            <xs:attribute name="myAttribute" type="xs:string" use="optional" />
         </xs:complexType>
     </xs:element>
 </xs:schema>

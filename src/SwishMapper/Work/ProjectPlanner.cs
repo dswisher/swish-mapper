@@ -87,7 +87,7 @@ namespace SwishMapper.Work
                         break;
 
                     case ProjectModelPopulatorType.Xsd:
-                        worker.Mergers.Add(CreateXsdLoader((XsdProjectModelPopulator)populator, model));
+                        worker.Mergers.Add(CreateXsdLoader((XsdProjectModelPopulator)populator, model, settings));
                         break;
 
                     case ProjectModelPopulatorType.Sample:
@@ -168,30 +168,31 @@ namespace SwishMapper.Work
         }
 
 
-        private IModelMerger CreateXsdLoader(XsdProjectModelPopulator modelPopulator, ProjectModel projectModel)
+        private IModelMerger CreateXsdLoader(XsdProjectModelPopulator modelPopulator, ProjectModel projectModel, AppSettings settings)
         {
             // Create the loader
-            var loader = serviceProvider.GetRequiredService<XsdLoader>();
+            var loader = serviceProvider.GetRequiredService<IXsdLoader>();
 
             // TODO - verify the path exists, and if not, throw an exception
 
             loader.Path = modelPopulator.Path;
-            loader.ShortName = "xsd";
-            loader.RootElement = modelPopulator.RootEntity;
-            loader.ModelId = projectModel.Id;
-            loader.ModelName = projectModel.Name;
 
-            // TODO - xyzzy - replumb this to use xsd-to-model translator
+            // TODO - make debugging an optional flag, either on the command-line or perhaps in the project file
+            loader.DebugDumpPath = Path.Combine(settings.TempDir, $"{projectModel.Id}-xsdLoader.json");
 
-            // Wrap the loader in a cleaner
-            var cleaner = serviceProvider.GetRequiredService<ModelCleaner>();
+            // Create the XSD-to-model translator
+            var xsdToModel = serviceProvider.GetRequiredService<IXsdToModelTranslator>();
 
-            cleaner.Input = loader;
+            xsdToModel.Input = loader;
+            xsdToModel.Path = modelPopulator.Path;
+            xsdToModel.ShortName = "xsd";
+            xsdToModel.ModelId = projectModel.Id;
+            xsdToModel.ModelName = projectModel.Name;
 
-            // Wrap the cleaner in a merger
+            // Wrap it all up in a merger
             var merger = serviceProvider.GetRequiredService<IModelMerger>();
 
-            merger.Input = cleaner;
+            merger.Input = xsdToModel;
 
             return merger;
         }

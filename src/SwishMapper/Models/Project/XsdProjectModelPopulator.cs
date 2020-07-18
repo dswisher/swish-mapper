@@ -10,10 +10,5 @@ namespace SwishMapper.Models.Project
         /// The path to the file from which model info will be parsed.
         /// </summary>
         public string Path { get; set; }
-
-        /// <summary>
-        /// The entity that is the starting point of the data model.
-        /// </summary>
-        public string RootEntity { get; set; }      // TODO - eliminate this
     }
 }

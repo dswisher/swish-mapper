@@ -198,11 +198,6 @@ namespace SwishMapper.Parsing.Project
                         OptionallyConsume(lexer, TokenKind.Semicolon);
                         break;
 
-                    case "root":
-                        populator.RootEntity = Consume(lexer, TokenKind.String);
-                        OptionallyConsume(lexer, TokenKind.Semicolon);
-                        break;
-
                     default:
                         throw new ParserException($"Unexpected populator keyword: {keyword}.", lexer.Token);
                 }

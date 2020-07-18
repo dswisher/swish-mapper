@@ -36,7 +36,6 @@ namespace SwishMapper.Parsing.Project
             Keywords.Add("model");
             Keywords.Add("name");
             Keywords.Add("path");
-            Keywords.Add("root");
             Keywords.Add("samples");
             Keywords.Add("to");
             Keywords.Add("xsd");
@@ -224,7 +223,6 @@ namespace SwishMapper.Parsing.Project
 
         private void ScanArrow()
         {
-            // TODO - backtrack?
             Consume();
 
             if (Current == '>')

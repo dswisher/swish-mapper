@@ -41,6 +41,11 @@ namespace SwishMapper.Work
                     child.DataType = row.DataType;
                     child.MinOccurs = row.MinOccurs;
                     child.MaxOccurs = row.MaxOccurs;
+
+                    if (child.DataType == "ref")
+                    {
+                        child.RefName = row.ChildElementName;
+                    }
                 }
                 else if (!string.IsNullOrEmpty(row.AttributeName))
                 {

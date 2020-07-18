@@ -24,6 +24,14 @@ namespace SwishMapper.Parsing
         }
 
 
+        public ParserException(XmlSchemaObject xsd, string message, Exception inner)
+            : base($"line {xsd.LineNumber}: {message} - {inner.Message}", inner)
+        {
+            LineNumber = xsd.LineNumber;
+            LinePosition = xsd.LinePosition;
+        }
+
+
         public ParserException(string message, string filename, int lineNumber, int linePosition)
             : base($"{filename} ({lineNumber}:{linePosition}): {message}")
         {

@@ -96,6 +96,7 @@ namespace SwishMapper.Tests.Work
             var child = address.Elements.First(x => x.Name == "City");
 
             child.DataType.Should().Be("ref");
+            child.RefName.Should().Be("City");
             child.MinOccurs.Should().Be("2");
             child.MaxOccurs.Should().Be("23");
         }

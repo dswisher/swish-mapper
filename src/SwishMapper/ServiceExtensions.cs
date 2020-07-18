@@ -29,15 +29,14 @@ namespace SwishMapper
             services.AddTransient<ICsvToXsdTranslator, CsvToXsdTranslator>();
             services.AddTransient<IModelMerger, ModelMerger>();
             services.AddTransient<IXsdToModelTranslator, XsdToModelTranslator>();
+            services.AddTransient<IXsdLoader, XsdLoader>();
 
             // TODO - use interfaces for these!!!
             services.AddTransient<DataModelAssembler>();
             services.AddTransient<DataProjectAssembler>();
             services.AddTransient<MapLoader>();
-            services.AddTransient<ModelCleaner>();
             services.AddTransient<SampleLoader>();
             services.AddTransient<SampleWriter>();
-            services.AddTransient<XsdLoader>();
 
             services.AddTransient<CopyEmbeddedWorker>();
             services.AddTransient<IndexPage>();

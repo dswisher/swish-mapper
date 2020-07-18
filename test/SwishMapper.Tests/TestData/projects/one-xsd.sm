@@ -6,7 +6,6 @@ model solo
     xsd
     {
         path "bar/foo.xsd";
-        root "TopElement";
     }
 }
 

@@ -8,6 +8,7 @@ namespace SwishMapper.Parsing
         private static readonly DataType BoolType = new DataType(PrimitiveType.Boolean);
         private static readonly DataType DateType = new DataType(PrimitiveType.Date);
         private static readonly DataType IntType = new DataType(PrimitiveType.Int);
+        private static readonly DataType DecimalType = new DataType(PrimitiveType.Decimal);
         private static readonly DataType StringType = new DataType(PrimitiveType.String);
 
 
@@ -31,7 +32,11 @@ namespace SwishMapper.Parsing
                 case "INT32":
                 case "INT64":
                 case "INTEGER":
+                    // TODO - should these be separate types?
                     return IntType;
+
+                case "DECIMAL":
+                    return DecimalType;
 
                 case "NMTOKEN":
                     // TODO - xyzzy - what about the enum values?

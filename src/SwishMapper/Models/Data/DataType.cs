@@ -10,6 +10,7 @@ namespace SwishMapper.Models.Data
     {
         Boolean,
         Date,
+        Decimal,
         Enum,
         Int,
         String,
