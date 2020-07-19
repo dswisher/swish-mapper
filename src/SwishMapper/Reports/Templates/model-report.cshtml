@@ -88,7 +88,7 @@
             @foreach (var attribute in entity.Attributes.OrderBy(x => x.Name))
             {
                 <tr>
-                    <td>@attribute.Name</td>
+                    <td id="@entity.Name.@attribute.Name">@attribute.Name</td>
                     @if (attribute.DataType?.Type == PrimitiveType.Ref)
                     {
                         <td>ref(<a href="#@attribute.DataType.RefName">@attribute.DataType.RefName</a>)</td>

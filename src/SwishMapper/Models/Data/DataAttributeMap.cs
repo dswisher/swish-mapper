@@ -17,6 +17,11 @@ namespace SwishMapper.Models.Data
         public string FromXPath { get; set; }
 
         /// <summary>
+        /// The link to this attribute in the from data-model.
+        /// </summary>
+        public string FromUrl { get; set; }
+
+        /// <summary>
         /// The sink of the mapping.
         /// </summary>
         public DataAttribute ToAttribute { get; set; }

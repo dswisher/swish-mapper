@@ -11,6 +11,9 @@ namespace SwishMapper.Models.Reports
 
         public string Name { get; set; }
 
+        public DataType SinkType { get; set; }
+        public string Url { get; set; }
+
         public IList<DataAttributeMap> Maps { get { return maps; } }
     }
 }

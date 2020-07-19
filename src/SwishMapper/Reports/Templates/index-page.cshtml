@@ -7,7 +7,7 @@
     <h2>@section.Name</h2>
 
     <ul>
-    @foreach (var entry in section.Entries)
+    @foreach (var entry in section.Entries.OrderBy(x => x.Name))
     {
         <li><a href="@entry.Path">@entry.Name</a></li>
     }

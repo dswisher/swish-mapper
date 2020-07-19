@@ -96,6 +96,7 @@ namespace SwishMapper.Work
                     {
                         FromAttribute = sourceAtt,
                         FromXPath = sourceXPath,
+                        FromUrl = $"{sourceAtt.Parent.Parent.Id}.html#{sourceAtt.Parent.Name}",
                         ToAttribute = sinkAtt,
                         ToXPath = sinkXPath,
                         Comments = comments

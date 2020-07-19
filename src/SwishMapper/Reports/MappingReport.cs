@@ -49,9 +49,14 @@ namespace SwishMapper.Reports
                 sinkAttribute.Maps.Add(map);
 
                 // Add ALL attributes for this entity
-                foreach (var attribute in map.ToAttribute.Parent.Attributes)
+                foreach (var mapAttribute in map.ToAttribute.Parent.Attributes)
                 {
-                    sinkEntity.FindOrCreateAttribute(attribute.Name);
+                    var sinkAtt = sinkEntity.FindOrCreateAttribute(mapAttribute.Name);
+
+                    sinkAtt.SinkType = mapAttribute.DataType;
+
+                    // TODO - put this functionality in a Razor helper...
+                    sinkAtt.Url = $"{mapAttribute.Parent.Parent.Id}.html#{mapAttribute.Parent.Name}";
                 }
             }
 
