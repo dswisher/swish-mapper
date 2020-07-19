@@ -29,7 +29,6 @@ namespace SwishMapper.Work
         public async Task<XsdDocument> RunAsync()
         {
             // Parse the XML schema document
-            // TODO - remove RootElement as a parser parameter - just return ALL elements
             var doc = await parser.ParseAsync(Path);
 
             // If a debug path was specified, write the doc there for post-mortem analysis...

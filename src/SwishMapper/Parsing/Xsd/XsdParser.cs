@@ -166,6 +166,14 @@ namespace SwishMapper.Parsing.Xsd
                 {
                     xsdItem.MaxLength = maxLengthFacet.Value;
                 }
+
+                foreach (var ev in restriction.Facets.OfType<XmlSchemaEnumerationFacet>())
+                {
+                    xsdItem.EnumValues.Add(ev.Value);
+
+                    // A little hacky...is there a better way?
+                    xsdItem.DataType = "NMTOKEN";
+                }
             }
         }
 

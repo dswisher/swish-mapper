@@ -52,7 +52,7 @@ namespace SwishMapper.Work
             // Populate the model
             foreach (var xsdElement in xsdDoc.Elements)
             {
-                // TODO - xyzzy - need a better way to filter out the leaf elements
+                // TODO - need a better way to filter out the leaf elements
                 // Simple elements (string, int, etc) have a datatype. It appears that complex
                 // elements (for which we want to create entities) have a null datatype. So,
                 // here we skip elements with a null datatype.
@@ -88,6 +88,8 @@ namespace SwishMapper.Work
                     attribute.MinOccurs = xsdChild.MinOccurs;
                     attribute.MaxOccurs = xsdChild.MaxOccurs;
                     attribute.IsXmlAttribute = true;
+
+                    attribute.EnumValues.AddRange(xsdChild.EnumValues);
 
                     // TODO - set other properties: max-length, required, etc.
                 }
@@ -126,6 +128,8 @@ namespace SwishMapper.Work
 
                     attribute.MinOccurs = xsdChild.MinOccurs;
                     attribute.MaxOccurs = xsdChild.MaxOccurs;
+
+                    attribute.EnumValues.AddRange(xsdChild.EnumValues);
 
                     // TODO - set attribute properties
                 }

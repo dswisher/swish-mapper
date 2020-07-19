@@ -107,6 +107,38 @@
         </tbody>
     </table>
 
+    @if (entity.HasEnums)
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="2">Enumerations</th>
+                </tr>
+                <tr>
+                    <th>Attribute</th>
+                    <th>Enum Values</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var attribute in entity.Attributes.Where(x => x.EnumValues.Count > 0).OrderBy(x => x.Name))
+                {
+                    var first = true;
+                    foreach (var ev in attribute.EnumValues)
+                    {
+                        <tr>
+                            @if (first)
+                            {
+                                first = false;
+                                <td rowspan="@attribute.EnumValues.Count">@attribute.Name</td>
+                            }
+                            <td>@ev</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+
     @if (entity.HasSamples)
     {
         <table>

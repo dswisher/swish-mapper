@@ -64,6 +64,15 @@ namespace SwishMapper.Models.Data
         }
 
 
+        public bool HasEnums
+        {
+            get
+            {
+                return attributes.Any(x => x.EnumValues.Count > 0);
+            }
+        }
+
+
         public DataAttribute FindAttribute(string name)
         {
             return attributes.FirstOrDefault(x => x.Name == name);

@@ -51,6 +51,7 @@ namespace SwishMapper.Tests.Parsing.Xsd
         [Theory]
         [InlineData("one-simple-element.xsd", "message", null, "String")]
         [InlineData("element-with-max-length.xsd", "message", "payload", "String")]
+        [InlineData("element-with-enum.xsd", "message", "payload", "NMTOKEN")]
         public async Task ElementDataTypesAreParsed(string xsdName, string elementName, string childName, string dataType)
         {
             // Arrange
@@ -76,6 +77,7 @@ namespace SwishMapper.Tests.Parsing.Xsd
         [InlineData("one-untyped-attribute.xsd", "message", "myAttribute", "String", "0", "1")]
         [InlineData("ref-element.xsd", "payload", "myAttribute", "String", "0", "1")]
         [InlineData("multiple-ref-elements.xsd", "payload", "myAttribute", "String", "1", "1")]
+        [InlineData("attribute-with-enum.xsd", "meeting", "frequency", "NMTOKEN", "0", "1")]
         public async Task AttributeDataTypesAreParsed(string xsdName, string elementName, string attributeName, string dataType, string minOccurs, string maxOccurs)
         {
             // Arrange
@@ -180,6 +182,7 @@ namespace SwishMapper.Tests.Parsing.Xsd
 
         [Theory]
         [InlineData("attribute-with-max-length.xsd", "message", "myAttribute", "10")]
+        [InlineData("attribute-with-enum.xsd", "meeting", "frequency", "8")]
         public async Task MaxLengthIsExtractedFromAttribute(string xsdName, string elementName, string attributeName, string maxLength)
         {
             // Arrange
@@ -213,6 +216,42 @@ namespace SwishMapper.Tests.Parsing.Xsd
             var child = GetVerifiedElement(parent, childName);
 
             child.MaxLength.Should().Be(maxLength);
+        }
+
+
+        [Theory]
+        [InlineData("element-with-enum.xsd", "message", "payload", new[] { "One", "Two" })]
+        public async Task EnumValuesExtractedFromElement(string xsdName, string parentName, string childName, string[] vals)
+        {
+            // Arrange
+            var path = FileFinder.FindXsd(xsdName);
+
+            // Act
+            var doc = await parser.ParseAsync(path);
+
+            // Assert
+            var parent = GetVerifiedElement(doc, parentName);
+            var child = GetVerifiedElement(parent, childName);
+
+            child.EnumValues.Should().BeEquivalentTo(vals);
+        }
+
+
+        [Theory]
+        [InlineData("attribute-with-enum.xsd", "meeting", "frequency", new[] { "hourly", "daily", "weekly" })]
+        public async Task EnumValuesExtractedFromAttribute(string xsdName, string elementName, string attributeName, string[] vals)
+        {
+            // Arrange
+            var path = FileFinder.FindXsd(xsdName);
+
+            // Act
+            var doc = await parser.ParseAsync(path);
+
+            // Assert
+            var element = GetVerifiedElement(doc, elementName);
+            var attribute = GetVerifiedAttribute(element, attributeName);
+
+            attribute.EnumValues.Should().BeEquivalentTo(vals);
         }
 
 

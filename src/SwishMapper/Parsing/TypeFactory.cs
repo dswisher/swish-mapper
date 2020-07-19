@@ -39,7 +39,6 @@ namespace SwishMapper.Parsing
                     return DecimalType;
 
                 case "NMTOKEN":
-                    // TODO - xyzzy - what about the enum values?
                     return new DataType(PrimitiveType.Enum);
 
                 case "REF":

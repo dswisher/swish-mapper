@@ -1,6 +1,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -46,6 +47,10 @@ namespace SwishMapper.Work
                     {
                         child.RefName = row.ChildElementName;
                     }
+                    else
+                    {
+                        ProcessEnums(child, row);
+                    }
                 }
                 else if (!string.IsNullOrEmpty(row.AttributeName))
                 {
@@ -55,6 +60,8 @@ namespace SwishMapper.Work
                     attribute.DataType = row.DataType;
                     attribute.MaxLength = row.MaxLength;
                     attribute.Comment = row.Comment;
+
+                    ProcessEnums(attribute, row);
 
                     if (!string.IsNullOrEmpty(row.Required))
                     {
@@ -113,6 +120,15 @@ namespace SwishMapper.Work
             using (var childContext = context.Push())
             {
                 Input.Dump(childContext);
+            }
+        }
+
+
+        private void ProcessEnums(XsdItem item, CsvRow row)
+        {
+            if ((item.DataType == "NMTOKEN") && !string.IsNullOrEmpty(row.EnumValues))
+            {
+                item.EnumValues.AddRange(row.EnumValues.Split('|').Select(x => x.Trim()));
             }
         }
     }

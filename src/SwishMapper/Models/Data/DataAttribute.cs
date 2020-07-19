@@ -12,6 +12,7 @@ namespace SwishMapper.Models.Data
         private readonly List<DataAttributeMap> outgoingMaps = new List<DataAttributeMap>();
         private readonly List<DataModelSource> sources = new List<DataModelSource>();
         private readonly List<DataAttributeSample> samples = new List<DataAttributeSample>();
+        private readonly List<string> enumValues = new List<string>();
 
 
         public DataAttribute(DataEntity parent, string name)
@@ -34,6 +35,8 @@ namespace SwishMapper.Models.Data
         /// The data type of this attribute.
         /// </summary>
         public DataType DataType { get; set; }
+
+        public List<string> EnumValues { get { return enumValues; } }
 
         public string MinOccurs { get; set; }
         public string MaxOccurs { get; set; }

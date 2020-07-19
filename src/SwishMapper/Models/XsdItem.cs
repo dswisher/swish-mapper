@@ -1,4 +1,6 @@
 
+using System.Collections.Generic;
+
 namespace SwishMapper.Models
 {
     /// <summary>
@@ -6,6 +8,8 @@ namespace SwishMapper.Models
     /// </summary>
     public abstract class XsdItem
     {
+        private readonly List<string> enumValues = new List<string>();
+
         protected XsdItem(string name)
         {
             Name = name;
@@ -31,5 +35,7 @@ namespace SwishMapper.Models
 
         public string MaxLength { get; set; }
         public string Comment { get; set; }
+
+        public List<string> EnumValues { get { return enumValues; } }
     }
 }

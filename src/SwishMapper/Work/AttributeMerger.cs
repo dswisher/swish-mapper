@@ -33,6 +33,13 @@ namespace SwishMapper.Work
 
             targetAttribute.Samples.AddRange(sourceAttribute.Samples);
 
+            // TODO - do a better job of merging enum values!
+            if (targetAttribute.EnumValues.Count == 0)
+            {
+                targetAttribute.EnumValues.Clear();
+                targetAttribute.EnumValues.AddRange(sourceAttribute.EnumValues);
+            }
+
             return mismatchCount;
         }
 
