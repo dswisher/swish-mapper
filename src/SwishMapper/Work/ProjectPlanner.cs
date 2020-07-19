@@ -91,7 +91,7 @@ namespace SwishMapper.Work
                         break;
 
                     case ProjectModelPopulatorType.Sample:
-                        worker.Mergers.Add(CreateSampleLoader((SampleProjectModelPopulator)populator, model, settings));
+                        worker.Updaters.Add(CreateSampleUpdater((SampleProjectModelPopulator)populator, model, settings));
                         break;
 
                     default:
@@ -103,7 +103,7 @@ namespace SwishMapper.Work
         }
 
 
-        private IModelMerger CreateSampleLoader(SampleProjectModelPopulator modelPopulator, ProjectModel projectModel, AppSettings settings)
+        private IModelUpdater CreateSampleUpdater(SampleProjectModelPopulator modelPopulator, ProjectModel projectModel, AppSettings settings)
         {
             // Going through lots of files to gather up the samples takes quite some time. To amortize
             // the impact, we do the sampling and write a summary to the scratch area. The normal pipeline
@@ -114,21 +114,13 @@ namespace SwishMapper.Work
             writer.InputFiles = modelPopulator.Files;
             writer.ZipMask = modelPopulator.ZipMask;
 
-            // Create the loader
-            var loader = serviceProvider.GetRequiredService<SampleLoader>();
+            // Create the updater, which reads the samples and updates the model
+            var updater = serviceProvider.GetRequiredService<IModelSampleUpdater>();
 
-            loader.InputPath = writer.OutputPath;
-            loader.Writer = writer;
-            loader.SampleId = modelPopulator.Id;
-            loader.ModelId = projectModel.Id;
-            loader.ModelName = projectModel.Name;
+            updater.Writer = writer;
+            updater.SampleId = modelPopulator.Id;
 
-            // Wrap the loader in a merger
-            var merger = serviceProvider.GetRequiredService<IModelMerger>();
-
-            merger.Input = loader;
-
-            return merger;
+            return updater;
         }
 
 

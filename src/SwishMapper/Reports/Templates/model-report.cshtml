@@ -174,6 +174,32 @@
             </tbody>
         </table>
     }
+
+    @if (entity.OutcastSamples.Count > 0)
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="3">Outcast Samples</th>
+                </tr>
+                <tr>
+                    <th>Sample</th>
+                    <th>Path</th>
+                    <th>Top 5 Values</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var outcast in entity.OutcastSamples)
+                {
+                    <tr>
+                        <td>@outcast.SampleId</td>
+                        <td class="highlight">@outcast.Path</td>
+                        <td>@string.Join(", ", @outcast.Top5)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 }
 
 

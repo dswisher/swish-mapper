@@ -8,3 +8,7 @@ watch:
 report:
 	dotnet reportgenerator -reports:coverage.opencover.xml -targetdir:coveragereport
 
+clean:
+	rm -f coverage.opencover.xml
+	rm -rf coveragereport
+

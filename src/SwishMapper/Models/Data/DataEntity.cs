@@ -15,6 +15,7 @@ namespace SwishMapper.Models.Data
         private readonly List<DataAttribute> attributes = new List<DataAttribute>();
         private readonly List<DataModelSource> sources = new List<DataModelSource>();
         private readonly List<DataEntity> referencedBy = new List<DataEntity>();
+        private readonly List<DataAttributeSample> outcastSamples = new List<DataAttributeSample>();
 
 
         public DataEntity(DataModel parent, string name)
@@ -54,6 +55,10 @@ namespace SwishMapper.Models.Data
         /// </summary>
         public IList<DataEntity> ReferencedBy { get { return referencedBy; } }
 
+        /// <summary>
+        /// Samples that do not have a home, as their paths do match the model in some way.
+        /// </summary>
+        public List<DataAttributeSample> OutcastSamples { get { return outcastSamples; } }
 
         public bool HasSamples
         {

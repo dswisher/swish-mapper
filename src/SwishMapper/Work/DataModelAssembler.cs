@@ -11,6 +11,7 @@ namespace SwishMapper.Work
     public class DataModelAssembler : IWorker<DataModel>
     {
         private readonly List<IModelMerger> mergers = new List<IModelMerger>();
+        private readonly List<IModelUpdater> updaters = new List<IModelUpdater>();
 
         private readonly ILogger logger;
 
@@ -23,6 +24,7 @@ namespace SwishMapper.Work
         public string Id { get; set; }
 
         public IList<IModelMerger> Mergers { get { return mergers; } }
+        public IList<IModelUpdater> Updaters { get { return updaters; } }
 
 
         public async Task<DataModel> RunAsync()
@@ -42,7 +44,14 @@ namespace SwishMapper.Work
 
             logger.LogDebug("DataModelAssembler, {Name}, entity count = {Num}.", Name, model.Entities.Count());
 
+            // Go through all the updaters, and process 'em
+            foreach (var updater in updaters)
+            {
+                await updater.RunAsync(model);
+            }
+
             // Go through and set the "referenced by" field
+            // TODO - turn this into an updater?
             SetReferencedBy(model);
 
             // Return what we've built
@@ -57,6 +66,11 @@ namespace SwishMapper.Work
             using (var childContext = context.Push())
             {
                 foreach (var child in mergers)
+                {
+                    child.Dump(childContext);
+                }
+
+                foreach (var child in updaters)
                 {
                     child.Dump(childContext);
                 }

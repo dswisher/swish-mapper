@@ -28,6 +28,7 @@ namespace SwishMapper
             services.AddTransient<ICsvNormalizer, CsvNormalizer>();
             services.AddTransient<ICsvToXsdTranslator, CsvToXsdTranslator>();
             services.AddTransient<IModelMerger, ModelMerger>();
+            services.AddTransient<IModelSampleUpdater, ModelSampleUpdater>();
             services.AddTransient<IXsdToModelTranslator, XsdToModelTranslator>();
             services.AddTransient<IXsdLoader, XsdLoader>();
 
@@ -35,7 +36,6 @@ namespace SwishMapper
             services.AddTransient<DataModelAssembler>();
             services.AddTransient<DataProjectAssembler>();
             services.AddTransient<MapLoader>();
-            services.AddTransient<SampleLoader>();
             services.AddTransient<SampleWriter>();
 
             services.AddTransient<CopyEmbeddedWorker>();

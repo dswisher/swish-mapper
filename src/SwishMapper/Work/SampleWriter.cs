@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
+using SwishMapper.Models;
 using SwishMapper.Models.Project;
 using SwishMapper.Sampling;
 
@@ -34,7 +35,7 @@ namespace SwishMapper.Work
         public string ZipMask { get; set; }
 
 
-        public async Task RunAsync()
+        public async Task<SampleJson> RunAsync()
         {
             // Build the finder options
             var finderOptions = new SampleStreamFinderOptions
@@ -47,7 +48,16 @@ namespace SwishMapper.Work
             if (OutputIsAlreadyCurrent())
             {
                 logger.LogInformation("Sample output {Name} is up to date, skipping regeneration.", Path.GetFileName(OutputPath));
-                return;
+
+                using (var stream = new FileStream(OutputPath, FileMode.Open, FileAccess.Read))
+                {
+                    var content = await JsonSerializer.DeserializeAsync<SampleJson>(stream);
+
+                    logger.LogDebug("Loaded samples from {Name}, found {Num1} filenames and {Num2} data points.",
+                            OutputPath, content.Filenames.Count, content.DataPoints.Count);
+
+                    return content;
+                }
             }
 
             // Go through all the inputs, and process 'em
@@ -80,6 +90,8 @@ namespace SwishMapper.Work
 
                 await JsonSerializer.SerializeAsync(stream, json, jsonOptions);
             }
+
+            return json;
         }
 
 
