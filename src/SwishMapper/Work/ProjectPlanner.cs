@@ -143,20 +143,15 @@ namespace SwishMapper.Work
             csvToXsd.DebugDumpPath = Path.Combine(settings.TempDir, $"{projectModel.Id}-csvToXsd.json");
 
             // Create the XSD-to-model translator
-            var xsdToModel = serviceProvider.GetRequiredService<IXsdToModelTranslator>();
+            var xsdToModel = XsdToModel(csvToXsd, modelPopulator.Path, projectModel);
 
-            xsdToModel.Input = csvToXsd;
-            xsdToModel.Path = modelPopulator.Path;
             xsdToModel.ShortName = "csv";
-            xsdToModel.ModelId = projectModel.Id;
-            xsdToModel.ModelName = projectModel.Name;
+
+            // Clean things up a bit
+            var cleaner = Clean(xsdToModel);
 
             // Wrap it all up in a merger
-            var merger = serviceProvider.GetRequiredService<IModelMerger>();
-
-            merger.Input = xsdToModel;
-
-            return merger;
+            return Merge(cleaner);
         }
 
 
@@ -173,18 +168,46 @@ namespace SwishMapper.Work
             loader.DebugDumpPath = Path.Combine(settings.TempDir, $"{projectModel.Id}-xsdLoader.json");
 
             // Create the XSD-to-model translator
+            var xsdToModel = XsdToModel(loader, modelPopulator.Path, projectModel);
+
+            xsdToModel.ShortName = "xsd";
+
+            // Clean things up a bit
+            var cleaner = Clean(xsdToModel);
+
+            // Wrap it all up in a merger
+            return Merge(cleaner);
+        }
+
+
+        private IXsdToModelTranslator XsdToModel(IWorker<XsdDocument> input, string path, ProjectModel projectModel)
+        {
             var xsdToModel = serviceProvider.GetRequiredService<IXsdToModelTranslator>();
 
-            xsdToModel.Input = loader;
-            xsdToModel.Path = modelPopulator.Path;
-            xsdToModel.ShortName = "xsd";
+            xsdToModel.Input = input;
+            xsdToModel.Path = path;
             xsdToModel.ModelId = projectModel.Id;
             xsdToModel.ModelName = projectModel.Name;
 
-            // Wrap it all up in a merger
+            return xsdToModel;
+        }
+
+
+        private IModelProducer Clean(IModelProducer input)
+        {
+            var cleaner = serviceProvider.GetRequiredService<IEmptyEntityCleaner>();
+
+            cleaner.Input = input;
+
+            return cleaner;
+        }
+
+
+        private IModelMerger Merge(IModelProducer input)
+        {
             var merger = serviceProvider.GetRequiredService<IModelMerger>();
 
-            merger.Input = xsdToModel;
+            merger.Input = input;
 
             return merger;
         }

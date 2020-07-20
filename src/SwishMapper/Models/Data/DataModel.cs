@@ -60,5 +60,11 @@ namespace SwishMapper.Models.Data
             // Return what we've got!
             return entity;
         }
+
+
+        public void DestroyEntity(DataEntity entity)
+        {
+            entities.Remove(entity.Name);
+        }
     }
 }

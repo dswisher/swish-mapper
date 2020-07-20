@@ -63,6 +63,13 @@
                     }
                 </td>
             </tr>
+            @if (entity.DataType != null)
+            {
+                <tr>
+                    <td>Data Type</td>
+                    <td class="highlight">@entity.DataType</td>
+                </tr>
+            }
         </tbody>
     </table>
 

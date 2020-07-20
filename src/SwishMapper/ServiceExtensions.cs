@@ -27,6 +27,8 @@ namespace SwishMapper
             services.AddTransient<IAttributeMerger, AttributeMerger>();
             services.AddTransient<ICsvNormalizer, CsvNormalizer>();
             services.AddTransient<ICsvToXsdTranslator, CsvToXsdTranslator>();
+            services.AddTransient<IEmptyEntityCleaner, EmptyEntityCleaner>();
+            services.AddTransient<IEntityMerger, EntityMerger>();
             services.AddTransient<IModelMerger, ModelMerger>();
             services.AddTransient<IModelSampleUpdater, ModelSampleUpdater>();
             services.AddTransient<IXsdToModelTranslator, XsdToModelTranslator>();

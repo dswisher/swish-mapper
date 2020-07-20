@@ -1,6 +1,4 @@
 
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
@@ -10,12 +8,15 @@ namespace SwishMapper.Work
 {
     public class ModelMerger : IModelMerger
     {
+        private readonly IEntityMerger entityMerger;
         private readonly IAttributeMerger attributeMerger;
         private readonly ILogger logger;
 
-        public ModelMerger(IAttributeMerger attributeMerger,
+        public ModelMerger(IEntityMerger entityMerger,
+                           IAttributeMerger attributeMerger,
                            ILogger<ModelMerger> logger)
         {
+            this.entityMerger = entityMerger;
             this.attributeMerger = attributeMerger;
             this.logger = logger;
         }
@@ -40,7 +41,8 @@ namespace SwishMapper.Work
             {
                 var targetEntity = targetModel.FindOrCreateEntity(sourceEntity.Name, sourceEntity.Sources);
 
-                MergeProperty(targetEntity, sourceEntity, "Comment", x => x.Comment, (x, y) => x.Comment = y);
+                // Merge the entity properties
+                entityMerger.Merge(targetEntity, sourceEntity);
 
                 // Merge the attributes
                 foreach (var sourceAttribute in sourceEntity.Attributes)
@@ -60,35 +62,6 @@ namespace SwishMapper.Work
             using (var childContext = context.Push())
             {
                 Input.Dump(childContext);
-            }
-        }
-
-
-        private void MergeProperty(DataEntity targetEntity, DataEntity sourceEntity, string propertyName,
-                Func<DataEntity, string> getter, Action<DataEntity, string> setter)
-        {
-            var source = getter(sourceEntity);
-            var target = getter(targetEntity);
-
-            // If we don't have data, we're done.
-            if (string.IsNullOrEmpty(source))
-            {
-                return;
-            }
-
-            // If the source or target is empty, we can't have a conflict
-            if (string.IsNullOrEmpty(target))
-            {
-                setter(targetEntity, source);
-            }
-            else if (source != target)
-            {
-                var modelId = sourceEntity.Parent.Id;
-
-                var sourceSource = sourceEntity.Sources.First()?.ShortName;
-
-                logger.LogWarning("Merge conflict from {Source} on {Model}, {Entity}, {PropName} has current value '{Old}', proposed value is '{New}'.",
-                        sourceSource, modelId, sourceEntity.Name, propertyName, target, source);
             }
         }
     }

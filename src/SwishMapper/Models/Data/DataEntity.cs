@@ -36,6 +36,11 @@ namespace SwishMapper.Models.Data
         public string Name { get; private set; }
 
         /// <summary>
+        /// The data type of the entity, used during model assembly.
+        /// </summary>
+        public DataType DataType { get; set; }
+
+        /// <summary>
         /// Description about this entity.
         /// </summary>
         public string Comment { get; set; }

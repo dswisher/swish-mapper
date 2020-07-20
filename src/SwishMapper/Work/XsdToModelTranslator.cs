@@ -52,46 +52,36 @@ namespace SwishMapper.Work
             // Populate the model
             foreach (var xsdElement in xsdDoc.Elements)
             {
-                // TODO - need a better way to filter out the leaf elements
-                // Simple elements (string, int, etc) have a datatype. It appears that complex
-                // elements (for which we want to create entities) have a null datatype. So,
-                // here we skip elements with a null datatype.
-                // if (xsdElement.DataType != "ref")
-                // {
-                //     continue;
-                // }
-
                 // Find or create the entity
                 var entity = model.FindOrCreateEntity(xsdElement.Name, source);
+
+                entity.Comment = xsdElement.Comment;
+
+                if (!string.IsNullOrEmpty(xsdElement.DataType))
+                {
+                    if (string.IsNullOrEmpty(xsdElement.RefName))
+                    {
+                        entity.DataType = typeFactory.Make(xsdElement.DataType, ParseMaxLength(xsdElement.MaxLength));
+                    }
+                    else
+                    {
+                        // This should never happen, but include it anyway
+                        entity.DataType = typeFactory.Make(xsdElement.DataType, xsdElement.RefName);
+                    }
+                }
 
                 // Add the attributes as attributes
                 foreach (var xsdChild in xsdElement.Attributes)
                 {
                     var attribute = entity.FindOrCreateAttribute(xsdChild.Name, source);
 
-                    int? maxLength = null;
-                    if (!string.IsNullOrEmpty(xsdChild.MaxLength))
-                    {
-                        int i;
-                        if (int.TryParse(xsdChild.MaxLength, out i))
-                        {
-                            maxLength = i;
-                        }
-                        else
-                        {
-                            // TODO - throw a loader exception!
-                        }
-                    }
-
-                    attribute.DataType = typeFactory.Make(xsdChild.DataType, maxLength);
+                    attribute.DataType = typeFactory.Make(xsdChild.DataType, ParseMaxLength(xsdChild.MaxLength));
                     attribute.Comment = xsdChild.Comment;
                     attribute.MinOccurs = xsdChild.MinOccurs;
                     attribute.MaxOccurs = xsdChild.MaxOccurs;
                     attribute.IsXmlAttribute = true;
 
                     attribute.EnumValues.AddRange(xsdChild.EnumValues);
-
-                    // TODO - set other properties: max-length, required, etc.
                 }
 
                 // Add the child elements as attributes with complex types
@@ -101,37 +91,25 @@ namespace SwishMapper.Work
 
                     if (xsdChild.DataType != null)
                     {
-                        int? maxLength = null;
-                        if (!string.IsNullOrEmpty(xsdChild.MaxLength))
-                        {
-                            int i;
-                            if (int.TryParse(xsdChild.MaxLength, out i))
-                            {
-                                maxLength = i;
-                            }
-                            else
-                            {
-                                // TODO - throw a loader exception!
-                            }
-                        }
-
-                        // TODO - throw exception if DataType is null!
                         if (string.IsNullOrEmpty(xsdChild.RefName))
                         {
-                            attribute.DataType = typeFactory.Make(xsdChild.DataType, maxLength);
+                            attribute.DataType = typeFactory.Make(xsdChild.DataType, ParseMaxLength(xsdChild.MaxLength));
                         }
                         else
                         {
                             attribute.DataType = typeFactory.Make(xsdChild.DataType, xsdChild.RefName);
                         }
                     }
+                    else
+                    {
+                        // TODO - xyzzy - throw exception if DataType is null!
+                    }
 
+                    attribute.Comment = xsdChild.Comment;
                     attribute.MinOccurs = xsdChild.MinOccurs;
                     attribute.MaxOccurs = xsdChild.MaxOccurs;
 
                     attribute.EnumValues.AddRange(xsdChild.EnumValues);
-
-                    // TODO - set attribute properties
                 }
             }
 
@@ -148,6 +126,27 @@ namespace SwishMapper.Work
             {
                 Input.Dump(childContext);
             }
+        }
+
+
+        private int? ParseMaxLength(string maxStr)
+        {
+            int? maxLength = null;
+
+            if (!string.IsNullOrEmpty(maxStr))
+            {
+                int i;
+                if (int.TryParse(maxStr, out i))
+                {
+                    maxLength = i;
+                }
+                else
+                {
+                    // TODO - throw a loader exception!
+                }
+            }
+
+            return maxLength;
         }
     }
 }
