@@ -28,5 +28,11 @@ namespace SwishMapper.Models.Reports
 
             return attribute;
         }
+
+
+        public MappingReportAttribute FindAttribute(string name)
+        {
+            return attributes.ContainsKey(name) ? attributes[name] : null;
+        }
     }
 }

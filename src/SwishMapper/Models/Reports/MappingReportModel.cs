@@ -29,5 +29,11 @@ namespace SwishMapper.Models.Reports
 
             return entity;
         }
+
+
+        public MappingReportEntity FindEntity(string name)
+        {
+            return entities.ContainsKey(name) ? entities[name] : null;
+        }
     }
 }

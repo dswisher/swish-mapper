@@ -38,26 +38,33 @@ namespace SwishMapper.Reports
                 Name = $"{Mapping.SourceModel.Name} -> {Mapping.SinkModel.Name}"
             };
 
+            // The report is sink-oriented, so go through and add all the entities/attributes
+            // from the sink model. This will make it easy to see the mappings that are still lacking.
+            foreach (var entity in Mapping.SinkModel.Entities)
+            {
+                var sinkEntity = model.FindOrCreateEntity(entity.Name);
+
+                foreach (var attribute in entity.Attributes)
+                {
+                    var sinkAtt = sinkEntity.FindOrCreateAttribute(attribute.Name);
+
+                    sinkAtt.SinkType = attribute.DataType;
+
+                    // TODO - put this functionality in a Razor helper...
+                    sinkAtt.Url = $"{Mapping.SinkModel.Id}.html#{entity.Name}";
+                }
+            }
+
             // Add the maps. For now, keep track of the entities...
             foreach (var map in Mapping.Maps)
             {
-                // The report is sink-oriented, so find the sink entity and attribute...
-                var sinkEntity = model.FindOrCreateEntity(map.ToAttribute.Parent.Name);
-                var sinkAttribute = sinkEntity.FindOrCreateAttribute(map.ToAttribute.Name);
+                // The report is sink-oriented, so find the sink entity and attribute, which should
+                // have been created up above...
+                var sinkEntity = model.FindEntity(map.ToAttribute.Parent.Name);
+                var sinkAttribute = sinkEntity.FindAttribute(map.ToAttribute.Name);
 
                 // Add the map
                 sinkAttribute.Maps.Add(map);
-
-                // Add ALL attributes for this entity
-                foreach (var mapAttribute in map.ToAttribute.Parent.Attributes)
-                {
-                    var sinkAtt = sinkEntity.FindOrCreateAttribute(mapAttribute.Name);
-
-                    sinkAtt.SinkType = mapAttribute.DataType;
-
-                    // TODO - put this functionality in a Razor helper...
-                    sinkAtt.Url = $"{mapAttribute.Parent.Parent.Id}.html#{mapAttribute.Parent.Name}";
-                }
             }
 
             // Return what we've build
