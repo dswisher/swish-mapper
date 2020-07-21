@@ -279,7 +279,8 @@ namespace SwishMapper.Parsing.Project
         {
             var mask = Consume(lexer, TokenKind.String);
 
-            var directory = new DirectoryInfo(Path.GetDirectoryName(mask));
+            var dirPath = Path.Combine(Path.GetDirectoryName(lexer.FilePath), Path.GetDirectoryName(mask));
+            var directory = new DirectoryInfo(dirPath);
             var filemask = Path.GetFileName(mask);
 
             foreach (var info in directory.GetFiles(filemask).OrderBy(x => x.Name))
