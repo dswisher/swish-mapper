@@ -13,11 +13,12 @@ namespace SwishMapper.Tests.Parsing.Map
     public class MapLexerTests : AbstractLexerTests<MapLexer>
     {
         [Theory]
+        [InlineData("model")]
         [InlineData("with")]
         public void CanLexKeyword(string word)
         {
             // Arrange
-            using (var context = MakeContext(word))
+            using (var context = MakeWrapper(word))
             {
                 // Act
                 context.Lexer.LexToken();
@@ -39,15 +40,15 @@ namespace SwishMapper.Tests.Parsing.Map
         }
 
 
-        protected override Context<MapLexer> MakeContext(string input)
+        protected override LexerWrapper<MapLexer> MakeWrapper(string input)
         {
-            return new MapContext(input);
+            return new MapLexerWrapper(input);
         }
 
 
-        private class MapContext : Context<MapLexer>
+        private class MapLexerWrapper : LexerWrapper<MapLexer>
         {
-            public MapContext(string input)
+            public MapLexerWrapper(string input)
                 : base(input)
             {
             }

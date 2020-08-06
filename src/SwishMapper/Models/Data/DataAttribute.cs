@@ -8,8 +8,13 @@ namespace SwishMapper.Models.Data
     /// </summary>
     public class DataAttribute
     {
+        // TODO - xyzzy - get rid of these two - replaced with mapReferences
         private readonly List<DataAttributeMap> incomingMaps = new List<DataAttributeMap>();
         private readonly List<DataAttributeMap> outgoingMaps = new List<DataAttributeMap>();
+
+        // TODO - xyzzy - add this - double check type
+        // private readonly List<ExpressiveMapping> mapReferences = new List<ExpressiveMapping>();
+
         private readonly List<DataModelSource> sources = new List<DataModelSource>();
         private readonly List<DataAttributeSample> samples = new List<DataAttributeSample>();
         private readonly List<string> enumValues = new List<string>();

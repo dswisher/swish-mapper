@@ -19,7 +19,7 @@ namespace SwishMapper.Tests.Parsing.Project
         public void CanLexKeyword(string word)
         {
             // Arrange
-            using (var context = MakeContext(word))
+            using (var context = MakeWrapper(word))
             {
                 // Act
                 context.Lexer.LexToken();
@@ -41,15 +41,15 @@ namespace SwishMapper.Tests.Parsing.Project
         }
 
 
-        protected override Context<ProjectLexer> MakeContext(string input)
+        protected override LexerWrapper<ProjectLexer> MakeWrapper(string input)
         {
-            return new ProjectContext(input);
+            return new ProjectLexerWrapper(input);
         }
 
 
-        private class ProjectContext : Context<ProjectLexer>
+        private class ProjectLexerWrapper : LexerWrapper<ProjectLexer>
         {
-            public ProjectContext(string input)
+            public ProjectLexerWrapper(string input)
                 : base(input)
             {
             }

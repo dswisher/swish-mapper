@@ -3,8 +3,6 @@ using System;
 using System.IO;
 
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Moq;
 using SwishMapper.Parsing;
 using Xunit;
 
@@ -36,7 +34,7 @@ namespace SwishMapper.Tests.Parsing
         public void UnexpectedCharacterThrows(string content, int line, int pos)
         {
             // Arrange
-            using (var context = MakeContext(content))
+            using (var context = MakeWrapper(content))
             {
                 Action act = () => context.Lexer.LexToken();
 
@@ -59,7 +57,7 @@ namespace SwishMapper.Tests.Parsing
         public void CanLexSingleToken(string content, TokenKind expectedKind)
         {
             // Arrange
-            using (var context = MakeContext(content))
+            using (var context = MakeWrapper(content))
             {
                 // Act
                 context.Lexer.LexToken();
@@ -80,7 +78,7 @@ namespace SwishMapper.Tests.Parsing
         public void CanLexTwoTokens(string content, TokenKind expectedKind1, TokenKind expectedKind2)
         {
             // Arrange
-            using (var context = MakeContext(content))
+            using (var context = MakeWrapper(content))
             {
                 // Act
                 context.Lexer.LexToken();
@@ -108,7 +106,7 @@ namespace SwishMapper.Tests.Parsing
         public void CanLexIdentifier(string word)
         {
             // Arrange
-            using (var context = MakeContext(word))
+            using (var context = MakeWrapper(word))
             {
                 // Act
                 context.Lexer.LexToken();
@@ -130,7 +128,7 @@ namespace SwishMapper.Tests.Parsing
         public void CommentsAreIgnored(string content)
         {
             // Arrange
-            using (var context = MakeContext(content))
+            using (var context = MakeWrapper(content))
             {
                 // Act and assert
                 context.Lexer.LexToken();
@@ -151,7 +149,7 @@ namespace SwishMapper.Tests.Parsing
         public void CanLexString(string content, string text)
         {
             // Arrange
-            using (var context = MakeContext(content))
+            using (var context = MakeWrapper(content))
             {
                 // Act and assert
                 context.Lexer.LexToken();
@@ -161,15 +159,20 @@ namespace SwishMapper.Tests.Parsing
         }
 
 
+        // TODO - have each lexer-specific test supply a list of punctuation
         [Theory]
         [InlineData("{", TokenKind.LeftCurly)]
         [InlineData("}", TokenKind.RightCurly)]
         [InlineData(";", TokenKind.Semicolon)]
         [InlineData("->", TokenKind.Arrow)]
+        [InlineData("=", TokenKind.Equals)]
+        [InlineData("(", TokenKind.LeftParen)]
+        [InlineData(")", TokenKind.RightParen)]
+        [InlineData("/", TokenKind.Slash)]
         public void CanLexCommonPunctuation(string content, TokenKind expectedKind)
         {
             // Arrange
-            using (var context = MakeContext(content))
+            using (var context = MakeWrapper(content))
             {
                 // Act
                 context.Lexer.LexToken();
@@ -181,43 +184,6 @@ namespace SwishMapper.Tests.Parsing
 
 
         protected abstract T MakeLexer();
-        protected abstract Context<T> MakeContext(string input);
-
-
-        protected abstract class Context<TLexer> : IDisposable
-            where TLexer : IDisposable
-        {
-            private readonly Mock<ILogger<TLexer>> logger = new Mock<ILogger<TLexer>>();
-            private readonly MemoryStream memoryStream;
-
-
-            public Context(string input)
-            {
-                memoryStream = new MemoryStream();
-
-                using (var writer = new StreamWriter(memoryStream, leaveOpen: true))
-                {
-                    writer.Write(input);
-                    writer.Flush();
-                }
-
-                memoryStream.Position = 0;
-
-                var reader = new StreamReader(memoryStream, leaveOpen: true);
-                Lexer = MakeLexer(reader, Filename, logger.Object);
-            }
-
-
-            public TLexer Lexer { get; private set; }
-
-
-            public void Dispose()
-            {
-                Lexer.Dispose();
-            }
-
-
-            protected abstract TLexer MakeLexer(StreamReader reader, string filename, ILogger<TLexer> logger);
-        }
+        protected abstract LexerWrapper<T> MakeWrapper(string input);
     }
 }

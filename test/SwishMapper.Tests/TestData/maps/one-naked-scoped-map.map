@@ -1,0 +1,8 @@
+
+src = model(input);
+sink = model(output);
+
+with left = sink:Person
+with right = src:Person
+    left:Name = right:Name;
+

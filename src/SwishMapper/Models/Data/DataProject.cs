@@ -10,11 +10,11 @@ namespace SwishMapper.Models.Data
     {
         private readonly List<DataModel> models = new List<DataModel>();
         private readonly List<SimpleDataMapping> simpleMaps = new List<SimpleDataMapping>();
-        private readonly List<ExpressiveDataMapping> expressiveMaps = new List<ExpressiveDataMapping>();
+        private readonly List<ExpressiveMapList> expressiveMaps = new List<ExpressiveMapList>();
 
         public IList<DataModel> Models { get { return models; } }
 
         public IList<SimpleDataMapping> SimpleMaps { get { return simpleMaps; } }
-        public IList<ExpressiveDataMapping> ExpressiveMaps { get { return expressiveMaps; } }
+        public IList<ExpressiveMapList> ExpressiveMaps { get { return expressiveMaps; } }
     }
 }

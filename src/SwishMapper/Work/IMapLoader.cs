@@ -7,8 +7,6 @@ namespace SwishMapper.Work
 {
     public interface IMapLoader
     {
-        string FromModelId { set; }
-        string ToModelId { set; }
         string Path { set; }
 
         Task RunAsync(DataProject project);

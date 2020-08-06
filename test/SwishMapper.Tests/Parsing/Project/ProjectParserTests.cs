@@ -25,7 +25,7 @@ namespace SwishMapper.Tests.Parsing.Project
 
         public ProjectParserTests()
         {
-            factory = new LexerFactory(lexerLogger.Object);
+            factory = new LexerFactory(lexerLogger.Object, null);
             parser = new ProjectParser(factory, logger.Object);
         }
 
@@ -34,7 +34,7 @@ namespace SwishMapper.Tests.Parsing.Project
         public async Task MissingFileThrows()
         {
             // Arrange
-            Func<Task> act = async () => { await parser.ParseAsync("foo.map"); };
+            Func<Task> act = async () => { await parser.ParseAsync("foo.sm"); };
 
             // Act and assert
             await act.Should().ThrowAsync<FileNotFoundException>();

@@ -65,7 +65,12 @@ namespace SwishMapper.Work
 
             if (map.Path.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
             {
-                worker = serviceProvider.GetRequiredService<IMapCsvLoader>();
+                var csvLoader = serviceProvider.GetRequiredService<IMapCsvLoader>();
+
+                csvLoader.FromModelId = map.FromModelId;
+                csvLoader.ToModelId = map.ToModelId;
+
+                worker = csvLoader;
             }
             else if (map.Path.EndsWith(".map", StringComparison.OrdinalIgnoreCase))
             {
@@ -76,8 +81,6 @@ namespace SwishMapper.Work
                 throw new ProjectPlannerException($"Unexpected map path extension: {Path.GetExtension(map.Path)}");
             }
 
-            worker.FromModelId = map.FromModelId;
-            worker.ToModelId = map.ToModelId;
             worker.Path = map.Path;
 
             return worker;

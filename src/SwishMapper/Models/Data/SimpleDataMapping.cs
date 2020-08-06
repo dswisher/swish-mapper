@@ -6,7 +6,7 @@ namespace SwishMapper.Models.Data
     /// <summary>
     /// One set of mappings between two data models.
     /// </summary>
-    // TODO - xyzzy - replaced by ExpressiveDataMapping
+    // TODO - xyzzy - obsolete - replaced by ExpressiveDataMapping
     public class SimpleDataMapping
     {
         private readonly List<DataAttributeMap> maps = new List<DataAttributeMap>();

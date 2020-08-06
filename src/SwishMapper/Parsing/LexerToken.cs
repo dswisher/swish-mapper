@@ -10,6 +10,11 @@ namespace SwishMapper.Parsing
         LeftCurly,
         RightCurly,
         Semicolon,
+        Colon,
+        Equals,
+        LeftParen,
+        RightParen,
+        Slash,
         String
     }
 

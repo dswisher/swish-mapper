@@ -26,10 +26,10 @@ namespace SwishMapper.Work
 
         public async Task RunAsync(DataProject project)
         {
-            logger.LogDebug("Loading mapping file {Path}.", Path);
+            logger.LogDebug("Loading DSL mapping file {Path}.", Path);
 
             // Parse the mapping document
-            var dataMap = await parser.ParseAsync(Path);
+            var dataMap = await parser.ParseAsync(Path, project.Models);
 
             // Add the mapping to the project
             project.ExpressiveMaps.Add(dataMap);

@@ -30,6 +30,13 @@ namespace SwishMapper.Parsing.Project
             PunctuationStarters.Add('{');
             PunctuationStarters.Add('}');
             PunctuationStarters.Add('-');
+
+            // TODO - remove these - they apply to MapLexer, but not ProjectLexer (but unit test is at AbstractLexer level)
+            PunctuationStarters.Add(':');
+            PunctuationStarters.Add('=');
+            PunctuationStarters.Add('(');
+            PunctuationStarters.Add(')');
+            PunctuationStarters.Add('/');
         }
 
 

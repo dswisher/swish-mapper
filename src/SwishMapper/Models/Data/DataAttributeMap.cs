@@ -4,6 +4,7 @@ namespace SwishMapper.Models.Data
     /// <summary>
     /// A mapping between two attributes.
     /// </summary>
+    // TODO - xyzzy - obsolete - get rid of this
     public class DataAttributeMap
     {
         /// <summary>

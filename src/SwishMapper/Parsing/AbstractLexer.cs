@@ -24,6 +24,7 @@ namespace SwishMapper.Parsing
         private int linePos;
 
 
+        // TODO - this should take a dictionary of punctuation -> token
         protected AbstractLexer(TextReader reader, string path, ILogger logger, HashSet<string> keywords, HashSet<char> punctuationStarters)
         {
             this.logger = logger;
@@ -180,6 +181,31 @@ namespace SwishMapper.Parsing
                 case ';':
                     Consume();
                     CreateToken(TokenKind.Semicolon);
+                    break;
+
+                case ':':
+                    Consume();
+                    CreateToken(TokenKind.Colon);
+                    break;
+
+                case '=':
+                    Consume();
+                    CreateToken(TokenKind.Equals);
+                    break;
+
+                case '(':
+                    Consume();
+                    CreateToken(TokenKind.LeftParen);
+                    break;
+
+                case ')':
+                    Consume();
+                    CreateToken(TokenKind.RightParen);
+                    break;
+
+                case '/':
+                    Consume();
+                    CreateToken(TokenKind.Slash);
                     break;
 
                 case '-':

@@ -9,7 +9,7 @@ using SwishMapper.Models.Project;
 
 namespace SwishMapper.Parsing.Project
 {
-    public class ProjectParser : IProjectParser
+    public class ProjectParser : AbstractParser, IProjectParser
     {
         private readonly ILexerFactory lexerFactory;
         private readonly ILogger logger;
@@ -29,7 +29,7 @@ namespace SwishMapper.Parsing.Project
             using (var lexer = lexerFactory.CreateProjectLexer(path))
             {
                 // Move to the first token
-                lexer.LexToken();
+                Advance(lexer);
 
                 // Keep parsing until nothing is left.
                 while (lexer.Token.Kind != TokenKind.EOF)
@@ -48,8 +48,7 @@ namespace SwishMapper.Parsing.Project
 
             var text = lexer.Token.Text;
 
-            // TODO - change this (and other similar statements) to Advance()
-            lexer.LexToken();
+            Advance(lexer);
 
             switch (text)
             {
@@ -241,32 +240,6 @@ namespace SwishMapper.Parsing.Project
         }
 
 
-        private void VerifyToken(ProjectLexer lexer, TokenKind kind, string text = null)
-        {
-            if (lexer.Token.Kind != kind)
-            {
-                throw new ParserException($"Expecting token kind {kind}, but found {lexer.Token.Kind}: {lexer.Token.Text}.", lexer.Token);
-            }
-
-            if ((text != null) && (lexer.Token.Text != text))
-            {
-                throw new ParserException($"Expecting {kind} token to have text '{text}', but found '{lexer.Token.Text}'.", lexer.Token);
-            }
-        }
-
-
-        private string Consume(ProjectLexer lexer, TokenKind kind, string text = null)
-        {
-            VerifyToken(lexer, kind, text);
-
-            var result = lexer.Token.Text;
-
-            lexer.LexToken();
-
-            return result;
-        }
-
-
         private string ConsumeFile(ProjectLexer lexer)
         {
             var fragment = Consume(lexer, TokenKind.String);
@@ -298,7 +271,7 @@ namespace SwishMapper.Parsing.Project
         {
             if (lexer.Token.Kind == kind)
             {
-                lexer.LexToken();
+                Advance(lexer);
             }
         }
     }

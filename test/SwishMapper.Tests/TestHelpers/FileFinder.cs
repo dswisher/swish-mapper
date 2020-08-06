@@ -23,7 +23,7 @@ namespace SwishMapper.Tests.TestHelpers
         }
 
 
-        public static FileInfo FindMappingFile(string name)
+        public static FileInfo FindMapFile(string name)
         {
             return new FileInfo(Path.Join(FindDataDir().FullName, "maps", name));
         }

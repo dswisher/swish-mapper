@@ -14,12 +14,18 @@ namespace SwishMapper.Parsing.Map
 
         static MapLexer()
         {
+            Keywords.Add("model");
             Keywords.Add("with");
 
             PunctuationStarters.Add(';');
+            PunctuationStarters.Add(':');
             PunctuationStarters.Add('{');
             PunctuationStarters.Add('}');
             PunctuationStarters.Add('-');
+            PunctuationStarters.Add('=');
+            PunctuationStarters.Add('(');
+            PunctuationStarters.Add(')');
+            PunctuationStarters.Add('/');
         }
 
 

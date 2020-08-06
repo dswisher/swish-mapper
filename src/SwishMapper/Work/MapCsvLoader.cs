@@ -27,7 +27,7 @@ namespace SwishMapper.Work
 
         public async Task RunAsync(DataProject project)
         {
-            logger.LogDebug("Loading mapping file {Path}.", Path);
+            logger.LogDebug("Loading CSV mapping file {Path}.", Path);
 
             // Find and validate the source and sink
             var sourceModel = project.Models.FirstOrDefault(x => x.Id == FromModelId);
