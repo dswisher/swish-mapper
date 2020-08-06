@@ -18,7 +18,7 @@ namespace SwishMapper.Reports
         }
 
 
-        public DataMapping Mapping { get; set; }
+        public SimpleDataMapping Mapping { get; set; }
 
 
         public override Task RunAsync()

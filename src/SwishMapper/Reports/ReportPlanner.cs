@@ -78,7 +78,7 @@ namespace SwishMapper.Reports
             // Create a mapping report for each mapping
             section = indexModel.CreateSection("Mappings");
 
-            foreach (var map in dataProject.Maps)
+            foreach (var map in dataProject.SimpleMaps)
             {
                 // TODO - what if there are two maps between the same models? Need more foolproof naming.
                 var filename = $"{map.SourceModel.Id}-{map.SinkModel.Id}.html";
@@ -88,6 +88,8 @@ namespace SwishMapper.Reports
 
                 yield return serviceProvider.MappingReport(map, path);
             }
+
+            // TODO - xyzzy - add report for expressive maps
 
             // Create the index page
             yield return serviceProvider.IndexPage(indexModel, Path.Combine(outDir.FullName, "index.html"));

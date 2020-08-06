@@ -11,7 +11,7 @@ namespace SwishMapper.Work
     public class DataProjectAssembler : IWorker<DataProject>
     {
         private readonly List<DataModelAssembler> modelWorkers = new List<DataModelAssembler>();
-        private readonly List<MapLoader> mapWorkers = new List<MapLoader>();
+        private readonly List<IMapLoader> mapWorkers = new List<IMapLoader>();
 
         private readonly ILogger logger;
 
@@ -70,7 +70,7 @@ namespace SwishMapper.Work
         }
 
 
-        public void AddWorker(MapLoader worker)
+        public void AddWorker(IMapLoader worker)
         {
             mapWorkers.Add(worker);
         }

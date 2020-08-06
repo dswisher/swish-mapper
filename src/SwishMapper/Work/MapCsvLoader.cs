@@ -10,11 +10,11 @@ using SwishMapper.Models.Data;
 
 namespace SwishMapper.Work
 {
-    public class MapLoader
+    public class MapCsvLoader : IMapCsvLoader
     {
         private readonly ILogger logger;
 
-        public MapLoader(ILogger<MapLoader> logger)
+        public MapCsvLoader(ILogger<MapCsvLoader> logger)
         {
             this.logger = logger;
         }
@@ -27,7 +27,7 @@ namespace SwishMapper.Work
 
         public async Task RunAsync(DataProject project)
         {
-            logger.LogDebug($"Loading mapping file {Path}.");
+            logger.LogDebug("Loading mapping file {Path}.", Path);
 
             // Find and validate the source and sink
             var sourceModel = project.Models.FirstOrDefault(x => x.Id == FromModelId);
@@ -46,13 +46,13 @@ namespace SwishMapper.Work
             }
 
             // Create the map object and stuff it into the project.
-            var dataMap = new DataMapping
+            var dataMap = new SimpleDataMapping
             {
                 SourceModel = sourceModel,
                 SinkModel = sinkModel
             };
 
-            project.Maps.Add(dataMap);
+            project.SimpleMaps.Add(dataMap);
 
             // Load and process the mappings
             using (var reader = new StreamReader(Path))

@@ -1,6 +1,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using SwishMapper.Parsing;
+using SwishMapper.Parsing.Map;
 using SwishMapper.Parsing.Project;
 using SwishMapper.Parsing.Xsd;
 using SwishMapper.Reports;
@@ -33,11 +34,13 @@ namespace SwishMapper
             services.AddTransient<IModelSampleUpdater, ModelSampleUpdater>();
             services.AddTransient<IXsdToModelTranslator, XsdToModelTranslator>();
             services.AddTransient<IXsdLoader, XsdLoader>();
+            services.AddTransient<IMapCsvLoader, MapCsvLoader>();
+            services.AddTransient<IMapDslLoader, MapDslLoader>();
+            services.AddTransient<IMapParser, MapParser>();
 
             // TODO - use interfaces for these!!!
             services.AddTransient<DataModelAssembler>();
             services.AddTransient<DataProjectAssembler>();
-            services.AddTransient<MapLoader>();
             services.AddTransient<SampleWriter>();
 
             services.AddTransient<CopyEmbeddedWorker>();

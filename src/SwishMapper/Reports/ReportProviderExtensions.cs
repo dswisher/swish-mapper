@@ -33,7 +33,7 @@ namespace SwishMapper.Reports
         }
 
 
-        public static MappingReport MappingReport(this IServiceProvider provider, DataMapping mapping, string path)
+        public static MappingReport MappingReport(this IServiceProvider provider, SimpleDataMapping mapping, string path)
         {
             var report = provider.GetRequiredService<MappingReport>();
 
