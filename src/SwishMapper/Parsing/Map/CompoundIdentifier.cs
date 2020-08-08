@@ -9,9 +9,47 @@ namespace SwishMapper.Parsing.Map
     {
         private readonly List<string> parts = new List<string>();
 
+        // TODO - xyzzy - include file/line info so we can provide good error messages
+
+        public CompoundIdentifier()
+        {
+        }
+
+
+        public CompoundIdentifier(string s)
+        {
+            string pieces;
+            var bits = s.Split(':');
+
+            if (bits.Length == 1)
+            {
+                pieces = bits[0];
+            }
+            else
+            {
+                Prefix = bits[0];
+                pieces = bits[1];
+            }
+
+            parts.AddRange(pieces.Split('/'));
+        }
+
+
         public string Prefix { get; private set; }
 
         public IEnumerable<string> Parts { get { return parts; } }
+
+
+        public bool HasPrefix
+        {
+            get { return !string.IsNullOrEmpty(Prefix); }
+        }
+
+
+        public string XPath
+        {
+            get { return string.Join("/", parts); }
+        }
 
 
         public static CompoundIdentifier Parse(MapLexer lexer)

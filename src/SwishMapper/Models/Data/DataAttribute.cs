@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.Text;
 
 namespace SwishMapper.Models.Data
 {
@@ -57,5 +58,21 @@ namespace SwishMapper.Models.Data
         /// The sources used to determine the definition of this attribtue.
         /// </summary>
         public IList<DataModelSource> Sources { get { return sources; } }
+
+
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+
+            builder.Append($"{Parent.Parent.Id}:{Parent.Name}.{Name}");
+
+            if (DataType != null)
+            {
+                builder.Append(":");
+                builder.Append(DataType.ToString());
+            }
+
+            return builder.ToString();
+        }
     }
 }

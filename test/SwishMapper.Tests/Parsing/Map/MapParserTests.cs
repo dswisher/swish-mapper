@@ -22,12 +22,14 @@ namespace SwishMapper.Tests.Parsing.Map
         private readonly Mock<ILogger<MapParser>> logger = new Mock<ILogger<MapParser>>();
 
         private readonly ILexerFactory factory;
+        private readonly IMappedDataExpressionParser expressionParser;
         private readonly MapParser parser;
 
         public MapParserTests()
         {
             factory = new LexerFactory(null, lexerLogger.Object);
-            parser = new MapParser(factory, logger.Object);
+            expressionParser = new MappedDataExpressionParser();
+            parser = new MapParser(factory, expressionParser, logger.Object);
         }
 
 

@@ -5,6 +5,18 @@ namespace SwishMapper.Tests.TestHelpers
 {
     public class ProjectBuilder
     {
+        private readonly DataProject project = new DataProject();
+        private readonly DataModelSource source = new DataModelSource
+        {
+            ShortName = "ProjectBuilder",
+            Path = "ProjectBuilder"
+        };
+
+        private DataModel currentModel;
+        private DataEntity currentEntity;
+        private DataAttribute currentAttribute;
+
+
         public static DataProject Predefined(string name)
         {
             switch (name)
@@ -20,25 +32,66 @@ namespace SwishMapper.Tests.TestHelpers
 
         public static DataProject InputOutput()
         {
-            var input = new DataModel
+            var builder = new ProjectBuilder();
+
+            builder.Model("input")
+                .Entity("Person")
+                    .Attribute("Name")
+                    .Attribute("BirthPlace")
+                        .References("City")
+                .Entity("City")
+                    .Attribute("Name");
+
+            builder.Model("output")
+                .Entity("People")
+                    .Attribute("FullName")
+                    .Attribute("PlaceOfBirth")
+                        .References("Place")
+                .Entity("Place")
+                    .Attribute("Name");
+
+            return builder.project;
+        }
+
+
+        public ProjectBuilder Model(string id)
+        {
+            currentModel = new DataModel
             {
-                Id = "input",
-                Name = "Input"
+                Id = id,
+                Name = id
             };
 
-            var output = new DataModel
-            {
-                Id = "output",
-                Name = "Output"
-            };
+            project.Models.Add(currentModel);
 
-            // TODO - xyzzy - add entities/attributes to the models
+            return this;
+        }
 
-            var project = new DataProject();
-            project.Models.Add(input);
-            project.Models.Add(output);
 
-            return project;
+        public ProjectBuilder Entity(string name)
+        {
+            currentEntity = currentModel.FindOrCreateEntity(name, source);
+
+            return this;
+        }
+
+
+        public ProjectBuilder Attribute(string name)
+        {
+            currentAttribute = currentEntity.FindOrCreateAttribute(name, source);
+
+            // Default the datatype to string
+            currentAttribute.DataType = new DataType(PrimitiveType.String, 255);
+
+            return this;
+        }
+
+
+        public ProjectBuilder References(string name)
+        {
+            currentAttribute.DataType = new DataType(name);
+
+            return this;
         }
     }
 }

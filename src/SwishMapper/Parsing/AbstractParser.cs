@@ -1,6 +1,7 @@
 
 namespace SwishMapper.Parsing
 {
+    // TODO - xyzzy - get rid of this class and replace with extension methods
     public abstract class AbstractParser
     {
         public static void VerifyToken(AbstractLexer lexer, params TokenKind[] kinds)

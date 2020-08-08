@@ -11,25 +11,22 @@ namespace SwishMapper.Parsing.Map
     public class MapParser : AbstractParser, IMapParser
     {
         private readonly ILexerFactory lexerFactory;
+        private readonly IMappedDataExpressionParser expressionParser;
         private readonly ILogger logger;
 
         public MapParser(ILexerFactory lexerFactory,
+                         IMappedDataExpressionParser expressionParser,
                          ILogger<MapParser> logger)
         {
             this.lexerFactory = lexerFactory;
+            this.expressionParser = expressionParser;
             this.logger = logger;
         }
 
 
         public Task<ExpressiveMapList> ParseAsync(string path, IEnumerable<DataModel> models)
         {
-            var mapping = new ExpressiveMapList();
-
-            var context = new MapParserContext
-            {
-                MapList = mapping,
-                Models = models
-            };
+            var context = new MapParserContext(models);
 
             using (var lexer = lexerFactory.CreateMapLexer(path))
             {
@@ -43,15 +40,13 @@ namespace SwishMapper.Parsing.Map
                 }
             }
 
-            return Task.FromResult(mapping);
+            return Task.FromResult(context.MapList);
         }
 
 
         private void ParseStatement(MapParserContext context, MapLexer lexer)
         {
             // Constructs:
-            //      ident = model(ident);
-            //      ident:ident = ident:ident;
             //      with ...
             //      { statements }
             if (lexer.Token.Kind == TokenKind.Keyword)
@@ -80,16 +75,47 @@ namespace SwishMapper.Parsing.Map
                 return;
             }
 
+            // Constructs:
+            //      ident = model(ident);
+            //      ident:ident = ident:ident;
             var lhs = CompoundIdentifier.Parse(lexer);
 
             Consume(lexer, TokenKind.Equals);
 
-            // TODO - xyzzy - right-hand-side parsing needs to be a more general expression
+            // TODO - xyzzy - proper RHS parsing!
 
+#if false
+            var rhs = expressionParser.Parse(lexer, context);
+
+            // A little special handling for the model function
+            if (rhs.FunctionName == "model")
+            {
+                var modelId = rhs.Arguments.First();
+                var model = context.Models.FirstOrDefault(x => x.Id == modelId);
+
+                if (model == null)
+                {
+                    throw new ParserException($"Model '{modelId}' not found in project.", lexer.Token);
+                }
+
+                context.AddModelAlias(lhs.Parts.First(), model);
+            }
+            else
+            {
+            }
+#endif
+
+#if true
             if (lexer.Token.Kind == TokenKind.Keyword)
             {
                 if (lexer.Token.Text == "model")
                 {
+                    // Verify the LHS is legit
+                    if (lhs.HasPrefix || lhs.Parts.Count() != 1)
+                    {
+                        throw new ParserException($"Model left-hand-side must be a simple identifier.", lexer.Token);
+                    }
+
                     // Parse this simple expression
                     Consume(lexer, TokenKind.Keyword, "model");
                     Consume(lexer, TokenKind.LeftParen);
@@ -102,6 +128,8 @@ namespace SwishMapper.Parsing.Map
                     {
                         throw new ParserException($"Model '{modelId}' not found in project.", lexer.Token);
                     }
+
+                    context.AddModelAlias(lhs.Parts.First(), model);
 
                     // ...and done...
                     Consume(lexer, TokenKind.RightParen);
@@ -118,6 +146,7 @@ namespace SwishMapper.Parsing.Map
                 // TODO - do something with this mapping!
                 context.MapList.Maps.Add(new ExpressiveMapping());  // TODO - HACK!
             }
+#endif
 
             Consume(lexer, TokenKind.Semicolon);
         }
@@ -136,9 +165,13 @@ namespace SwishMapper.Parsing.Map
 
             var rhs = CompoundIdentifier.Parse(lexer);
 
-            // TODO - xyzzy - process the "with" - add alias to context or w/e
+            // TODO - perform some sort of validation on the RHS - does it resolve to a model, etc
+
+            context.Push(alias, rhs);
 
             ParseStatement(context, lexer);
+
+            context.Pop();
         }
     }
 }

@@ -2,6 +2,8 @@
 using System;
 using System.Xml.Schema;
 
+using SwishMapper.Parsing.Map;
+
 namespace SwishMapper.Parsing
 {
     /// <summary>
@@ -49,8 +51,15 @@ namespace SwishMapper.Parsing
         }
 
 
+        // TODO - make token the first argument to be consistent with XmlSchema overloads
         public ParserException(string message, LexerToken token)
             : this(message, token.Filename, token.LineNumber, token.LinePosition)
+        {
+        }
+
+
+        public ParserException(CompoundIdentifier identifier, string message)
+            : this(message)     // TODO - include file/line info
         {
         }
 
