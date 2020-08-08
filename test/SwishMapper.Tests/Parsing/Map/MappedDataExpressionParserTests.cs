@@ -1,9 +1,11 @@
 
+using System;
 using System.IO;
 using System.Linq;
 
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using SwishMapper.Parsing;
 using SwishMapper.Parsing.Map;
 using SwishMapper.Tests.TestHelpers;
 using Xunit;
@@ -44,13 +46,11 @@ namespace SwishMapper.Tests.Parsing.Map
 
                 var arg = expression.Arguments[0];
 
-                arg.XPath.Should().Be("Person/Name");
+                arg.Attribute.XPath.Should().Be("Person/Name");
             }
         }
 
 
-        // TODO - xyzzy - put this into the mix!
-#if false
         [Theory]
         [InlineData("model(input)", "model")]
         public void CanParseSingleArgumentFunctions(string content, string functionName)
@@ -67,7 +67,21 @@ namespace SwishMapper.Tests.Parsing.Map
                 // TODO - check arguments
             }
         }
-#endif
+
+
+        [Theory]
+        [InlineData("model(foo)")]
+        public void InvalidExpressionsThrow(string content)
+        {
+            // Arrange
+            using (var wrapper = new MapLexerWrapper(content))
+            {
+                Action act = () => parser.Parse(wrapper.Lexer, context);
+
+                // Act and assert
+                act.Should().Throw<ParserException>();
+            }
+        }
 
 
         private class MapLexerWrapper : LexerWrapper<MapLexer>

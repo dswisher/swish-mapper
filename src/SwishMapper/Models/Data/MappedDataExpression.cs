@@ -5,14 +5,12 @@ namespace SwishMapper.Models.Data
 {
     public class MappedDataExpression
     {
-        private readonly List<MappedDataAttribute> arguments = new List<MappedDataAttribute>();
+        private readonly List<MappedDataArgument> arguments = new List<MappedDataArgument>();
 
         /// <summary>
         /// The function to be applied to the arguments. May be null.
         /// </summary>
         public string FunctionName { get; set; }
-
-        // TODO - xyzzy - FIXME - arguments can be: 1) an attribute, 2) a model name, 3) a string; how to support 2 & 3???
 
         /// <summary>
         /// The arguments to the function.
@@ -21,6 +19,8 @@ namespace SwishMapper.Models.Data
         /// An expression can be just an identifier. If so, the FunctionName will be null, and there
         /// will be a single argument.
         /// </remarks>
-        public List<MappedDataAttribute> Arguments { get { return arguments; } }
+        public List<MappedDataArgument> Arguments { get { return arguments; } }
+
+        // TODO - implement ToString()
     }
 }

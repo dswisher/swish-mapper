@@ -8,7 +8,7 @@ using SwishMapper.Models.Data;
 
 namespace SwishMapper.Parsing.Map
 {
-    public class MapParser : AbstractParser, IMapParser
+    public class MapParser : IMapParser
     {
         private readonly ILexerFactory lexerFactory;
         private readonly IMappedDataExpressionParser expressionParser;
@@ -31,7 +31,7 @@ namespace SwishMapper.Parsing.Map
             using (var lexer = lexerFactory.CreateMapLexer(path))
             {
                 // Move to the first token
-                Advance(lexer);
+                lexer.Advance();
 
                 // Keep parsing until nothing is left.
                 while (lexer.Token.Kind != TokenKind.EOF)
@@ -63,14 +63,14 @@ namespace SwishMapper.Parsing.Map
             }
             else if (lexer.Token.Kind == TokenKind.LeftCurly)
             {
-                Consume(lexer, TokenKind.LeftCurly);
+                lexer.Consume(TokenKind.LeftCurly);
 
                 while (lexer.Token.Kind != TokenKind.RightCurly)
                 {
                     ParseStatement(context, lexer);
                 }
 
-                Consume(lexer, TokenKind.RightCurly);
+                lexer.Consume(TokenKind.RightCurly);
 
                 return;
             }
@@ -80,17 +80,48 @@ namespace SwishMapper.Parsing.Map
             //      ident:ident = ident:ident;
             var lhs = CompoundIdentifier.Parse(lexer);
 
-            Consume(lexer, TokenKind.Equals);
+            lexer.Consume(TokenKind.Equals);
 
             // TODO - xyzzy - proper RHS parsing!
 
-#if false
+#if true
             var rhs = expressionParser.Parse(lexer, context);
 
             // A little special handling for the model function
             if (rhs.FunctionName == "model")
             {
-                var modelId = rhs.Arguments.First();
+                var model = rhs.Arguments.First().Model;
+
+                if (model == null)
+                {
+                    throw new ParserException("The 'model' function requires a model argument.");
+                }
+
+                context.AddModelAlias(lhs.Parts.First(), model);
+            }
+            else
+            {
+                // TODO - do something with this mapping!
+                context.MapList.Maps.Add(new ExpressiveMapping());  // TODO - HACK!
+            }
+
+#else
+
+            // TODO - temporary hack
+            if (lexer.Token.Text == "model")
+            {
+                // Verify the LHS is legit
+                if (lhs.HasPrefix || lhs.Parts.Count() != 1)
+                {
+                    throw new ParserException($"Model left-hand-side must be a simple identifier.", lexer.Token);
+                }
+
+                // Parse this simple expression
+                lexer.Consume(TokenKind.Identifier, "model");
+                lexer.Consume(TokenKind.LeftParen);
+
+                // Look up the model
+                var modelId = lexer.Consume(TokenKind.Identifier);
                 var model = context.Models.FirstOrDefault(x => x.Id == modelId);
 
                 if (model == null)
@@ -99,45 +130,9 @@ namespace SwishMapper.Parsing.Map
                 }
 
                 context.AddModelAlias(lhs.Parts.First(), model);
-            }
-            else
-            {
-            }
-#endif
 
-#if true
-            if (lexer.Token.Kind == TokenKind.Keyword)
-            {
-                if (lexer.Token.Text == "model")
-                {
-                    // Verify the LHS is legit
-                    if (lhs.HasPrefix || lhs.Parts.Count() != 1)
-                    {
-                        throw new ParserException($"Model left-hand-side must be a simple identifier.", lexer.Token);
-                    }
-
-                    // Parse this simple expression
-                    Consume(lexer, TokenKind.Keyword, "model");
-                    Consume(lexer, TokenKind.LeftParen);
-
-                    // Look up the model
-                    var modelId = Consume(lexer, TokenKind.Identifier);
-                    var model = context.Models.FirstOrDefault(x => x.Id == modelId);
-
-                    if (model == null)
-                    {
-                        throw new ParserException($"Model '{modelId}' not found in project.", lexer.Token);
-                    }
-
-                    context.AddModelAlias(lhs.Parts.First(), model);
-
-                    // ...and done...
-                    Consume(lexer, TokenKind.RightParen);
-                }
-                else
-                {
-                    throw new ParserException($"Unknown function '{lexer.Token.Text}'.", lexer.Token);
-                }
+                // ...and done...
+                lexer.Consume(TokenKind.RightParen);
             }
             else
             {
@@ -148,20 +143,20 @@ namespace SwishMapper.Parsing.Map
             }
 #endif
 
-            Consume(lexer, TokenKind.Semicolon);
+            lexer.Consume(TokenKind.Semicolon);
         }
 
 
         private void ParseWith(MapParserContext context, MapLexer lexer)
         {
             // with cident = cident ...statement...
-            VerifyToken(lexer, TokenKind.Keyword, "with");
+            lexer.VerifyToken(TokenKind.Keyword, "with");
 
-            Advance(lexer);
+            lexer.Advance();
 
-            var alias = Consume(lexer, TokenKind.Identifier);
+            var alias = lexer.Consume(TokenKind.Identifier);
 
-            Consume(lexer, TokenKind.Equals);
+            lexer.Consume(TokenKind.Equals);
 
             var rhs = CompoundIdentifier.Parse(lexer);
 

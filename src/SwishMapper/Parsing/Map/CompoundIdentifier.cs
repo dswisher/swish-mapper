@@ -56,15 +56,15 @@ namespace SwishMapper.Parsing.Map
         {
             var ident = new CompoundIdentifier();
 
-            var text = AbstractParser.Consume(lexer, TokenKind.Identifier);
+            var text = lexer.Consume(TokenKind.Identifier);
 
             if (lexer.Token.Kind == TokenKind.Colon)
             {
                 ident.Prefix = text;
 
-                AbstractParser.Consume(lexer, TokenKind.Colon);
+                lexer.Consume(TokenKind.Colon);
 
-                ident.parts.Add(AbstractParser.Consume(lexer, TokenKind.Identifier));
+                ident.parts.Add(lexer.Consume(TokenKind.Identifier));
             }
             else
             {
@@ -73,9 +73,9 @@ namespace SwishMapper.Parsing.Map
 
             while (lexer.Token.Kind == TokenKind.Slash)
             {
-                AbstractParser.Advance(lexer);
+                lexer.Advance();
 
-                ident.parts.Add(AbstractParser.Consume(lexer, TokenKind.Identifier));
+                ident.parts.Add(lexer.Consume(TokenKind.Identifier));
             }
 
             return ident;

@@ -9,7 +9,7 @@ using SwishMapper.Models.Project;
 
 namespace SwishMapper.Parsing.Project
 {
-    public class ProjectParser : AbstractParser, IProjectParser
+    public class ProjectParser : IProjectParser
     {
         private readonly ILexerFactory lexerFactory;
         private readonly ILogger logger;
@@ -29,7 +29,7 @@ namespace SwishMapper.Parsing.Project
             using (var lexer = lexerFactory.CreateProjectLexer(path))
             {
                 // Move to the first token
-                Advance(lexer);
+                lexer.Advance();
 
                 // Keep parsing until nothing is left.
                 while (lexer.Token.Kind != TokenKind.EOF)
@@ -44,11 +44,11 @@ namespace SwishMapper.Parsing.Project
 
         private void ParseStatement(ProjectDefinition definition, ProjectLexer lexer)
         {
-            VerifyToken(lexer, TokenKind.Keyword);
+            lexer.VerifyToken(TokenKind.Keyword);
 
             var text = lexer.Token.Text;
 
-            Advance(lexer);
+            lexer.Advance();
 
             switch (text)
             {
@@ -71,16 +71,16 @@ namespace SwishMapper.Parsing.Project
             var map = new ProjectMap();
             definition.Maps.Add(map);
 
-            Consume(lexer, TokenKind.LeftCurly);
+            lexer.Consume(TokenKind.LeftCurly);
 
             while (lexer.Token.Kind == TokenKind.Keyword)
             {
-                var keyword = Consume(lexer, TokenKind.Keyword);
+                var keyword = lexer.Consume(TokenKind.Keyword);
 
                 switch (keyword)
                 {
                     case "from":
-                        map.FromModelId = Consume(lexer, TokenKind.Identifier);
+                        map.FromModelId = lexer.Consume(TokenKind.Identifier);
                         OptionallyConsume(lexer, TokenKind.Semicolon);
                         break;
 
@@ -90,7 +90,7 @@ namespace SwishMapper.Parsing.Project
                         break;
 
                     case "to":
-                        map.ToModelId = Consume(lexer, TokenKind.Identifier);
+                        map.ToModelId = lexer.Consume(TokenKind.Identifier);
                         OptionallyConsume(lexer, TokenKind.Semicolon);
                         break;
 
@@ -99,7 +99,7 @@ namespace SwishMapper.Parsing.Project
                 }
             }
 
-            Consume(lexer, TokenKind.RightCurly);
+            lexer.Consume(TokenKind.RightCurly);
         }
 
 
@@ -108,13 +108,13 @@ namespace SwishMapper.Parsing.Project
             var model = new ProjectModel();
             definition.Models.Add(model);
 
-            model.Id = Consume(lexer, TokenKind.Identifier);
+            model.Id = lexer.Consume(TokenKind.Identifier);
 
-            Consume(lexer, TokenKind.LeftCurly);
+            lexer.Consume(TokenKind.LeftCurly);
 
             while (lexer.Token.Kind == TokenKind.Keyword)
             {
-                var keyword = Consume(lexer, TokenKind.Keyword);
+                var keyword = lexer.Consume(TokenKind.Keyword);
 
                 switch (keyword)
                 {
@@ -123,7 +123,7 @@ namespace SwishMapper.Parsing.Project
                         break;
 
                     case "name":
-                        model.Name = Consume(lexer, TokenKind.String);
+                        model.Name = lexer.Consume(TokenKind.String);
                         OptionallyConsume(lexer, TokenKind.Semicolon);
                         break;
 
@@ -140,7 +140,7 @@ namespace SwishMapper.Parsing.Project
                 }
             }
 
-            Consume(lexer, TokenKind.RightCurly);
+            lexer.Consume(TokenKind.RightCurly);
         }
 
 
@@ -153,11 +153,11 @@ namespace SwishMapper.Parsing.Project
 
             model.Populators.Add(populator);
 
-            Consume(lexer, TokenKind.LeftCurly);
+            lexer.Consume(TokenKind.LeftCurly);
 
             while (lexer.Token.Kind == TokenKind.Keyword)
             {
-                var keyword = Consume(lexer, TokenKind.Keyword);
+                var keyword = lexer.Consume(TokenKind.Keyword);
 
                 switch (keyword)
                 {
@@ -171,7 +171,7 @@ namespace SwishMapper.Parsing.Project
                 }
             }
 
-            Consume(lexer, TokenKind.RightCurly);
+            lexer.Consume(TokenKind.RightCurly);
         }
 
 
@@ -184,11 +184,11 @@ namespace SwishMapper.Parsing.Project
 
             model.Populators.Add(populator);
 
-            Consume(lexer, TokenKind.LeftCurly);
+            lexer.Consume(TokenKind.LeftCurly);
 
             while (lexer.Token.Kind == TokenKind.Keyword)
             {
-                var keyword = Consume(lexer, TokenKind.Keyword);
+                var keyword = lexer.Consume(TokenKind.Keyword);
 
                 switch (keyword)
                 {
@@ -202,7 +202,7 @@ namespace SwishMapper.Parsing.Project
                 }
             }
 
-            Consume(lexer, TokenKind.RightCurly);
+            lexer.Consume(TokenKind.RightCurly);
         }
 
 
@@ -211,16 +211,16 @@ namespace SwishMapper.Parsing.Project
             var populator = new SampleProjectModelPopulator
             {
                 Type = ProjectModelPopulatorType.Sample,
-                Id = Consume(lexer, TokenKind.Identifier)
+                Id = lexer.Consume(TokenKind.Identifier)
             };
 
             model.Populators.Add(populator);
 
-            Consume(lexer, TokenKind.LeftCurly);
+            lexer.Consume(TokenKind.LeftCurly);
 
             while (lexer.Token.Kind == TokenKind.Keyword)
             {
-                var keyword = Consume(lexer, TokenKind.Keyword);
+                var keyword = lexer.Consume(TokenKind.Keyword);
 
                 switch (keyword)
                 {
@@ -230,19 +230,19 @@ namespace SwishMapper.Parsing.Project
                         break;
 
                     case "zip-mask":
-                        populator.ZipMask = Consume(lexer, TokenKind.String);
+                        populator.ZipMask = lexer.Consume(TokenKind.String);
                         OptionallyConsume(lexer, TokenKind.Semicolon);
                         break;
                 }
             }
 
-            Consume(lexer, TokenKind.RightCurly);
+            lexer.Consume(TokenKind.RightCurly);
         }
 
 
         private string ConsumeFile(ProjectLexer lexer)
         {
-            var fragment = Consume(lexer, TokenKind.String);
+            var fragment = lexer.Consume(TokenKind.String);
 
             return Path.Combine(Path.GetDirectoryName(lexer.FilePath), fragment);
         }
@@ -250,7 +250,7 @@ namespace SwishMapper.Parsing.Project
 
         private IEnumerable<SampleInputFile> ConsumeWildcardFiles(ProjectLexer lexer)
         {
-            var mask = Consume(lexer, TokenKind.String);
+            var mask = lexer.Consume(TokenKind.String);
 
             var dirPath = Path.Combine(Path.GetDirectoryName(lexer.FilePath), Path.GetDirectoryName(mask));
             var directory = new DirectoryInfo(dirPath);
@@ -271,7 +271,7 @@ namespace SwishMapper.Parsing.Project
         {
             if (lexer.Token.Kind == kind)
             {
-                Advance(lexer);
+                lexer.Advance();
             }
         }
     }

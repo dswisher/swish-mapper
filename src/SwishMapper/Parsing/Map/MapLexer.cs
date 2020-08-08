@@ -14,7 +14,6 @@ namespace SwishMapper.Parsing.Map
 
         static MapLexer()
         {
-            Keywords.Add("model");  // TODO - xyzzy - remove this!!
             Keywords.Add("with");
 
             PunctuationStarters.Add(';');
