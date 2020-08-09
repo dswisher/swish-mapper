@@ -14,6 +14,7 @@ namespace SwishMapper.Models.Data
 
         public IList<DataModel> Models { get { return models; } }
 
+        // TODO - xyzzy - SimpleMaps should go away
         public IList<SimpleDataMapping> SimpleMaps { get { return simpleMaps; } }
         public IList<ExpressiveMapList> ExpressiveMaps { get { return expressiveMaps; } }
     }

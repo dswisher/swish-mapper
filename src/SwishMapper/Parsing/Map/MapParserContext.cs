@@ -10,10 +10,10 @@ namespace SwishMapper.Parsing.Map
     {
         private readonly Stack<Scope> scopes = new Stack<Scope>();
 
-        public MapParserContext(IEnumerable<DataModel> models)
+        public MapParserContext(string filename, IEnumerable<DataModel> models)
         {
             Models = models;
-            MapList = new ExpressiveMapList();
+            MapList = new ExpressiveMapList(filename);
 
             // Should always have at least one scope
             scopes.Push(new Scope());

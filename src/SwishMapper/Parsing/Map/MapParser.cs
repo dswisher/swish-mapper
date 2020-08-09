@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,7 +27,8 @@ namespace SwishMapper.Parsing.Map
 
         public Task<ExpressiveMapList> ParseAsync(string path, IEnumerable<DataModel> models)
         {
-            var context = new MapParserContext(models);
+            // Parse the content
+            var context = new MapParserContext(Path.GetFileName(path), models);
 
             using (var lexer = lexerFactory.CreateMapLexer(path))
             {
@@ -40,6 +42,14 @@ namespace SwishMapper.Parsing.Map
                 }
             }
 
+            // Make sure we have a name
+            if (string.IsNullOrEmpty(context.MapList.Name))
+            {
+                // TODO - need file name/line number here!
+                throw new ParserException("Map must have a name.");
+            }
+
+            // Return what we've got
             return Task.FromResult(context.MapList);
         }
 
@@ -54,6 +64,11 @@ namespace SwishMapper.Parsing.Map
                 if (lexer.Token.Text == "with")
                 {
                     ParseWith(context, lexer);
+                    return;
+                }
+                else if (lexer.Token.Text == "name")
+                {
+                    ParseName(context, lexer);
                     return;
                 }
                 else
@@ -116,9 +131,7 @@ namespace SwishMapper.Parsing.Map
         private void ParseWith(MapParserContext context, MapLexer lexer)
         {
             // with cident = cident ...statement...
-            lexer.VerifyToken(TokenKind.Keyword, "with");
-
-            lexer.Advance();
+            lexer.Consume(TokenKind.Keyword, "with");
 
             var alias = lexer.Consume(TokenKind.Identifier);
 
@@ -133,6 +146,16 @@ namespace SwishMapper.Parsing.Map
             ParseStatement(context, lexer);
 
             context.Pop();
+        }
+
+
+        private void ParseName(MapParserContext context, MapLexer lexer)
+        {
+            lexer.Consume(TokenKind.Keyword, "name");
+
+            context.MapList.Name = lexer.Consume(TokenKind.String);
+
+            lexer.Consume(TokenKind.Semicolon);
         }
     }
 }

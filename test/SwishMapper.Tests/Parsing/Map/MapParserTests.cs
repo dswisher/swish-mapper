@@ -45,9 +45,9 @@ namespace SwishMapper.Tests.Parsing.Map
 
 
         [Theory]
-        [InlineData("empty.map")]
-        [InlineData("comments.map")]
-        public async Task MapsWithoutMappingsArePointlessButParsable(string filename)
+        [InlineData("empty.map", "Empty")]
+        [InlineData("comments.map", "Comments")]
+        public async Task MapsWithoutMappingsArePointlessButParsable(string filename, string mapName)
         {
             // Arrange
             var path = FileFinder.FindMapFile(filename);
@@ -57,6 +57,7 @@ namespace SwishMapper.Tests.Parsing.Map
 
             // Assert
             map.Maps.Should().BeEmpty();
+            map.Name.Should().Be(mapName);
         }
 
 
@@ -88,6 +89,8 @@ namespace SwishMapper.Tests.Parsing.Map
             // Assert
             map.Maps.Should().Contain(x => x.TargetAttribute.XPath == leftXPath);
             map.Maps.Should().Contain(x => x.Expression.Arguments.First().Attribute.XPath == rightXPath);
+
+            map.Name.Should().NotBeEmpty();
         }
     }
 }

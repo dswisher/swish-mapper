@@ -1,4 +1,6 @@
 
+name "OneCurlied";
+
 src = model(input);
 sink = model(output);
 

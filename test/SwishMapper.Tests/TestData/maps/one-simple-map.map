@@ -1,4 +1,6 @@
 
+name "OneSimple";
+
 src = model(input);
 sink = model(output);
 

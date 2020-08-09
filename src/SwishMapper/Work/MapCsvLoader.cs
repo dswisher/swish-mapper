@@ -102,9 +102,6 @@ namespace SwishMapper.Work
                         Comments = comments
                     };
 
-                    sourceAtt.OutgoingMaps.Add(map);
-                    sinkAtt.IncomingMaps.Add(map);
-
                     dataMap.Maps.Add(map);
                 }
             }

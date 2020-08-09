@@ -49,5 +49,17 @@ namespace SwishMapper.Parsing
 
             return result;
         }
+
+
+        public static string Consume(this AbstractLexer lexer, params TokenKind[] kinds)
+        {
+            lexer.VerifyToken(kinds);
+
+            var result = lexer.Token.Text;
+
+            lexer.Advance();
+
+            return result;
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace SwishMapper.Tests.Parsing.Map
         {
             var project = ProjectBuilder.Predefined("input-output");
 
-            context = new MapParserContext(project.Models);
+            context = new MapParserContext("foo.txt", project.Models);
 
             context.AddModelAlias("input", project.Models.FirstOrDefault(x => x.Id == "input"));
 

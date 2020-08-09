@@ -1,4 +1,6 @@
 
+name "OneNaked";
+
 src = model(input);
 sink = model(output);
 

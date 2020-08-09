@@ -80,7 +80,7 @@ namespace SwishMapper.Tests.Parsing.Map
         {
             var project = ProjectBuilder.Predefined(modelName);
 
-            var context = new MapParserContext(project.Models);
+            var context = new MapParserContext("foo.txt", project.Models);
 
             foreach (var model in project.Models)
             {

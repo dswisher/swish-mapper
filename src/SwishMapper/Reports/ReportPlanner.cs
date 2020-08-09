@@ -89,7 +89,15 @@ namespace SwishMapper.Reports
                 yield return serviceProvider.MappingReport(map, path);
             }
 
-            // TODO - xyzzy - add report for expressive maps
+            foreach (var map in dataProject.ExpressiveMaps)
+            {
+                var filename = Path.GetFileNameWithoutExtension(map.FileName) + ".html";
+                var path = Path.Combine(outDir.FullName, filename);
+
+                section.CreateEntry(map.Name, filename);
+
+                // TODO - xyzzy - add report for expressive maps
+            }
 
             // Create the index page
             yield return serviceProvider.IndexPage(indexModel, Path.Combine(outDir.FullName, "index.html"));
