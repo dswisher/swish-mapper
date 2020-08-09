@@ -9,7 +9,7 @@ namespace SwishMapper.Parsing.Map
     {
         private readonly List<string> parts = new List<string>();
 
-        // TODO - xyzzy - include file/line info so we can provide good error messages
+        // TODO - include file/line info so we can provide better error messages
 
         public CompoundIdentifier()
         {
@@ -35,9 +35,9 @@ namespace SwishMapper.Parsing.Map
         }
 
 
-        public string Prefix { get; private set; }
+        public string Prefix { get; set; }
 
-        public IEnumerable<string> Parts { get { return parts; } }
+        public List<string> Parts { get { return parts; } }
 
 
         public bool HasPrefix

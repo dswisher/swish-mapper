@@ -54,6 +54,28 @@ namespace SwishMapper.Tests.Parsing.Map
         }
 
 
+        [Fact]
+        public void PrefixesAreAvailableWithinTheirScope()
+        {
+            // Arrange
+            var context = MakeContext("input-output");
+            var alias = new CompoundIdentifier("input:City");
+            var ident = new CompoundIdentifier("scope:Name");
+
+            var expected = context.Models.First(x => x.Id == "input").FindEntity("City").FindAttribute("Name");
+
+            // Act
+            context.Push("scope", alias);
+            var resolved = context.Resolve(ident);
+            context.Pop();
+
+            // Assert
+            resolved.Attribute.Should().Be(expected);
+
+            resolved.XPath.Should().Be("City/Name");
+        }
+
+
         private MapParserContext MakeContext(string modelName)
         {
             var project = ProjectBuilder.Predefined(modelName);

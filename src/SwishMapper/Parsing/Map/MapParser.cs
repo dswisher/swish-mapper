@@ -82,9 +82,6 @@ namespace SwishMapper.Parsing.Map
 
             lexer.Consume(TokenKind.Equals);
 
-            // TODO - xyzzy - proper RHS parsing!
-
-#if true
             var rhs = expressionParser.Parse(lexer, context);
 
             // A little special handling for the model function
@@ -101,47 +98,16 @@ namespace SwishMapper.Parsing.Map
             }
             else
             {
-                // TODO - do something with this mapping!
-                context.MapList.Maps.Add(new ExpressiveMapping());  // TODO - HACK!
-            }
+                var target = context.Resolve(lhs);
 
-#else
-
-            // TODO - temporary hack
-            if (lexer.Token.Text == "model")
-            {
-                // Verify the LHS is legit
-                if (lhs.HasPrefix || lhs.Parts.Count() != 1)
+                var mapping = new ExpressiveMapping
                 {
-                    throw new ParserException($"Model left-hand-side must be a simple identifier.", lexer.Token);
-                }
+                    TargetAttribute = target,
+                    Expression = rhs
+                };
 
-                // Parse this simple expression
-                lexer.Consume(TokenKind.Identifier, "model");
-                lexer.Consume(TokenKind.LeftParen);
-
-                // Look up the model
-                var modelId = lexer.Consume(TokenKind.Identifier);
-                var model = context.Models.FirstOrDefault(x => x.Id == modelId);
-
-                if (model == null)
-                {
-                    throw new ParserException($"Model '{modelId}' not found in project.", lexer.Token);
-                }
-
-                context.AddModelAlias(lhs.Parts.First(), model);
-
-                // ...and done...
-                lexer.Consume(TokenKind.RightParen);
+                context.MapList.Maps.Add(mapping);
             }
-            else
-            {
-                var rhs = CompoundIdentifier.Parse(lexer);
-
-                // TODO - do something with this mapping!
-                context.MapList.Maps.Add(new ExpressiveMapping());  // TODO - HACK!
-            }
-#endif
 
             lexer.Consume(TokenKind.Semicolon);
         }

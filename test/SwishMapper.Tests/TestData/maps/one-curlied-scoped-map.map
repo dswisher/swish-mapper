@@ -2,9 +2,9 @@
 src = model(input);
 sink = model(output);
 
-with left = sink:Person
+with left = sink:People
 with right = src:Person
 {
-    left:Name = right:Name;
+    left:FullName = right:Name;
 }
 

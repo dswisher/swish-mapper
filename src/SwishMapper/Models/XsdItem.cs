@@ -8,6 +8,8 @@ namespace SwishMapper.Models
     /// </summary>
     public abstract class XsdItem
     {
+        // TODO - include some sort of file/line detail here to provide better error messages
+
         private readonly List<string> enumValues = new List<string>();
 
         protected XsdItem(string name)

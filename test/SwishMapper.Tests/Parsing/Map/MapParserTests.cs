@@ -74,10 +74,10 @@ namespace SwishMapper.Tests.Parsing.Map
 
 
         [Theory]
-        [InlineData("one-simple-map.map", "input-output")]
-        // [InlineData("one-curlied-scoped-map.map", "input-output")]   // TODO - need scoping (with statements) for this to pass
-        // [InlineData("one-naked-scoped-map.map", "input-output")]     // TODO - need scoping (with statements) for this to pass
-        public async Task CanParseMapsWithMappings(string filename, string predefinedProjectName)
+        [InlineData("one-simple-map.map", "input-output", "People/FullName", "Person/Name")]
+        [InlineData("one-curlied-scoped-map.map", "input-output", "People/FullName", "Person/Name")]
+        [InlineData("one-naked-scoped-map.map", "input-output", "People/FullName", "Person/Name")]
+        public async Task CanParseMapsWithMappings(string filename, string predefinedProjectName, string leftXPath, string rightXPath)
         {
             // Arrange
             var path = FileFinder.FindMapFile(filename);
@@ -86,9 +86,8 @@ namespace SwishMapper.Tests.Parsing.Map
             var map = await parser.ParseAsync(path.FullName, ProjectBuilder.Predefined(predefinedProjectName).Models);
 
             // Assert
-            map.Maps.Should().NotBeEmpty();
-
-            // TODO - can we/should we verify something about some of the maps?
+            map.Maps.Should().Contain(x => x.TargetAttribute.XPath == leftXPath);
+            map.Maps.Should().Contain(x => x.Expression.Arguments.First().Attribute.XPath == rightXPath);
         }
     }
 }

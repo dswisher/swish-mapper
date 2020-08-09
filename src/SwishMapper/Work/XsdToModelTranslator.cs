@@ -61,7 +61,7 @@ namespace SwishMapper.Work
                 {
                     if (string.IsNullOrEmpty(xsdElement.RefName))
                     {
-                        entity.DataType = typeFactory.Make(xsdElement.DataType, ParseMaxLength(xsdElement.MaxLength));
+                        entity.DataType = typeFactory.Make(xsdElement.DataType, ParseMaxLength(xsdElement));
                     }
                     else
                     {
@@ -75,7 +75,7 @@ namespace SwishMapper.Work
                 {
                     var attribute = entity.FindOrCreateAttribute(xsdChild.Name, source);
 
-                    attribute.DataType = typeFactory.Make(xsdChild.DataType, ParseMaxLength(xsdChild.MaxLength));
+                    attribute.DataType = typeFactory.Make(xsdChild.DataType, ParseMaxLength(xsdChild));
                     attribute.Comment = xsdChild.Comment;
                     attribute.MinOccurs = xsdChild.MinOccurs;
                     attribute.MaxOccurs = xsdChild.MaxOccurs;
@@ -93,7 +93,7 @@ namespace SwishMapper.Work
                     {
                         if (string.IsNullOrEmpty(xsdChild.RefName))
                         {
-                            attribute.DataType = typeFactory.Make(xsdChild.DataType, ParseMaxLength(xsdChild.MaxLength));
+                            attribute.DataType = typeFactory.Make(xsdChild.DataType, ParseMaxLength(xsdChild));
                         }
                         else
                         {
@@ -102,7 +102,8 @@ namespace SwishMapper.Work
                     }
                     else
                     {
-                        // TODO - xyzzy - throw exception if DataType is null!
+                        // TODO - improve this error message
+                        throw new LoaderException("DataType is null!");
                     }
 
                     attribute.Comment = xsdChild.Comment;
@@ -129,12 +130,20 @@ namespace SwishMapper.Work
         }
 
 
-        private int? ParseMaxLength(string maxStr)
+        private int? ParseMaxLength(XsdItem xsdItem)
         {
+            var maxStr = xsdItem.MaxLength;
             int? maxLength = null;
 
-            if (!string.IsNullOrEmpty(maxStr))
+            // Oddball case hackery...
+            if (maxStr == "max")
             {
+                logger.LogWarning($"MaxLength for {xsdItem.Name} is 'max', which really should not be supported.");
+                maxLength = 999;   // got a better idea?
+            }
+            else if (!string.IsNullOrEmpty(maxStr))
+            {
+                // Ok, we should have a number...
                 int i;
                 if (int.TryParse(maxStr, out i))
                 {
@@ -142,7 +151,8 @@ namespace SwishMapper.Work
                 }
                 else
                 {
-                    // TODO - throw a loader exception!
+                    // TODO - improve this error message
+                    throw new LoaderException($"Malformed max length ({maxStr}) for {xsdItem.Name}.");
                 }
             }
 

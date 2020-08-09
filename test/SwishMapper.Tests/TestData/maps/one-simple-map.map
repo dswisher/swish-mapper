@@ -2,5 +2,5 @@
 src = model(input);
 sink = model(output);
 
-sink:Person/Name = src:Person/Name;
+sink:People/FullName = src:Person/Name;
 
