@@ -31,7 +31,24 @@ namespace SwishMapper.Models.Data
         /// </summary>
         public DataModel Model { get; private set; }
 
+
         // TODO - add literals
-        // TODO - implement ToString()
+
+
+        public override string ToString()
+        {
+            if (Model != null)
+            {
+                return Model.Name;
+            }
+            else if (Attribute != null)
+            {
+                return Attribute.XPath;
+            }
+            else
+            {
+                throw new System.NotImplementedException();
+            }
+        }
     }
 }

@@ -1,39 +1,29 @@
 
 using System.Collections.Generic;
 
+using SwishMapper.Extensions;
+using SwishMapper.Models.Data;
+
 namespace SwishMapper.Models.Reports
 {
     public class MappingReportModel
     {
         private readonly Dictionary<string, MappingReportEntity> entities = new Dictionary<string, MappingReportEntity>();
 
+        public string Id { get; set; }
         public string Name { get; set; }
 
 
         public IEnumerable<MappingReportEntity> Entities { get { return entities.Values; } }
 
 
-        public MappingReportEntity FindOrCreateEntity(string name)
+        public MappingReportEntity FindOrCreateEntity(DataEntity dataEntity)
         {
-            if (entities.ContainsKey(name))
+            return entities.FindOrCreate(dataEntity.Name, () => new MappingReportEntity
             {
-                return entities[name];
-            }
-
-            var entity = new MappingReportEntity
-            {
-                Name = name
-            };
-
-            entities.Add(name, entity);
-
-            return entity;
-        }
-
-
-        public MappingReportEntity FindEntity(string name)
-        {
-            return entities.ContainsKey(name) ? entities[name] : null;
+                // TODO - freddie - add all the attributes
+                Name = dataEntity.Name
+            });
         }
     }
 }

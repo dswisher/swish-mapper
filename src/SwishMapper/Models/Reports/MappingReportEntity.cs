@@ -1,6 +1,9 @@
 
 using System.Collections.Generic;
 
+using SwishMapper.Extensions;
+using SwishMapper.Models.Data;
+
 namespace SwishMapper.Models.Reports
 {
     public class MappingReportEntity
@@ -12,21 +15,12 @@ namespace SwishMapper.Models.Reports
         public IEnumerable<MappingReportAttribute> Attributes { get { return attributes.Values; } }
 
 
-        public MappingReportAttribute FindOrCreateAttribute(string name)
+        public MappingReportAttribute FindOrCreateAttribute(DataAttribute dataAttribute)
         {
-            if (attributes.ContainsKey(name))
+            return attributes.FindOrCreate(dataAttribute.Name, () => new MappingReportAttribute
             {
-                return attributes[name];
-            }
-
-            var attribute = new MappingReportAttribute
-            {
-                Name = name
-            };
-
-            attributes.Add(name, attribute);
-
-            return attribute;
+                Name = dataAttribute.Name
+            });
         }
 
 

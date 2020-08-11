@@ -7,7 +7,7 @@ using SwishMapper.Models.Reports;
 
 namespace SwishMapper.Reports
 {
-    public class MappingReport : RazorReport<MappingReportModel>
+    public class MappingReport : RazorReport<MappingReportViewModel>
     {
         private readonly ILogger logger;
 
@@ -18,21 +18,46 @@ namespace SwishMapper.Reports
         }
 
 
-        public SimpleDataMapping Mapping { get; set; }
+        public ExpressiveMapList Mapping { get; set; }
 
 
         public override Task RunAsync()
         {
             logger.LogInformation("Writing MappingReport to {Path}.", OutputPath);
 
+            // TODO - freddie - refactor this so we can pass in a mock CompileAndRun
             CompileAndRun(BuildModel());
 
             return Task.CompletedTask;
         }
 
 
-        private MappingReportModel BuildModel()
+        private MappingReportViewModel BuildModel()
         {
+#if true
+            // Create the basic view model
+            var reportViewModel = new MappingReportViewModel
+            {
+                Name = Mapping.Name
+            };
+
+            // Go through all the mappings, and stuff them into the proper place in the view
+            foreach (var map in Mapping.Maps)
+            {
+                // Everything is based off the target attribute
+                var dataAttribute = map.TargetAttribute.Attribute;
+
+                // Build out the corresponding view objects...
+                var viewModel = reportViewModel.FindOrCreateModel(dataAttribute.Parent.Parent);
+                var viewEntity = viewModel.FindOrCreateEntity(dataAttribute.Parent);
+                var viewAttribute = viewEntity.FindOrCreateAttribute(dataAttribute);
+
+                viewAttribute.Maps.Add(map);
+            }
+
+            // Return what we've built
+            return reportViewModel;
+#else
             var model = new MappingReportModel
             {
                 Name = $"{Mapping.SourceModel.Name} -> {Mapping.SinkModel.Name}"
@@ -69,6 +94,7 @@ namespace SwishMapper.Reports
 
             // Return what we've build
             return model;
+#endif
         }
     }
 }

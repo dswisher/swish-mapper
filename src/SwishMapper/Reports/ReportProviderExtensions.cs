@@ -33,13 +33,13 @@ namespace SwishMapper.Reports
         }
 
 
-        public static MappingReport MappingReport(this IServiceProvider provider, SimpleDataMapping mapping, string path)
+        public static MappingReport MappingReport(this IServiceProvider provider, ExpressiveMapList mapping, string path)
         {
             var report = provider.GetRequiredService<MappingReport>();
 
             report.OutputPath = path;
             report.Mapping = mapping;
-            report.Title = $"Mapping: {mapping.SourceModel.Name} -> {mapping.SinkModel.Name}";
+            report.Title = mapping.Name;
 
             return report;
         }

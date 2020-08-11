@@ -1,62 +1,78 @@
 @{Layout = "layout";}
-@using SwishMapper.Models.Data
+@* @using SwishMapper.Models.Data *@
 
 <h1>@Model.Name Mapping</h1>
 
-@foreach (var entity in Model.Entities.OrderBy(x => x.Name))
+@foreach (var model in Model.Models.OrderBy(x => x.Name))
 {
-    <h3>@entity.Name</h3>
+    <h2>@model.Name</h2>
 
-    <table>
-        <thead>
-            <tr>
-                <th colspan="6">Mappings</th>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <th>Source Type</th>
-                <th>Sink Type</th>
-                <th>Source XPath</th>
-                <th>Sink XPath</th>
-                <th>Comments</th>
-            </tr>
-        <thead>
-        <tbody>
-            @foreach (var attribute in entity.Attributes.OrderBy(x => x.Name))
-            {
-                if (attribute.Maps.Count > 0)
+    @foreach (var entity in model.Entities.OrderBy(x => x.Name))
+    {
+        <h3>@entity.Name</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="4">Mappings</th>
+                </tr>
+                <tr>
+                    <th>Name</th>
+                    <th>Data Type</th>
+                    <th>XPath</th>
+                    <th>Expression</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var attribute in entity.Attributes.OrderBy(x => x.Name))
                 {
-                    var first = true;
-                    foreach (var map in attribute.Maps)
+                    if (attribute.Maps.Count > 0)
+                    {
+                        var first = true;
+                        foreach (var map in attribute.Maps)
+                        {
+                            <tr>
+                                @if (first)
+                                {
+                                    first = false;
+                                    <td rowspan="@attribute.Maps.Count">@attribute.Name</td>
+                                    @* <td rowspan="@attribute.Maps.Count"><a href="@attribute.Url">@attribute.Name</a></td> *@
+                                }
+
+                                @* TODO - xyzzy - finish this up! *@
+
+                                <td>@map.TargetAttribute.Attribute.DataType</td>
+                                <td>@map.TargetAttribute.XPath</td>
+                                <td>@map.Expression</td>
+
+                                @*
+                                <td>@map.FromAttribute.DataType</td>
+                                <td>@attribute.SinkType</td>
+                                <td><a href="@map.FromUrl">@map.FromXPath</a></td>
+                                <td>@map.ToXPath</td>
+                                <td>@map.Comments</td>
+                                *@
+                            </tr>
+                        }
+                    }
+                    else
                     {
                         <tr>
-                            @if (first)
-                            {
-                                first = false;
-                                <td rowspan="@attribute.Maps.Count"><a href="@attribute.Url">@attribute.Name</a></td>
-                            }
+                            <td>@attribute.Name</td>
 
-                            <td>@map.FromAttribute.DataType</td>
+                            @*
+                            <td class="@(attribute.SinkType.Type == PrimitiveType.Ref ? string.Empty : "highlight")"><a href="@attribute.Url">@attribute.Name</a></td>
+                            <td>&nbsp;</td>
                             <td>@attribute.SinkType</td>
-                            <td><a href="@map.FromUrl">@map.FromXPath</a></td>
-                            <td>@map.ToXPath</td>
-                            <td>@map.Comments</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            *@
                         </tr>
                     }
                 }
-                else
-                {
-                    <tr>
-                        <td class="@(attribute.SinkType.Type == PrimitiveType.Ref ? string.Empty : "highlight")"><a href="@attribute.Url">@attribute.Name</a></td>
-                        <td>&nbsp;</td>
-                        <td>@attribute.SinkType</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    }
 }
 

@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SwishMapper.Models.Data
 {
@@ -21,6 +22,18 @@ namespace SwishMapper.Models.Data
         /// </remarks>
         public List<MappedDataArgument> Arguments { get { return arguments; } }
 
-        // TODO - implement ToString()
+
+        public override string ToString()
+        {
+            var args = string.Join(", ", Arguments.Select(x => x.ToString()));
+            if (FunctionName != null)
+            {
+                return $"{FunctionName}({args})";
+            }
+            else
+            {
+                return args;
+            }
+        }
     }
 }
