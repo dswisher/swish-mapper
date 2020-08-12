@@ -21,7 +21,6 @@ namespace SwishMapper.Models.Reports
         {
             return entities.FindOrCreate(dataEntity.Name, () => new MappingReportEntity
             {
-                // TODO - freddie - add all the attributes
                 Name = dataEntity.Name
             });
         }

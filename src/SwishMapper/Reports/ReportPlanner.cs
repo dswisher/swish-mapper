@@ -78,18 +78,6 @@ namespace SwishMapper.Reports
             // Create a mapping report for each mapping
             section = indexModel.CreateSection("Mappings");
 
-            // TODO - get rid of this block
-            foreach (var map in dataProject.SimpleMaps)
-            {
-                // TODO - what if there are two maps between the same models? Need more foolproof naming.
-                var filename = $"{map.SourceModel.Id}-{map.SinkModel.Id}.html";
-                var path = Path.Combine(outDir.FullName, filename);
-
-                section.CreateEntry($"{map.SourceModel.Name} -> {map.SinkModel.Name}", filename);
-
-                // yield return serviceProvider.MappingReport(map, path);
-            }
-
             foreach (var map in dataProject.ExpressiveMaps)
             {
                 var filename = Path.GetFileNameWithoutExtension(map.FileName) + ".html";

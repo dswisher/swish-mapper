@@ -79,18 +79,8 @@ namespace SwishMapper.Parsing.Project
 
                 switch (keyword)
                 {
-                    case "from":
-                        map.FromModelId = lexer.Consume(TokenKind.Identifier);
-                        OptionallyConsume(lexer, TokenKind.Semicolon);
-                        break;
-
                     case "path":
                         map.Path = ConsumeFile(lexer);
-                        OptionallyConsume(lexer, TokenKind.Semicolon);
-                        break;
-
-                    case "to":
-                        map.ToModelId = lexer.Consume(TokenKind.Identifier);
                         OptionallyConsume(lexer, TokenKind.Semicolon);
                         break;
 

@@ -63,16 +63,7 @@ namespace SwishMapper.Work
         {
             IMapLoader worker;
 
-            if (map.Path.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
-            {
-                var csvLoader = serviceProvider.GetRequiredService<IMapCsvLoader>();
-
-                csvLoader.FromModelId = map.FromModelId;
-                csvLoader.ToModelId = map.ToModelId;
-
-                worker = csvLoader;
-            }
-            else if (map.Path.EndsWith(".map", StringComparison.OrdinalIgnoreCase))
+            if (map.Path.EndsWith(".map", StringComparison.OrdinalIgnoreCase))
             {
                 worker = serviceProvider.GetRequiredService<IMapDslLoader>();
             }

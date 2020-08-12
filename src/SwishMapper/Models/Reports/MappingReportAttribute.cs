@@ -13,7 +13,7 @@ namespace SwishMapper.Models.Reports
 
         public IList<ExpressiveMapping> Maps { get { return maps; } }
 
-        // TODO - freddie - need URL and type for RHS
+        // TODO - need URL and type for RHS
         // public DataType SinkType { get; set; }
         // public string Url { get; set; }
     }
