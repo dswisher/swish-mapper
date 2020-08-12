@@ -84,6 +84,25 @@ namespace SwishMapper.Tests.Parsing.Map
         }
 
 
+        [Theory]
+        [InlineData("concat(input:Person/FirstName, input:Person/LastName)", 2)]
+        [InlineData("concat(input:Person/FirstName, input:Person/MiddleName, input:Person/LastName)", 3)]
+        public void CanParseMultipleArguments(string content, int argumentCount)
+        {
+            // Arrange
+            using (var wrapper = new MapLexerWrapper(content))
+            {
+                // Act
+                var expression = parser.Parse(wrapper.Lexer, context);
+
+                // Assert
+                expression.FunctionName.Should().Be("concat");
+
+                expression.Arguments.Should().HaveCount(argumentCount);
+            }
+        }
+
+
         private class MapLexerWrapper : LexerWrapper<MapLexer>
         {
             public MapLexerWrapper(string input)

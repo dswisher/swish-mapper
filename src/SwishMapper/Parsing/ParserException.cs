@@ -59,7 +59,7 @@ namespace SwishMapper.Parsing
 
 
         public ParserException(CompoundIdentifier identifier, string message)
-            : this(message)     // TODO - include file/line info
+            : this(message, identifier.Filename, identifier.LineNumber, identifier.LinePosition)
         {
         }
 

@@ -208,6 +208,11 @@ namespace SwishMapper.Parsing
                     CreateToken(TokenKind.Slash);
                     break;
 
+                case ',':
+                    Consume();
+                    CreateToken(TokenKind.Comma);
+                    break;
+
                 case '-':
                     ScanArrow();
                     break;

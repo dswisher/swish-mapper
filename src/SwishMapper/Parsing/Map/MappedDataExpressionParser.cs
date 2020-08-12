@@ -52,6 +52,26 @@ namespace SwishMapper.Parsing.Map
             // Start of the argument list
             lexer.Consume(TokenKind.LeftParen);
 
+            // Parse an argument
+            while (true)
+            {
+                ParseArgument(lexer, context, expression);
+
+                if (lexer.Token.Kind != TokenKind.Comma)
+                {
+                    break;
+                }
+
+                lexer.Consume(TokenKind.Comma);
+            }
+
+            // End of the argument list
+            lexer.Consume(TokenKind.RightParen);
+        }
+
+
+        private void ParseArgument(MapLexer lexer, MapParserContext context, MappedDataExpression expression)
+        {
             // We should have an identifier...
             // TODO - literals
             var ident = CompoundIdentifier.Parse(lexer);
@@ -59,12 +79,6 @@ namespace SwishMapper.Parsing.Map
             // The identifier is either an attribute or a model...
             if (ident.HasPrefix)
             {
-                // An attribute...it needs at least two parts (entity and attribute names)...
-                if (ident.Parts.Count() < 2)
-                {
-                    throw new ParserException(ident, $"Malformed identifier: '{ident}'.");
-                }
-
                 expression.Arguments.Add(new MappedDataArgument(context.Resolve(ident)));
             }
             else
@@ -80,11 +94,6 @@ namespace SwishMapper.Parsing.Map
 
                 expression.Arguments.Add(new MappedDataArgument(model));
             }
-
-            // TODO - check for a comma to see if we have more arguments
-
-            // End of the argument list
-            lexer.Consume(TokenKind.RightParen);
         }
     }
 }

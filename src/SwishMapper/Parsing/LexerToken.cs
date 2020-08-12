@@ -14,6 +14,7 @@ namespace SwishMapper.Parsing
         Equals,
         LeftParen,
         RightParen,
+        Comma,
         Slash,
         String
     }

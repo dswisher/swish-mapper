@@ -26,6 +26,7 @@ namespace SwishMapper.Parsing.Map
             PunctuationStarters.Add('(');
             PunctuationStarters.Add(')');
             PunctuationStarters.Add('/');
+            PunctuationStarters.Add(',');
         }
 
 

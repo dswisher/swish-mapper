@@ -9,7 +9,6 @@ namespace SwishMapper.Parsing.Map
     {
         private readonly List<string> parts = new List<string>();
 
-        // TODO - include file/line info so we can provide better error messages
 
         public CompoundIdentifier()
         {
@@ -34,6 +33,9 @@ namespace SwishMapper.Parsing.Map
             parts.AddRange(pieces.Split('/'));
         }
 
+        public int LineNumber { get; set; }
+        public int LinePosition { get; set; }
+        public string Filename { get; set; }
 
         public string Prefix { get; set; }
 
@@ -54,7 +56,12 @@ namespace SwishMapper.Parsing.Map
 
         public static CompoundIdentifier Parse(MapLexer lexer)
         {
-            var ident = new CompoundIdentifier();
+            var ident = new CompoundIdentifier
+            {
+                Filename = lexer.Token.Filename,
+                LineNumber = lexer.Token.LineNumber,
+                LinePosition = lexer.Token.LinePosition
+            };
 
             var text = lexer.Consume(TokenKind.Identifier, TokenKind.Keyword);
 
@@ -75,7 +82,7 @@ namespace SwishMapper.Parsing.Map
             {
                 lexer.Advance();
 
-                ident.parts.Add(lexer.Consume(TokenKind.Identifier));
+                ident.parts.Add(lexer.Consume(TokenKind.Identifier, TokenKind.Keyword));
             }
 
             return ident;

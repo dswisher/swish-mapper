@@ -139,6 +139,11 @@ namespace SwishMapper.Parsing.Map
 
             var rhs = CompoundIdentifier.Parse(lexer);
 
+            if (string.IsNullOrEmpty(rhs.Prefix))
+            {
+                throw new ParserException(rhs, "Right-hand side of 'with' statement must have a prefix.");
+            }
+
             // TODO - perform some sort of validation on the RHS - does it resolve to a model, etc
 
             context.Push(alias, rhs);

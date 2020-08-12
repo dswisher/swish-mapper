@@ -58,7 +58,10 @@
                     else
                     {
                         <tr>
-                            <td>@attribute.Name</td>
+                            <td class="highlight">@attribute.Name</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
 
                             @*
                             <td class="@(attribute.SinkType.Type == PrimitiveType.Ref ? string.Empty : "highlight")"><a href="@attribute.Url">@attribute.Name</a></td>
