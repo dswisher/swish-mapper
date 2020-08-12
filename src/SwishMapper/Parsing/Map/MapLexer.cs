@@ -15,6 +15,7 @@ namespace SwishMapper.Parsing.Map
         static MapLexer()
         {
             Keywords.Add("name");
+            Keywords.Add("note");
             Keywords.Add("with");
 
             PunctuationStarters.Add(';');

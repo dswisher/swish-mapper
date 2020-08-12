@@ -1,0 +1,11 @@
+
+name "WithNotes";
+
+src = model(input);
+sink = model(output);
+
+sink:People/FullName = src:Person/Name
+{
+    note "Hey look, a note!";
+}
+

@@ -73,6 +73,11 @@ namespace SwishMapper.Reports
                 var viewEntity = viewModel.FindOrCreateEntity(dataAttribute.Parent);
                 var viewAttribute = viewEntity.FindOrCreateAttribute(dataAttribute);
 
+                foreach (var note in map.Notes)
+                {
+                    viewAttribute.Notes.Add(note);
+                }
+
                 viewAttribute.Maps.Add(map);
             }
 

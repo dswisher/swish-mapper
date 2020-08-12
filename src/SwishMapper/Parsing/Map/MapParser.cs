@@ -110,6 +110,8 @@ namespace SwishMapper.Parsing.Map
                 }
 
                 context.AddModelAlias(lhs.Parts.First(), model);
+
+                lexer.Consume(TokenKind.Semicolon);
             }
             else
             {
@@ -122,9 +124,33 @@ namespace SwishMapper.Parsing.Map
                 };
 
                 context.MapList.Maps.Add(mapping);
-            }
 
+                if (lexer.Token.Kind == TokenKind.LeftCurly)
+                {
+                    ParseMappingExtras(context, lexer, mapping);
+                }
+                else
+                {
+                    lexer.Consume(TokenKind.Semicolon);
+                }
+            }
+        }
+
+
+        private void ParseMappingExtras(MapParserContext context, MapLexer lexer, ExpressiveMapping mapping)
+        {
+            // Consume the preamble
+            lexer.Consume(TokenKind.LeftCurly);
+            lexer.Consume(TokenKind.Keyword, "note");
+
+            // Grab the note, and attach it to the mapping
+            var note = lexer.Consume(TokenKind.String);
+
+            mapping.Notes.Add(note);
+
+            // Consume the postamble
             lexer.Consume(TokenKind.Semicolon);
+            lexer.Consume(TokenKind.RightCurly);
         }
 
 

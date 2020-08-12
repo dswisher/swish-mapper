@@ -92,5 +92,24 @@ namespace SwishMapper.Tests.Parsing.Map
 
             map.Name.Should().NotBeEmpty();
         }
+
+
+        [Fact]
+        public async Task CanParseMappingsWithNotes()
+        {
+            // Arrange
+            var path = FileFinder.FindMapFile("mapping-with-notes.map");
+
+            // Act
+            var map = await parser.ParseAsync(path.FullName, ProjectBuilder.InputOutput().Models);
+
+            // Assert
+            map.Maps.Should().HaveCount(1);
+
+            var item = map.Maps.First();
+
+            // TODO - xyzzy - verify notes!
+            // item.Notes.Should().NotBeBlank();
+        }
     }
 }

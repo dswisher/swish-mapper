@@ -14,13 +14,14 @@
         <table>
             <thead>
                 <tr>
-                    <th colspan="4">Mappings</th>
+                    <th colspan="5">Mappings</th>
                 </tr>
                 <tr>
                     <th>Name</th>
                     <th>Data Type</th>
                     <th>XPath</th>
                     <th>Expression</th>
+                    <th>Notes</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,11 +40,12 @@
                                     @* <td rowspan="@attribute.Maps.Count"><a href="@attribute.Url">@attribute.Name</a></td> *@
                                 }
 
-                                @* TODO - xyzzy - finish this up! *@
+                                @* TODO - finish this up! *@
 
                                 <td>@map.TargetAttribute.Attribute.DataType</td>
                                 <td>@map.TargetAttribute.XPath</td>
                                 <td>@map.Expression</td>
+                                <td>@string.Join(", ", map.Notes)</td>
 
                                 @*
                                 <td>@map.FromAttribute.DataType</td>
@@ -59,6 +61,7 @@
                     {
                         <tr>
                             <td class="highlight">@attribute.Name</td>
+                            <td>&nbsp;</td>
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
