@@ -27,7 +27,7 @@ namespace SwishMapper.Models.Data
         public MappedDataAttribute Attribute { get; private set; }
 
         /// <summary>
-        /// A data model.
+        /// A data model. Used when the argument is the name of a model.
         /// </summary>
         public DataModel Model { get; private set; }
 

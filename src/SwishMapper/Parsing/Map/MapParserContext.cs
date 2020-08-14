@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 using SwishMapper.Models.Data;
@@ -9,18 +10,22 @@ namespace SwishMapper.Parsing.Map
     public class MapParserContext
     {
         private readonly Stack<Scope> scopes = new Stack<Scope>();
+        private readonly List<MapParserExamplesDefinition> examples = new List<MapParserExamplesDefinition>();
 
-        public MapParserContext(string filename, IEnumerable<DataModel> models)
+        public MapParserContext(string path, IEnumerable<DataModel> models)
         {
+            FilePath = path;
             Models = models;
-            MapList = new ExpressiveMapList(filename);
+            MapList = new ExpressiveMapList(Path.GetFileName(path));
 
             // Should always have at least one scope
             scopes.Push(new Scope());
         }
 
         public IEnumerable<DataModel> Models { get; private set; }
+        public IList<MapParserExamplesDefinition> Examples { get { return examples; } }
         public ExpressiveMapList MapList { get; private set; }
+        public string FilePath { get; private set; }
 
         private Scope CurrentScope { get { return scopes.Peek(); } }
 

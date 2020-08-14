@@ -14,8 +14,12 @@ namespace SwishMapper.Parsing.Map
 
         static MapLexer()
         {
+            Keywords.Add("directory");
+            Keywords.Add("examples");
             Keywords.Add("name");
             Keywords.Add("note");
+            Keywords.Add("prefix");
+            Keywords.Add("suffix");
             Keywords.Add("with");
 
             PunctuationStarters.Add(';');

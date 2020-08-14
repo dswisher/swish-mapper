@@ -1,0 +1,13 @@
+
+name "WithExamples";
+
+examples
+{
+    input
+    {
+        directory: "examples";
+        suffix: "</records>";
+        prefix: "<records>";
+    }
+}
+

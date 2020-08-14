@@ -36,6 +36,7 @@ namespace SwishMapper
             services.AddTransient<IXsdLoader, XsdLoader>();
             services.AddTransient<IMapDslLoader, MapDslLoader>();
             services.AddTransient<IMapParser, MapParser>();
+            services.AddTransient<IMapExampleLoader, MapExampleLoader>();
             services.AddTransient<IMappedDataExpressionParser, MappedDataExpressionParser>();
 
             // TODO - use interfaces for these!!!

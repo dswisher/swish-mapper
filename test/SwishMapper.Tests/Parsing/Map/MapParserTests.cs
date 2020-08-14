@@ -20,6 +20,7 @@ namespace SwishMapper.Tests.Parsing.Map
     {
         private readonly Mock<ILogger<MapLexer>> lexerLogger = new Mock<ILogger<MapLexer>>();
         private readonly Mock<ILogger<MapParser>> logger = new Mock<ILogger<MapParser>>();
+        private readonly Mock<IMapExampleLoader> exampleLoader = new Mock<IMapExampleLoader>();
 
         private readonly ILexerFactory factory;
         private readonly IMappedDataExpressionParser expressionParser;
@@ -29,7 +30,7 @@ namespace SwishMapper.Tests.Parsing.Map
         {
             factory = new LexerFactory(null, lexerLogger.Object);
             expressionParser = new MappedDataExpressionParser();
-            parser = new MapParser(factory, expressionParser, logger.Object);
+            parser = new MapParser(factory, expressionParser, exampleLoader.Object, logger.Object);
         }
 
 
@@ -108,8 +109,23 @@ namespace SwishMapper.Tests.Parsing.Map
 
             var item = map.Maps.First();
 
-            // TODO - xyzzy - verify notes!
-            // item.Notes.Should().NotBeBlank();
+            item.Notes.Should().NotBeEmpty();
+        }
+
+
+        [Theory]
+        [InlineData("mapping-with-examples.map")]
+        [InlineData("mapping-with-reordered-examples.map")]
+        public async Task CanParseMappingWithExamples(string filename)
+        {
+            // Arrange
+            var path = FileFinder.FindMapFile(filename);
+
+            // Act
+            var map = await parser.ParseAsync(path.FullName, ProjectBuilder.InputOutput().Models);
+
+            // Assert
+            // TODO - xyzzy - verify!
         }
     }
 }
