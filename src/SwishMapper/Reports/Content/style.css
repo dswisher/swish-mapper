@@ -21,7 +21,7 @@ h2 {
 }
 
 h3 {
-    margin: 10px;
+    margin: 10px 10px 20px 10px;
     border: solid 1px #ccc;
     background-color: #eee;
     padding: 0 10px 0 10px;
@@ -29,19 +29,27 @@ h3 {
 
 table {
     border-collapse: collapse;
-    margin: 10px 0 20px 1em;
+    margin: 10px 0 20px 2em;
+}
+
+table.subitem {
+    margin-left: 4em;
 }
 
 thead {
     background-color: lightcyan;
 }
 
-thead.muted {
-    background-color: #EEE;
+table.subitem thead {
+    background-color: #eee;
+}
+
+tr.stripe {
+    background-color: #f0fff0;
 }
 
 td, th {
-    border: solid 1px #CCC;
+    border: solid 1px #ccc;
     padding: 0.1em;
 }
 

@@ -80,8 +80,8 @@
 
             @if (attribute.Notes.Count > 0)
             {
-                <table>
-                    <thead class="muted">
+                <table class="subitem">
+                    <thead>
                         <tr>
                             <th colspan="2">Notes</th>
                         </tr>
@@ -107,8 +107,9 @@
 
             @if (attribute.Examples.Count > 0)
             {
-                <table>
-                    <thead class="muted">
+                var count = 0;
+                <table class="subitem">
+                    <thead>
                         <tr>
                             <th colspan="4">Examples</th>
                         </tr>
@@ -121,13 +122,14 @@
                     <tbody>
                         @foreach (var example in attribute.Examples)
                         {
-                            <tr>
+                            count += 1;
+                            <tr class="@(count % 2 == 0 ? "stripe" : string.Empty)">
                                 <td rowspan="2">@example.MapId</td>
                                 <td rowspan="2">@example.ExampleId</td>
                                 <td class="right title">Target</td>
                                 <td>@example.Target</td>
                             </tr>
-                            <tr>
+                            <tr class="@(count % 2 == 0 ? "stripe" : string.Empty)">
                                 <td class="right title">Expression</td>
                                 <td>@example.Expression</td>
                             </tr>

@@ -51,11 +51,19 @@ namespace SwishMapper.Reports
 
                 foreach (var entity in model.Entities)
                 {
+                    if (HasAllRefAttributes(entity))
+                    {
+                        continue;
+                    }
+
                     var viewEntity = viewModel.FindOrCreateEntity(entity);
 
                     foreach (var attribute in entity.Attributes)
                     {
-                        viewEntity.FindOrCreateAttribute(attribute);
+                        if (attribute.DataType.Type != PrimitiveType.Ref)
+                        {
+                            viewEntity.FindOrCreateAttribute(attribute);
+                        }
                     }
                 }
             }
@@ -87,6 +95,20 @@ namespace SwishMapper.Reports
 
             // Return what we've built
             return reportViewModel;
+        }
+
+
+        private bool HasAllRefAttributes(DataEntity entity)
+        {
+            foreach (var att in entity.Attributes)
+            {
+                if (att.DataType.Type != PrimitiveType.Ref)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
 
