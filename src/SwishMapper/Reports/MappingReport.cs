@@ -55,10 +55,7 @@ namespace SwishMapper.Reports
 
                     foreach (var attribute in entity.Attributes)
                     {
-                        var viewAttribute = viewEntity.FindOrCreateAttribute(attribute);
-
-                        // TODO - populate URL??
-                        // sinkAtt.Url = $"{Mapping.SinkModel.Id}.html#{entity.Name}";
+                        viewEntity.FindOrCreateAttribute(attribute);
                     }
                 }
             }

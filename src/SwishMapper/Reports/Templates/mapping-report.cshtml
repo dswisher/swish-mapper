@@ -5,81 +5,43 @@
 {
     <h1>@Model.Name Mapping<br/>@model.Name</h1>
 
-    @foreach (var entity in model.Entities.OrderBy(x => x.Name))
-    {
-        <h2>@entity.Name Entity</h2>
+    <ul class="toc">
+        @foreach (var entity in model.Entities.OrderBy(x => x.Name))
+        {
+            <li><a href="#@entity.Name">@entity.Name</a></li>
 
-        <table>
-            <thead>
-                <tr>
-                    <th colspan="4">Mappings</th>
-                </tr>
-                <tr>
-                    <th>Name</th>
-                    <th>Data Type</th>
-                    <th>XPath</th>
-                    <th>Expression</th>
-                </tr>
-            </thead>
-            <tbody>
+            <ul>
                 @foreach (var attribute in entity.Attributes.OrderBy(x => x.Name))
                 {
-                    if (attribute.Maps.Count > 0)
-                    {
-                        var first = true;
-                        foreach (var map in attribute.Maps)
-                        {
-                            <tr>
-                                @if (first)
-                                {
-                                    first = false;
-                                    <td rowspan="@attribute.Maps.Count">@attribute.Name</td>
-                                    @* <td rowspan="@attribute.Maps.Count"><a href="@attribute.Url">@attribute.Name</a></td> *@
-                                }
-
-                                @* TODO - finish this up! *@
-
-                                <td>@map.TargetAttribute.Attribute.DataType</td>
-                                <td>@map.TargetAttribute.XPath</td>
-                                <td>@map.Expression</td>
-
-                                @*
-                                <td>@map.FromAttribute.DataType</td>
-                                <td>@attribute.SinkType</td>
-                                <td><a href="@map.FromUrl">@map.FromXPath</a></td>
-                                <td>@map.ToXPath</td>
-                                <td>@map.Comments</td>
-                                *@
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td class="highlight">@attribute.Name</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-
-                            @*
-                            <td class="@(attribute.SinkType.Type == PrimitiveType.Ref ? string.Empty : "highlight")"><a href="@attribute.Url">@attribute.Name</a></td>
-                            <td>&nbsp;</td>
-                            <td>@attribute.SinkType</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            *@
-                        </tr>
-                    }
+                    <li class="subitem"><a href="#@entity.Name.@attribute.Name">@attribute.Name</a></li>
                 }
-            </tbody>
-        </table>
+            </ul>
+        }
+    </ul>
 
-        @* - - - - - - - - NEW STUFF BEGINS HERE - - - - - - - - *@
+    @foreach (var entity in model.Entities.OrderBy(x => x.Name))
+    {
+        <h2 id="@entity.Name">@entity.Name Entity</h2>
 
         @foreach (var attribute in entity.Attributes.OrderBy(x => x.Name))
         {
-            <h3>@attribute.Name Attribute</h3>
+            <h3 id="@entity.Name.@attribute.Name">@attribute.Name Attribute</h3>
+
+            @* - - - General Attribute Info - - - *@
+
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2">Attribute Info</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Model Entity</td><td><a href="@entity.ModelUrl">@entity.Name</a></td></tr>
+                    <tr><td>Model Attribute</td><td><a href="@attribute.ModelUrl">@attribute.Name</a></td></tr>
+                    <tr><td>Data Type</td><td>@attribute.DataType</td></tr>
+                </tbody>
+            </table>
+
 
             @* - - - Mappings - - - *@
 
@@ -113,6 +75,7 @@
                 </tbody>
             </table>
 
+
             @* - - - Notes - - - *@
 
             @if (attribute.Notes.Count > 0)
@@ -139,6 +102,7 @@
                 </table>
             }
 
+
             @* - - - Examples - - - *@
 
             @if (attribute.Examples.Count > 0)
@@ -151,7 +115,7 @@
                         <tr>
                             <th>Map</th>
                             <th>Key</th>
-                            <th colspan="2">Target/Expression</th>
+                            <th colspan="2">Values</th>
                         </tr>
                     </thead>
                     <tbody>

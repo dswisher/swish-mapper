@@ -174,7 +174,7 @@
                             }
                             <td>@sample.SampleId</td>
                             <td>@sample.Path</td>
-                            <td>@string.Join(", ", @sample.Top5)</td>
+                            <td>@string.Join(", ", @sample.Top5.Select(x => $"\"{x}\""))</td>
                         </tr>
                     }
                 }

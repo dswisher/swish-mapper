@@ -11,6 +11,7 @@ namespace SwishMapper.Models.Reports
         private readonly Dictionary<string, MappingReportAttribute> attributes = new Dictionary<string, MappingReportAttribute>();
 
         public string Name { get; set; }
+        public string ModelUrl { get; set; }
 
         public IEnumerable<MappingReportAttribute> Attributes { get { return attributes.Values; } }
 
@@ -19,7 +20,9 @@ namespace SwishMapper.Models.Reports
         {
             return attributes.FindOrCreate(dataAttribute.Name, () => new MappingReportAttribute
             {
-                Name = dataAttribute.Name
+                Name = dataAttribute.Name,
+                DataType = dataAttribute.DataType,
+                ModelUrl = $"{dataAttribute.Parent.Parent.Id}.html#{Name}.{dataAttribute.Name}"
             });
         }
 

@@ -21,7 +21,8 @@ namespace SwishMapper.Models.Reports
         {
             return entities.FindOrCreate(dataEntity.Name, () => new MappingReportEntity
             {
-                Name = dataEntity.Name
+                Name = dataEntity.Name,
+                ModelUrl = $"{dataEntity.Parent.Id}.html#{dataEntity.Name}"
             });
         }
     }

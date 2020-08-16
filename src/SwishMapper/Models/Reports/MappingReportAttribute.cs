@@ -12,13 +12,11 @@ namespace SwishMapper.Models.Reports
         private readonly List<MappingReportExample> examples = new List<MappingReportExample>();
 
         public string Name { get; set; }
+        public DataType DataType { get; set; }
+        public string ModelUrl { get; set; }
 
         public IList<ExpressiveMapping> Maps { get { return maps; } }
         public IList<MappingReportNote> Notes { get { return notes; } }
         public IList<MappingReportExample> Examples { get { return examples; } }
-
-        // TODO - need URL and type for RHS
-        // public DataType SinkType { get; set; }
-        // public string Url { get; set; }
     }
 }
