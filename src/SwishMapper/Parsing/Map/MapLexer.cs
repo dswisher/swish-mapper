@@ -16,6 +16,7 @@ namespace SwishMapper.Parsing.Map
         {
             Keywords.Add("directory");
             Keywords.Add("examples");
+            Keywords.Add("ignore");
             Keywords.Add("name");
             Keywords.Add("note");
             Keywords.Add("prefix");

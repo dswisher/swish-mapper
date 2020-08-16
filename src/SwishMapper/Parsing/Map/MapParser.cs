@@ -67,6 +67,7 @@ namespace SwishMapper.Parsing.Map
         {
             // Constructs:
             //      examples ...
+            //      ignore ...
             //      with ...
             //      { statements }
             if (lexer.Token.Kind == TokenKind.Keyword)
@@ -84,6 +85,11 @@ namespace SwishMapper.Parsing.Map
                 else if (lexer.Token.Text == "examples")
                 {
                     ParseExamples(context, lexer);
+                    return;
+                }
+                else if (lexer.Token.Text == "ignore")
+                {
+                    ParseIgnore(context, lexer);
                     return;
                 }
                 else
@@ -263,6 +269,25 @@ namespace SwishMapper.Parsing.Map
 
             // Record what we found
             context.Examples.Add(definition);
+        }
+
+
+        private void ParseIgnore(MapParserContext context, MapLexer lexer)
+        {
+            lexer.Consume(TokenKind.Keyword, "ignore");
+            lexer.Consume(TokenKind.LeftCurly);
+
+            while (lexer.Token.Kind == TokenKind.Identifier || lexer.Token.Kind == TokenKind.Keyword)
+            {
+                var ignoredId = CompoundIdentifier.Parse(lexer);
+                var ignoredAttribute = context.Resolve(ignoredId);
+
+                context.MapList.AddIgnored(ignoredAttribute);
+
+                lexer.Consume(TokenKind.Semicolon);
+            }
+
+            lexer.Consume(TokenKind.RightCurly);
         }
     }
 }

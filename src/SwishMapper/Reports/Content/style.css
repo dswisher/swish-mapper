@@ -85,6 +85,11 @@ li.subitem {
     font-size: 0.85em;
 }
 
+span.alert {
+    color: red;
+    font-weight: bold;
+}
+
 /* See https://stackoverflow.com/a/27836948/282725 */
 /*
 .comma:not(:first-child) {

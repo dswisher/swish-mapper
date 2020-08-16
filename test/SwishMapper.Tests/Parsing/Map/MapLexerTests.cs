@@ -13,6 +13,8 @@ namespace SwishMapper.Tests.Parsing.Map
     public class MapLexerTests : AbstractLexerTests<MapLexer>
     {
         [Theory]
+        [InlineData("examples")]
+        [InlineData("ignore")]
         [InlineData("with")]
         public void CanLexKeyword(string word)
         {

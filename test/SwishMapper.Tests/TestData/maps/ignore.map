@@ -1,0 +1,11 @@
+
+name "WithIgnores";
+
+input = model(input);
+
+ignore
+{
+    input:Person/Name;
+    input:City/Name;
+}
+

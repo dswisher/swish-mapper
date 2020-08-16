@@ -132,5 +132,25 @@ namespace SwishMapper.Tests.Parsing.Map
 
             context.Examples.Should().HaveCountGreaterThan(0);
         }
+
+
+        [Theory]
+        [InlineData("ignore.map")]
+        public async Task CanParseMappingWithIgnores(string filename)
+        {
+            // Arrange
+            var path = FileFinder.FindMapFile(filename);
+
+            MapParserContext context = null;
+            exampleLoader.Setup(x => x.LoadAsync(It.IsAny<MapParserContext>())).Callback<MapParserContext>(x => context = x);
+
+            // Act
+            var map = await parser.ParseAsync(path.FullName, ProjectBuilder.InputOutput().Models);
+
+            // Assert
+            context.Should().NotBeNull();
+
+            // TODO - xyzzy - check ignores!
+        }
     }
 }

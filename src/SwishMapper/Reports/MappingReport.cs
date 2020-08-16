@@ -51,19 +51,20 @@ namespace SwishMapper.Reports
 
                 foreach (var entity in model.Entities)
                 {
-                    if (HasAllRefAttributes(entity))
-                    {
-                        continue;
-                    }
-
-                    var viewEntity = viewModel.FindOrCreateEntity(entity);
-
                     foreach (var attribute in entity.Attributes)
                     {
-                        if (attribute.DataType.Type != PrimitiveType.Ref)
+                        // Check to see if we really want to include this attribute
+                        if ((attribute.DataType.Type == PrimitiveType.Ref) || Mapping.IsIgnored(attribute))
                         {
-                            viewEntity.FindOrCreateAttribute(attribute);
+                            continue;
                         }
+
+                        // At this point, we know we want the attribute. Make sure the entity is added,
+                        // then add the attribute. We defer adding the entity until this point, as we don't
+                        // want to add it if all of its attributes are omitted.
+                        var viewEntity = viewModel.FindOrCreateEntity(entity);
+
+                        viewEntity.FindOrCreateAttribute(attribute);
                     }
                 }
             }
@@ -95,20 +96,6 @@ namespace SwishMapper.Reports
 
             // Return what we've built
             return reportViewModel;
-        }
-
-
-        private bool HasAllRefAttributes(DataEntity entity)
-        {
-            foreach (var att in entity.Attributes)
-            {
-                if (att.DataType.Type != PrimitiveType.Ref)
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
 

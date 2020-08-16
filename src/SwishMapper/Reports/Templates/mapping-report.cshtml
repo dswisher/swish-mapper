@@ -13,7 +13,13 @@
             <ul>
                 @foreach (var attribute in entity.Attributes.OrderBy(x => x.Name))
                 {
-                    <li class="subitem"><a href="#@entity.Name.@attribute.Name">@attribute.Name</a></li>
+                    <li class="subitem">
+                        <a href="#@entity.Name.@attribute.Name">@attribute.Name</a>
+                        @if (attribute.Maps.Count == 0)
+                        {
+                            <span class="alert">&#9888;</span>
+                        }
+                    </li>
                 }
             </ul>
         }
