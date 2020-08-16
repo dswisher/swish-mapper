@@ -1,27 +1,24 @@
 @{Layout = "layout";}
 @* @using SwishMapper.Models.Data *@
 
-<h1>@Model.Name Mapping</h1>
-
 @foreach (var model in Model.Models.OrderBy(x => x.Name))
 {
-    <h2>@model.Name</h2>
+    <h1>@Model.Name Mapping<br/>@model.Name</h1>
 
     @foreach (var entity in model.Entities.OrderBy(x => x.Name))
     {
-        <h3>@entity.Name</h3>
+        <h2>@entity.Name Entity</h2>
 
         <table>
             <thead>
                 <tr>
-                    <th colspan="5">Mappings</th>
+                    <th colspan="4">Mappings</th>
                 </tr>
                 <tr>
                     <th>Name</th>
                     <th>Data Type</th>
                     <th>XPath</th>
                     <th>Expression</th>
-                    <th>Notes</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,7 +42,6 @@
                                 <td>@map.TargetAttribute.Attribute.DataType</td>
                                 <td>@map.TargetAttribute.XPath</td>
                                 <td>@map.Expression</td>
-                                <td>@string.Join(", ", map.Notes)</td>
 
                                 @*
                                 <td>@map.FromAttribute.DataType</td>
@@ -64,7 +60,6 @@
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
-                            <td>&nbsp;</td>
 
                             @*
                             <td class="@(attribute.SinkType.Type == PrimitiveType.Ref ? string.Empty : "highlight")"><a href="@attribute.Url">@attribute.Name</a></td>
@@ -79,6 +74,104 @@
                 }
             </tbody>
         </table>
+
+        @* - - - - - - - - NEW STUFF BEGINS HERE - - - - - - - - *@
+
+        @foreach (var attribute in entity.Attributes.OrderBy(x => x.Name))
+        {
+            <h3>@attribute.Name Attribute</h3>
+
+            @* - - - Mappings - - - *@
+
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="3">Mappings</th>
+                    </tr>
+                    <tr>
+                        <th>Map</th>
+                        <th>Target XPath</th>
+                        <th>Expression</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (attribute.Maps.Count > 0)
+                    {
+                        foreach (var map in attribute.Maps)
+                        {
+                            <tr>
+                                <td>@map.Id</td>
+                                <td>@map.TargetAttribute.XPath</td>
+                                <td>@map.Expression</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <td colspan="3" class="highlight center">None!</td>
+                    }
+                </tbody>
+            </table>
+
+            @* - - - Notes - - - *@
+
+            @if (attribute.Notes.Count > 0)
+            {
+                <table>
+                    <thead class="muted">
+                        <tr>
+                            <th colspan="2">Notes</th>
+                        </tr>
+                        <tr>
+                            <th>Map</th>
+                            <th>Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var note in attribute.Notes)
+                        {
+                            <tr>
+                                <td>@note.MapId</td>
+                                <td>@note.Note</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            @* - - - Examples - - - *@
+
+            @if (attribute.Examples.Count > 0)
+            {
+                <table>
+                    <thead class="muted">
+                        <tr>
+                            <th colspan="4">Examples</th>
+                        </tr>
+                        <tr>
+                            <th>Map</th>
+                            <th>Key</th>
+                            <th colspan="2">Target/Expression</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var example in attribute.Examples)
+                        {
+                            <tr>
+                                <td rowspan="2">@example.MapId</td>
+                                <td rowspan="2">@example.ExampleId</td>
+                                <td class="right title">Target</td>
+                                <td>@example.Target</td>
+                            </tr>
+                            <tr>
+                                <td class="right title">Expression</td>
+                                <td>@example.Expression</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        }
     }
 }
 

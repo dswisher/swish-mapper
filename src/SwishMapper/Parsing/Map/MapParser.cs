@@ -10,6 +10,10 @@ namespace SwishMapper.Parsing.Map
 {
     public class MapParser : IMapParser
     {
+        // If there are ever more than 26 mappings for one attribute, this will cause issues, but there
+        // are probably other issues, too.
+        private const string IdNames = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
         private readonly ILexerFactory lexerFactory;
         private readonly IMappedDataExpressionParser expressionParser;
         private readonly IMapExampleLoader exampleLoader;
@@ -128,11 +132,9 @@ namespace SwishMapper.Parsing.Map
             {
                 var target = context.Resolve(lhs);
 
-                var mapping = new ExpressiveMapping
-                {
-                    TargetAttribute = target,
-                    Expression = rhs
-                };
+                // TODO - do we really need the map ID (and IdNames)?
+                var mapCount = context.MapList.Maps.Where(x => x.TargetAttribute == target).Count();
+                var mapping = new ExpressiveMapping(IdNames.Substring(mapCount, 1), target, rhs);
 
                 context.MapList.Maps.Add(mapping);
 

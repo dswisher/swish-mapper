@@ -29,6 +29,10 @@ thead {
     background-color: lightcyan;
 }
 
+thead.muted {
+    background-color: #EEE;
+}
+
 td, th {
     border: solid 1px #CCC;
     padding: 0.1em;
@@ -40,6 +44,18 @@ td, th {
 
 td.right {
     text-align: right;
+}
+
+td.center {
+    text-align: center;
+}
+
+td.title {
+    font-weight: bold;
+}
+
+td.title:after {
+    content: ":";
 }
 
 td.highlight {

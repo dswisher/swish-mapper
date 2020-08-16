@@ -33,6 +33,7 @@ namespace SwishMapper.Models.Data
 
 
         // TODO - add literals
+        // TODO - add sub-expressions
 
 
         public override string ToString()

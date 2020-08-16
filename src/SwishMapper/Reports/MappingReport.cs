@@ -1,6 +1,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
@@ -75,8 +76,14 @@ namespace SwishMapper.Reports
 
                 foreach (var note in map.Notes)
                 {
-                    viewAttribute.Notes.Add(note);
+                    viewAttribute.Notes.Add(new MappingReportNote
+                    {
+                        MapId = map.Id,
+                        Note = note
+                    });
                 }
+
+                BuildExamples(map, viewAttribute);
 
                 viewAttribute.Maps.Add(map);
             }
@@ -91,6 +98,93 @@ namespace SwishMapper.Reports
             return Mapping.Maps
                 .Select(x => x.TargetAttribute.Attribute.Parent.Parent)
                 .Distinct();
+        }
+
+
+        private void BuildExamples(ExpressiveMapping map, MappingReportAttribute viewAttribute)
+        {
+            var builder = new StringBuilder();
+
+            foreach (var attributeExample in map.TargetAttribute.Examples)
+            {
+                builder.Clear();
+
+                var haveExpressionExample = BuildExampleExpression(builder, map.Expression, attributeExample.Key);
+
+                // Build the example entry and add it
+                viewAttribute.Examples.Add(new MappingReportExample
+                {
+                    MapId = map.Id,
+                    ExampleId = attributeExample.Key,
+                    Target = attributeExample.Value,
+                    Expression = haveExpressionExample ? builder.ToString() : null
+                });
+            }
+        }
+
+
+        private bool BuildExampleExpression(StringBuilder builder, MappedDataExpression expression, string exampleId)
+        {
+            var found = false;
+            var isFunction = !string.IsNullOrEmpty(expression.FunctionName);
+
+            if (isFunction)
+            {
+                builder.Append(expression.FunctionName);
+                builder.Append("(");
+            }
+
+            bool first = true;
+            foreach (var arg in expression.Arguments)
+            {
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    builder.Append(", ");
+                }
+
+                if (arg.Model != null)
+                {
+                    builder.Append(arg.Model.Id);
+                }
+                else if (arg.Attribute != null)
+                {
+                    if (arg.Attribute.Examples.ContainsKey(exampleId))
+                    {
+                        if (isFunction)
+                        {
+                            builder.Append("\"");
+                        }
+
+                        builder.Append(arg.Attribute.Examples[exampleId]);
+
+                        if (isFunction)
+                        {
+                            builder.Append("\"");
+                        }
+
+                        found = true;
+                    }
+                    else
+                    {
+                        builder.Append("NIL");
+                    }
+                }
+                else
+                {
+                    builder.Append("[unhandled-argument]");
+                }
+            }
+
+            if (isFunction)
+            {
+                builder.Append(")");
+            }
+
+            return found;
         }
     }
 }

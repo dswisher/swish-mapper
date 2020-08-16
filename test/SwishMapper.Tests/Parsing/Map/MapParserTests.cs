@@ -121,11 +121,16 @@ namespace SwishMapper.Tests.Parsing.Map
             // Arrange
             var path = FileFinder.FindMapFile(filename);
 
+            MapParserContext context = null;
+            exampleLoader.Setup(x => x.LoadAsync(It.IsAny<MapParserContext>())).Callback<MapParserContext>(x => context = x);
+
             // Act
             var map = await parser.ParseAsync(path.FullName, ProjectBuilder.InputOutput().Models);
 
             // Assert
-            // TODO - xyzzy - verify!
+            context.Should().NotBeNull();
+
+            context.Examples.Should().HaveCountGreaterThan(0);
         }
     }
 }

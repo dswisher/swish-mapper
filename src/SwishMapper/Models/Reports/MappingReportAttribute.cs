@@ -8,12 +8,14 @@ namespace SwishMapper.Models.Reports
     public class MappingReportAttribute
     {
         private readonly List<ExpressiveMapping> maps = new List<ExpressiveMapping>();
-        private readonly List<string> notes = new List<string>();
+        private readonly List<MappingReportNote> notes = new List<MappingReportNote>();
+        private readonly List<MappingReportExample> examples = new List<MappingReportExample>();
 
         public string Name { get; set; }
 
         public IList<ExpressiveMapping> Maps { get { return maps; } }
-        public IList<string> Notes { get { return notes; } }
+        public IList<MappingReportNote> Notes { get { return notes; } }
+        public IList<MappingReportExample> Examples { get { return examples; } }
 
         // TODO - need URL and type for RHS
         // public DataType SinkType { get; set; }

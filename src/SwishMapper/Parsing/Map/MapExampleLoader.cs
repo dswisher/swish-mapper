@@ -44,6 +44,9 @@ namespace SwishMapper.Parsing.Map
                         foreach (var fileInfo in directory.GetFiles())
                         {
                             var exampleId = Path.GetFileNameWithoutExtension(fileInfo.Name);
+
+                            logger.LogDebug("Loading {Model} sample {Id}...", model.ModelId, exampleId);
+
                             var builder = new StringBuilder();
 
                             builder.Append(model.Prefix);
