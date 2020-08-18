@@ -144,13 +144,39 @@ namespace SwishMapper.Tests.Parsing.Map
             MapParserContext context = null;
             exampleLoader.Setup(x => x.LoadAsync(It.IsAny<MapParserContext>())).Callback<MapParserContext>(x => context = x);
 
+            var project = ProjectBuilder.InputOutput();
+
+            var input = project.Models.First(x => x.Id == "input");
+            var personName = input.FindEntity("Person").FindAttribute("Name");
+            var personFirst = input.FindEntity("Person").FindAttribute("FirstName");
+            var cityName = input.FindEntity("City").FindAttribute("Name");
+
             // Act
-            var map = await parser.ParseAsync(path.FullName, ProjectBuilder.InputOutput().Models);
+            var map = await parser.ParseAsync(path.FullName, project.Models);
 
             // Assert
             context.Should().NotBeNull();
 
-            // TODO - xyzzy - check ignores!
+            context.MapList.IsIgnored(personName).Should().BeTrue();
+            context.MapList.IsIgnored(personFirst).Should().BeFalse();
+            context.MapList.IsIgnored(cityName).Should().BeTrue();
+        }
+
+
+        [Fact]
+        public async Task TwoMapsForSameTargetGetDifferentIds()
+        {
+            // Arrange
+            var path = FileFinder.FindMapFile("two-simple-maps.map");
+
+            // Act
+            var map = await parser.ParseAsync(path.FullName, ProjectBuilder.InputOutput().Models);
+
+            // Assert
+            map.Maps.Should().HaveCount(2);
+
+            map.Maps[0].Id.Should().Be("A");
+            map.Maps[1].Id.Should().Be("B");
         }
     }
 }

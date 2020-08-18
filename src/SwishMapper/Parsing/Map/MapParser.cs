@@ -138,8 +138,7 @@ namespace SwishMapper.Parsing.Map
             {
                 var target = context.Resolve(lhs);
 
-                // TODO - do we really need the map ID (and IdNames)?
-                var mapCount = context.MapList.Maps.Where(x => x.TargetAttribute == target).Count();
+                var mapCount = context.MapList.Maps.Where(x => x.TargetAttribute.Equals(target)).Count();
                 var mapping = new ExpressiveMapping(IdNames.Substring(mapCount, 1), target, rhs);
 
                 context.MapList.Maps.Add(mapping);

@@ -1,0 +1,9 @@
+
+name "TwoSimple";
+
+src = model(input);
+sink = model(output);
+
+sink:People/FullName = src:Person/Name;
+sink:People/FullName = src:Person/FirstName;    # not realistic, but useful test case
+

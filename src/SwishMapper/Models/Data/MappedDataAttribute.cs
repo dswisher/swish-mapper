@@ -21,5 +21,24 @@ namespace SwishMapper.Models.Data
         /// The examples for this attribute, if any.
         /// </summary>
         public IDictionary<string, string> Examples { get { return examples; } }
+
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as MappedDataAttribute;
+
+            if (other == null)
+            {
+                return false;
+            }
+
+            return Attribute.Equals(other.Attribute);
+        }
+
+
+        public override int GetHashCode()
+        {
+            return Attribute.GetHashCode();
+        }
     }
 }
