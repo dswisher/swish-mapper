@@ -1,10 +1,8 @@
 
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
 
 using Microsoft.Extensions.Logging;
 using SwishMapper.Models.Data;
@@ -15,10 +13,13 @@ namespace SwishMapper.Parsing.Map
     {
         private const int MaxExampleLength = 100;
 
+        private readonly IMapExampleXmlLoader xmlLoader;
         private readonly ILogger logger;
 
-        public MapExampleLoader(ILogger<MapExampleLoader> logger)
+        public MapExampleLoader(IMapExampleXmlLoader xmlLoader,
+                                ILogger<MapExampleLoader> logger)
         {
+            this.xmlLoader = xmlLoader;
             this.logger = logger;
         }
 
@@ -58,71 +59,11 @@ namespace SwishMapper.Parsing.Map
 
                             builder.Append(model.Suffix);
 
-                            // TODO - split this out to a separate class? Easier testing, and perhaps ability to handle JSON?
-                            var doc = new XmlDocument();
-
-                            doc.LoadXml(builder.ToString());
-
-                            foreach (var attribute in exampleAttributes)
-                            {
-                                var nodes = doc.SelectNodes(attribute.XPath);
-
-                                // If we didn't find a match, move on.
-                                if (nodes.Count == 0)
-                                {
-                                    continue;
-                                }
-
-                                // If we found one match, use it. If we found multiples, set up the suffix and use the first
-                                // match that we found.
-                                var oneOfN = string.Empty;
-                                if (nodes.Count > 1)
-                                {
-                                    oneOfN = $"[1-of-{nodes.Count}] ";
-                                }
-
-                                var node = nodes[0] as XmlElement;
-
-                                if (node == null)
-                                {
-                                    logger.LogWarning("In {Model} example {Id}, XPath {Path} resulted in a non-element!",
-                                            model.ModelId, exampleId, attribute.XPath);
-                                }
-                                else
-                                {
-                                    var childElementCount = node.ChildNodes.OfType<XmlElement>().Count();
-
-                                    string exampleText;
-                                    if (childElementCount > 0)
-                                    {
-                                        logger.LogWarning("In {Model} example {Id}, XPath {Path} found a node with child elements: {Content}.",
-                                                model.ModelId, exampleId, attribute.XPath, node.InnerXml);
-
-                                        exampleText = oneOfN + "[non-terminal] " + Cleanse(node.InnerXml);
-                                    }
-                                    else
-                                    {
-                                        exampleText = oneOfN + Cleanse(node.InnerText);
-                                    }
-
-                                    if (exampleText.Length > MaxExampleLength)
-                                    {
-                                        exampleText = exampleText.Substring(0, MaxExampleLength - 3) + "...";
-                                    }
-
-                                    attribute.Examples.Add(exampleId, exampleText);
-                                }
-                            }
+                            xmlLoader.LoadExamples(model.ModelId, builder.ToString(), exampleAttributes, exampleId);
                         }
                     }
                 }
             }
-        }
-
-
-        private string Cleanse(string val)
-        {
-            return val.Replace("\n", "\\n");
         }
 
 
