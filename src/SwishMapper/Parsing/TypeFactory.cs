@@ -32,6 +32,7 @@ namespace SwishMapper.Parsing
                 case "INT32":
                 case "INT64":
                 case "INTEGER":
+                case "SBYTE":
                     // TODO - should these be separate types?
                     return IntType;
 
