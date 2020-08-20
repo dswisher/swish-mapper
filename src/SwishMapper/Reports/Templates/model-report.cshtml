@@ -164,7 +164,7 @@
                 @foreach (var attribute in entity.Attributes.Where(x => x.Samples.Count > 0).OrderBy(x => x.Name))
                 {
                     var first = true;
-                    foreach (var sample in attribute.Samples)
+                    foreach (var sample in attribute.Samples.OrderBy(x => x.Path))
                     {
                         <tr>
                             @if (first)
